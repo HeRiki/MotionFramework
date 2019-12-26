@@ -170,41 +170,63 @@ public static class BuildSettingData
 	/// </summary>
 	public static string GetAssetTagName(string assetPath)
 	{
+		// 注意：一个资源有可能被多个规则覆盖
+		List<BuildSetting.Wrapper> filterWrappers = new List<BuildSetting.Wrapper>();
 		for (int i = 0; i < Setting.Elements.Count; i++)
 		{
 			BuildSetting.Wrapper wrapper = Setting.Elements[i];
 			if (assetPath.StartsWith(wrapper.FolderPath))
 			{
-				if (wrapper.NameRule == BuildSetting.EBundleNameRule.None)
-				{
-					// 注意：如果依赖资源来自于忽略文件夹，那么会触发这个异常
-					throw new Exception($"BuildSetting has depend asset in ignore folder : {wrapper.FolderPath}");
-				}
-				else if (wrapper.NameRule == BuildSetting.EBundleNameRule.TagByFileName)
-				{
-					return Path.GetFileNameWithoutExtension(assetPath);
-				}
-				else if (wrapper.NameRule == BuildSetting.EBundleNameRule.TagByFilePath)
-				{
-					return assetPath.Remove(assetPath.LastIndexOf("."));
-				}
-				else if (wrapper.NameRule == BuildSetting.EBundleNameRule.TagByFolderName)
-				{
-					string temp = Path.GetDirectoryName(assetPath);
-					return Path.GetFileName(temp);
-				}
-				else if (wrapper.NameRule == BuildSetting.EBundleNameRule.TagByFolderPath)
-				{
-					return Path.GetDirectoryName(assetPath);
-				}
-				else
-				{
-					throw new NotImplementedException($"{wrapper.NameRule}");
-				}
+				filterWrappers.Add(wrapper);
 			}
 		}
 
+		// 我们使用路径最深层的规则
+		BuildSetting.Wrapper findWrapper = null;
+		for (int i = 0; i < filterWrappers.Count; i++)
+		{
+			BuildSetting.Wrapper wrapper = filterWrappers[i];
+			if (findWrapper == null)
+			{
+				findWrapper = wrapper;
+				continue;
+			}
+			if (wrapper.FolderPath.Length > findWrapper.FolderPath.Length)
+				findWrapper = wrapper;
+		}
+
 		// 如果没有找到命名规则
-		return assetPath.Remove(assetPath.LastIndexOf("."));
+		if (findWrapper == null)
+		{
+			return assetPath.Remove(assetPath.LastIndexOf("."));
+		}
+
+		// 根据规则设置获取标签名称
+		if (findWrapper.NameRule == BuildSetting.EBundleNameRule.None)
+		{
+			// 注意：如果依赖资源来自于忽略文件夹，那么会触发这个异常
+			throw new Exception($"BuildSetting has depend asset in ignore folder : {findWrapper.FolderPath}");
+		}
+		else if (findWrapper.NameRule == BuildSetting.EBundleNameRule.TagByFileName)
+		{
+			return Path.GetFileNameWithoutExtension(assetPath);
+		}
+		else if (findWrapper.NameRule == BuildSetting.EBundleNameRule.TagByFilePath)
+		{
+			return assetPath.Remove(assetPath.LastIndexOf("."));
+		}
+		else if (findWrapper.NameRule == BuildSetting.EBundleNameRule.TagByFolderName)
+		{
+			string temp = Path.GetDirectoryName(assetPath);
+			return Path.GetFileName(temp);
+		}
+		else if (findWrapper.NameRule == BuildSetting.EBundleNameRule.TagByFolderPath)
+		{
+			return Path.GetDirectoryName(assetPath);
+		}
+		else
+		{
+			throw new NotImplementedException($"{findWrapper.NameRule}");
+		}
 	}
 }
