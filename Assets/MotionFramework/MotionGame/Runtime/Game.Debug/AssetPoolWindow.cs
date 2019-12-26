@@ -28,8 +28,8 @@ namespace MotionFramework.Debug
 			_scrollPos = DebugConsole.GUIBeginScrollView(_scrollPos, 30);
 			foreach (var pair in pools)
 			{
-				string content = $"[{pair.Value.ResName}] CacheCount = {pair.Value.Count} SpwanCount = {pair.Value.SpawnCount}";
-				if (pair.Value.LoadResult == EAssetResult.Failed)
+				string content = $"[{pair.Value.Location}] CacheCount = {pair.Value.Count} SpwanCount = {pair.Value.SpawnCount}";
+				if (pair.Value.States == EAssetProviderStates.Failed)
 					DebugConsole.GUIRedLable(content);
 				else
 					DebugConsole.GUILable(content);

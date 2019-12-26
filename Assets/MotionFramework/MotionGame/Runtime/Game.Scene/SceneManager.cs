@@ -17,10 +17,8 @@ namespace MotionFramework.Scene
 	{
 		public static readonly SceneManager Instance = new SceneManager();
 
-		// 主场景
-		private GameScene _mainScene;
-		// 附加场景列表
-		private readonly List<GameScene> _additionScenes = new List<GameScene>();
+		private AssetScene _mainScene;
+		private readonly List<AssetScene> _additionScenes = new List<AssetScene>();
 
 
 		private SceneManager()
@@ -42,17 +40,19 @@ namespace MotionFramework.Scene
 		{
 			string mainSceneName = string.Empty;
 			if (_mainScene != null)
-				mainSceneName = _mainScene.ResName;
+				mainSceneName = _mainScene.Location;
 			DebugConsole.GUILable($"[{nameof(SceneManager)}] Main scene : {mainSceneName}");
 			DebugConsole.GUILable($"[{nameof(SceneManager)}] Addition scene count : {_additionScenes.Count}");
 		}
 
+
 		/// <summary>
 		/// 切换主场景，之前的主场景以及附加场景将会被卸载
 		/// </summary>
-		/// <param name="resName">场景资源名称</param>
+		/// <param name="location">场景资源地址</param>
+		/// <param name="activeOnLoad">加载完成时是否激活场景</param>
 		/// <param name="callback">场景加载完毕的回调</param>
-		public void ChangeMainScene(string resName, System.Action<Asset> callback)
+		public void ChangeMainScene(string location, bool activeOnLoad, System.Action<SceneInstance> callback)
 		{
 			if (_mainScene != null)
 			{
@@ -61,66 +61,65 @@ namespace MotionFramework.Scene
 				_mainScene = null;
 			}
 
-			_mainScene = new GameScene(false);
-			_mainScene.OnSceneLoad = callback;
-			_mainScene.Load(resName, null);
+			_mainScene = new AssetScene(location);
+			_mainScene.Load(false, activeOnLoad, callback);
 		}
 
 		/// <summary>
 		/// 在当前主场景的基础上加载附加场景
 		/// </summary>
-		/// <param name="resName">场景资源名称</param>
+		/// <param name="location">场景资源地址</param>
+		/// <param name="activeOnLoad">加载完成时是否激活场景</param>
 		/// <param name="callback">场景加载完毕的回调</param>
-		public void LoadAdditionScene(string resName, System.Action<Asset> callback)
+		public void LoadAdditionScene(string location, bool activeOnLoad, System.Action<SceneInstance> callback)
 		{
-			GameScene scene = TryGetAdditionScene(resName);
+			AssetScene scene = TryGetAdditionScene(location);
 			if (scene != null)
 			{
-				LogSystem.Log(ELogType.Warning, $"The addition scene {resName} is already load.");
+				LogSystem.Log(ELogType.Warning, $"The addition scene {location} is already load.");
 				return;
 			}
 
-			GameScene newScene = new GameScene(true);
+			AssetScene newScene = new AssetScene(location);
 			_additionScenes.Add(newScene);
-			newScene.OnSceneLoad = callback;
-			newScene.Load(resName, null);
+			newScene.Load(true, activeOnLoad, callback);
 		}
 
 		/// <summary>
 		/// 获取场景当前的加载进度，如果场景不存在返回0
 		/// </summary>
-		public int GetSceneLoadProgress(string resName)
+		public int GetSceneLoadProgress(string location)
 		{
 			if (_mainScene != null)
 			{
-				if (_mainScene.ResName == resName)
+				if (_mainScene.Location == location)
 					return _mainScene.Progress;
 			}
 
-			GameScene scene = TryGetAdditionScene(resName);
+			AssetScene scene = TryGetAdditionScene(location);
 			if (scene != null)
 				return scene.Progress;
 
-			LogSystem.Log(ELogType.Warning, $"Not found scene {resName}");
+			LogSystem.Log(ELogType.Warning, $"Not found scene {location}");
 			return 0;
 		}
 
 		/// <summary>
 		/// 检测场景是否加载完毕，如果场景不存在返回false
 		/// </summary>
-		public bool CheckSceneIsDone(string resName)
+		public bool CheckSceneIsDone(string location)
 		{
 			if (_mainScene != null)
 			{
-				if (_mainScene.ResName == resName)
+				if (_mainScene.Location == location)
 					return _mainScene.IsDone;
 			}
 
-			GameScene scene = TryGetAdditionScene(resName);
+			AssetScene scene = TryGetAdditionScene(location);
 			if (scene != null)
 				return scene.IsDone;
 
-			LogSystem.Log(ELogType.Warning, $"Not found scene {resName}");
+			LogSystem.Log(ELogType.Warning, $"Not found scene {location}");
 			return false;
 		}
 
@@ -136,11 +135,11 @@ namespace MotionFramework.Scene
 		}
 
 		// 尝试获取一个附加场景，如果不存在返回NULL
-		private GameScene TryGetAdditionScene(string resName)
+		private AssetScene TryGetAdditionScene(string location)
 		{
 			for (int i = 0; i < _additionScenes.Count; i++)
 			{
-				if (_additionScenes[i].ResName == resName)
+				if (_additionScenes[i].Location == location)
 					return _additionScenes[i];
 			}
 			return null;

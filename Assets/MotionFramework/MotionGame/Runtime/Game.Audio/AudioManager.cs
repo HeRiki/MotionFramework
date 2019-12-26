@@ -56,11 +56,6 @@ namespace MotionFramework.Audio
 		/// </summary>
 		private GameObject _root;
 
-		/// <summary>
-		/// Resources文件夹下音频文件夹的相对路径
-		/// </summary>
-		public string BaseFolderPath = "Audio/";
-
 
 		private AudioManager()
 		{
@@ -102,13 +97,13 @@ namespace MotionFramework.Audio
 		/// <summary>
 		/// 预加载音频资源
 		/// </summary>
-		public void PreloadAsset(string name, int audioType)
+		public void PreloadAsset(string location, EAudioLayer audioLayer)
 		{
-			if (_assets.ContainsKey(name) == false)
+			if (_assets.ContainsKey(location) == false)
 			{
-				AssetAudio asset = new AssetAudio(audioType);
-				_assets.Add(name, asset);
-				asset.Load(BaseFolderPath + name, null);
+				AssetAudio asset = new AssetAudio(location, audioLayer);
+				_assets.Add(location, asset);
+				asset.Load(null);
 			}
 		}
 
@@ -125,15 +120,15 @@ namespace MotionFramework.Audio
 		}
 
 		/// <summary>
-		/// 释放指定类型音频资源
+		/// 释放指定层级的音频资源
 		/// </summary>
-		/// <param name="audioType">音频类型</param>
-		public void Release(EAudioLayer audioType)
+		/// <param name="audioLayer">音频层级</param>
+		public void Release(EAudioLayer audioLayer)
 		{
 			List<string> removeList = new List<string>();
 			foreach (KeyValuePair<string, AssetAudio> pair in _assets)
 			{
-				if (pair.Value.AudioTag == (int)audioType)
+				if (pair.Value.AudioLayer == audioLayer)
 					removeList.Add(pair.Key);
 			}
 
@@ -148,155 +143,92 @@ namespace MotionFramework.Audio
 		/// <summary>
 		/// 播放背景音乐
 		/// </summary>
-		/// <param name="name">资源名称</param>
+		/// <param name="location">资源地址</param>
 		/// <param name="loop">是否循环播放</param>
-		public void PlayMusic(string name, bool loop)
+		public void PlayMusic(string location, bool loop)
 		{
-			if (string.IsNullOrEmpty(name))
+			if (string.IsNullOrEmpty(location))
 				return;
 
-			if (_assets.ContainsKey(name))
-			{
-				if (_assets[name].Result == EAssetResult.OK)
-					PlayAudioClipInternal(EAudioLayer.Music, _assets[name].Clip, loop);
-			}
-			else
-			{
-				// 新建加载资源
-				AssetAudio assetAudio = new AssetAudio((int)EAudioLayer.Music);
-				_assets.Add(name, assetAudio);
-				assetAudio.Load(BaseFolderPath + name, (Asset asset) =>
-				{
-					if (asset.Result == EAssetResult.OK)
-						PlayAudioClipInternal(EAudioLayer.Music, _assets[name].Clip, loop);
-				});
-			}
+			PlayAudioClip(EAudioLayer.Music, location, loop);
 		}
 
 		/// <summary>
 		/// 播放环境音效
 		/// </summary>
-		/// <param name="name">资源名称</param>
+		/// <param name="location">资源地址</param>
 		/// <param name="loop">是否循环播放</param>
-		public void PlayAmbient(string name, bool loop)
+		public void PlayAmbient(string location, bool loop)
 		{
-			if (string.IsNullOrEmpty(name))
+			if (string.IsNullOrEmpty(location))
 				return;
 
-			if (_assets.ContainsKey(name))
-			{
-				if (_assets[name].Result == EAssetResult.OK)
-					PlayAudioClipInternal(EAudioLayer.Ambient, _assets[name].Clip, loop);
-			}
-			else
-			{
-				// 新建加载资源
-				AssetAudio assetAudio = new AssetAudio((int)EAudioLayer.Ambient);
-				_assets.Add(name, assetAudio);
-				assetAudio.Load(BaseFolderPath + name, (Asset asset) =>
-				{
-					if (asset.Result == EAssetResult.OK)
-						PlayAudioClipInternal(EAudioLayer.Ambient, _assets[name].Clip, loop);
-				});
-			}
+			PlayAudioClip(EAudioLayer.Ambient, location, loop);
 		}
 
 		/// <summary>
 		/// 播放语音
 		/// </summary>
-		/// <param name="name">资源名称</param>
-		public void PlayVoice(string name)
+		/// <param name="location">资源地址</param>
+		public void PlayVoice(string location)
 		{
-			if (string.IsNullOrEmpty(name))
+			if (string.IsNullOrEmpty(location))
 				return;
 
 			// 如果静音状态直接跳过播放
 			if (IsMute(EAudioLayer.Voice))
 				return;
 
-			if (_assets.ContainsKey(name))
-			{
-				if (_assets[name].Result == EAssetResult.OK)
-					PlayAudioClipInternal(EAudioLayer.Voice, _assets[name].Clip, false);
-			}
-			else
-			{
-				// 新建加载资源
-				AssetAudio assetAudio = new AssetAudio((int)EAudioLayer.Voice);
-				_assets.Add(name, assetAudio);
-				assetAudio.Load(BaseFolderPath + name, (Asset asset) =>
-				{
-					if (asset.Result == EAssetResult.OK)
-						PlayAudioClipInternal(EAudioLayer.Voice, _assets[name].Clip, false);
-				});
-			}
+			PlayAudioClip(EAudioLayer.Voice, location, false);
 		}
 
 		/// <summary>
 		/// 播放音效
 		/// </summary>
-		/// <param name="name">资源名称</param>
-		public void PlaySound(string name)
+		/// <param name="location">资源地址</param>
+		public void PlaySound(string location)
 		{
-			if (string.IsNullOrEmpty(name))
+			if (string.IsNullOrEmpty(location))
 				return;
 
 			// 如果静音状态直接跳过播放
 			if (IsMute(EAudioLayer.Sound))
 				return;
 
-			if (_assets.ContainsKey(name))
-			{
-				if (_assets[name].Result == EAssetResult.OK)
-					PlayAudioClipInternal(EAudioLayer.Sound, _assets[name].Clip, false);
-			}
-			else
-			{
-				// 新建加载资源
-				AssetAudio assetAudio = new AssetAudio((int)EAudioLayer.Sound);
-				_assets.Add(name, assetAudio);
-				assetAudio.Load(BaseFolderPath + name, (Asset asset) =>
-				{
-					if (asset.Result == EAssetResult.OK)
-						PlayAudioClipInternal(EAudioLayer.Sound, _assets[name].Clip, false);
-				});
-			}
+			PlayAudioClip(EAudioLayer.Sound, location, false);
 		}
 
 		/// <summary>
 		/// 使用外部音频源播放音效
 		/// </summary>
-		/// <param name="audio">外部的音频源</param>
-		/// <param name="name">资源名称</param>
-		public void PlaySound(AudioSource audio, string name)
+		/// <param name="audioSource">外部的音频源</param>
+		/// <param name="location">资源地址</param>
+		public void PlaySound(AudioSource audioSource, string location)
 		{
-			if (audio == null) return;
-			if (audio.isActiveAndEnabled == false) return;
-			if (string.IsNullOrEmpty(name)) return;
+			if (audioSource == null) return;
+			if (audioSource.isActiveAndEnabled == false) return;
+			if (string.IsNullOrEmpty(location)) return;
 
 			// 如果静音状态直接跳过播放
 			if (IsMute(EAudioLayer.Sound))
 				return;
 
-			if (_assets.ContainsKey(name))
+			if (_assets.ContainsKey(location))
 			{
-				if (_assets[name].Result == EAssetResult.OK)
-				{
-					if (audio != null)
-						audio.PlayOneShot(_assets[name].Clip);
-				}
+				if (_assets[location].Clip != null)
+					audioSource.PlayOneShot(_assets[location].Clip);
 			}
 			else
 			{
 				// 新建加载资源
-				AssetAudio assetAudio = new AssetAudio((int)EAudioLayer.Sound);
-				_assets.Add(name, assetAudio);
-				assetAudio.Load(BaseFolderPath + name, (Asset asset) =>
+				AssetAudio assetAudio = new AssetAudio(location, EAudioLayer.Sound);
+				_assets.Add(location, assetAudio);
+				assetAudio.Load((AudioClip clip) =>
 				{
-					if (asset.Result == EAssetResult.OK)
+					if (clip != null)
 					{
-						if (audio != null)
-							audio.PlayOneShot(_assets[name].Clip);
+						if (audioSource != null) //注意：在加载过程中音频源可能被销毁，所以需要判空
+							audioSource.PlayOneShot(_assets[location].Clip);
 					}
 				});
 			}
@@ -365,6 +297,25 @@ namespace MotionFramework.Audio
 			return _audioSourceWrappers[layer].Source.volume;
 		}
 
+		private void PlayAudioClip(EAudioLayer layer, string location, bool isLoop)
+		{
+			if (_assets.ContainsKey(location))
+			{
+				if (_assets[location].Clip != null)
+					PlayAudioClipInternal(layer, _assets[location].Clip, isLoop);
+			}
+			else
+			{
+				// 新建加载资源
+				AssetAudio assetAudio = new AssetAudio(location, layer);
+				_assets.Add(location, assetAudio);
+				assetAudio.Load((AudioClip clip) =>
+				{
+					if (clip != null)
+						PlayAudioClipInternal(layer, clip, isLoop);
+				});
+			}
+		}
 		private void PlayAudioClipInternal(EAudioLayer layer, AudioClip clip, bool isLoop)
 		{
 			if (clip == null)

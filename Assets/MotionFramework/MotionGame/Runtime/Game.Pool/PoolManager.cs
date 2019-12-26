@@ -11,21 +11,21 @@ using UnityEngine;
 namespace MotionFramework.Pool
 {
 	/// <summary>
-	/// 实体资源池管理器
+	/// 游戏对象池管理器
 	/// </summary>
 	public sealed class PoolManager
 	{
 		public static readonly PoolManager Instance = new PoolManager();
 
 		/// <summary>
-		/// 资源池的ROOT
+		/// 对象池管理器的ROOT
 		/// </summary>
 		private readonly GameObject _root;
 
 		/// <summary>
-		/// 资源池对象集合
+		/// 游戏对象池集合
 		/// </summary>
-		private readonly Dictionary<string, AssetObjectPool> _pools = new Dictionary<string, AssetObjectPool>();
+		private readonly Dictionary<string, GameObjectPool> _pools = new Dictionary<string, GameObjectPool>();
 
 
 		private PoolManager()
@@ -37,26 +37,26 @@ namespace MotionFramework.Pool
 		}
 
 		/// <summary>
-		/// 创建一种实体资源的对象池
+		/// 创建指定资源的游戏对象池
 		/// </summary>
-		public AssetObjectPool CreatePool(string resName, int capacity)
+		public GameObjectPool CreatePool(string location, int capacity)
 		{
-			if (_pools.ContainsKey(resName))
-				return _pools[resName];
+			if (_pools.ContainsKey(location))
+				return _pools[location];
 
-			AssetObjectPool pool = new AssetObjectPool(_root.transform, resName, capacity);
-			_pools.Add(resName, pool);
+			GameObjectPool pool = new GameObjectPool(_root.transform, location, capacity);
+			_pools.Add(location, pool);
 			return pool;
 		}
 
 		/// <summary>
-		/// 是否都已经准备完毕
+		/// 是否都已经加载完毕
 		/// </summary>
-		public bool IsAllPrepare()
+		public bool IsAllDone()
 		{
 			foreach (var pair in _pools)
 			{
-				if (pair.Value.IsPrepare == false)
+				if (pair.Value.IsDone == false)
 					return false;
 			}
 			return true;
@@ -75,61 +75,61 @@ namespace MotionFramework.Pool
 		}
 
 		/// <summary>
-		/// 异步方式获取一个实体对象
+		/// 异步方式获取一个游戏对象
 		/// </summary>
-		public void Spawn(string resName, Action<GameObject> callbcak)
+		public void Spawn(string location, Action<GameObject> callbcak)
 		{
-			if (_pools.ContainsKey(resName))
+			if (_pools.ContainsKey(location))
 			{
-				_pools[resName].Spawn(callbcak);
+				_pools[location].Spawn(callbcak);
 			}
 			else
 			{
-				// 如果不存在创建该实体的对象池
-				AssetObjectPool pool = CreatePool(resName, 0);
+				// 如果不存在创建游戏对象池
+				GameObjectPool pool = CreatePool(location, 0);
 				pool.Spawn(callbcak);
 			}
 		}
 
 		/// <summary>
-		/// 同步方式获取一个实体对象
+		/// 同步方式获取一个游戏对象
 		/// </summary>
-		public GameObject Spawn(string resName)
+		public GameObject Spawn(string location)
 		{
-			if (_pools.ContainsKey(resName))
+			if (_pools.ContainsKey(location))
 			{
-				return _pools[resName].Spawn();
+				return _pools[location].Spawn();
 			}
 			else
 			{
-				// 如果不存在创建该实体的对象池
-				AssetObjectPool pool = CreatePool(resName, 0);
+				// 如果不存在创建游戏对象池
+				GameObjectPool pool = CreatePool(location, 0);
 				return pool.Spawn();
 			}
 		}
 
 		/// <summary>
-		/// 回收一个实体对象
+		/// 回收一个游戏对象
 		/// </summary>
-		public void Restore(string resName, GameObject obj)
+		public void Restore(string location, GameObject obj)
 		{
 			if (obj == null)
 				return;
 
-			if (_pools.ContainsKey(resName))
+			if (_pools.ContainsKey(location))
 			{
-				_pools[resName].Restore(obj);
+				_pools[location].Restore(obj);
 			}
 			else
 			{
-				LogSystem.Log(ELogType.Error, $"Should never get here. ResName is {resName}");
+				LogSystem.Log(ELogType.Error, $"GameObjectPool does not exist : {location}");
 			}
 		}
 
 		/// <summary>
 		/// 调试专属方法
 		/// </summary>
-		public Dictionary<string, AssetObjectPool> DebugAllPools
+		public Dictionary<string, GameObjectPool> DebugAllPools
 		{
 			get { return _pools; }
 		}

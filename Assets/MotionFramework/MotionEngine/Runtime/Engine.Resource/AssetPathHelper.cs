@@ -23,23 +23,23 @@ namespace MotionFramework.Resource
 		/// <summary>
 		/// 获取基于流文件夹的加载路径
 		/// </summary>
-		public static string MakeStreamingLoadPath(string assetPath)
+		public static string MakeStreamingLoadPath(string path)
 		{
-			return StringFormat.Format("{0}/{1}", Application.streamingAssetsPath, assetPath);
+			return StringFormat.Format("{0}/{1}", Application.streamingAssetsPath, path);
 		}
 
 		/// <summary>
 		/// 获取基于沙盒文件夹的加载路径
 		/// </summary>
-		public static string MakePersistentLoadPath(string assetPath)
+		public static string MakePersistentLoadPath(string path)
 		{
 #if UNITY_EDITOR
 			// 注意：为了方便调试查看，编辑器下把存储目录放到项目里
 			string projectPath = Path.GetDirectoryName(Application.dataPath);
 			projectPath = GetRegularPath(projectPath);
-			return StringFormat.Format("{0}/Sandbox/{1}", projectPath, assetPath);
+			return StringFormat.Format("{0}/Sandbox/{1}", projectPath, path);
 #else
-		return StringFormat.Format("{0}/Sandbox/{1}", Application.persistentDataPath, assetPath);
+		return StringFormat.Format("{0}/Sandbox/{1}", Application.persistentDataPath, path);
 #endif
 		}
 
@@ -61,20 +61,20 @@ namespace MotionFramework.Resource
 		}
 
 		/// <summary>
-		/// 把Resource资源路径转换为Manifest资源路径
+		/// 把资源定位地址转换为Manifest路径
 		/// </summary>
 		private static string CachedManifestRootPath = null;
-		public static string ConvertResourcePathToManifestPath(string path)
+		public static string ConvertLocationToManifestPath(string location)
 		{
-			if(CachedManifestRootPath == null)
+			if (CachedManifestRootPath == null)
 			{
 				if (string.IsNullOrEmpty(AssetSystem.AssetRootPath))
 					throw new System.Exception("Asset system root path is null or empty.");
 				CachedManifestRootPath = AssetSystem.AssetRootPath.ToLower();
 			}
 
-			path = path.ToLower(); //转换为小写形式
-			return StringFormat.Format("{0}/{1}{2}", CachedManifestRootPath, path, PatchDefine.StrBundleSuffixName);
-		}	
+			location = location.ToLower(); //转换为小写形式
+			return StringFormat.Format("{0}/{1}{2}", CachedManifestRootPath, location, PatchDefine.StrBundleSuffixName);
+		}
 	}
 }

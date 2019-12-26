@@ -6,10 +6,7 @@
 
 namespace MotionFramework.Resource
 {
-	/// <summary>
-	/// 场景资源基类
-	/// </summary>
-	public abstract class AssetScene : Asset
+	public interface IAssetParam
 	{
 	}
 }

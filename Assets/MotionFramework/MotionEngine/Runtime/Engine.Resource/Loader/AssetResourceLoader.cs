@@ -15,79 +15,27 @@ namespace MotionFramework.Resource
 	/// </summary>
 	public class AssetResourceLoader : AssetFileLoader
 	{
-		/// <summary>
-		/// 主资源对象
-		/// </summary>
-		private UnityEngine.Object _mainAsset;
-
-		/// <summary>
-		/// Request对象
-		/// </summary>
-		private ResourceRequest _cacheRequest;
-
-
-		public AssetResourceLoader(bool isStreamScene, string loadPath)
-			: base(isStreamScene, loadPath)
+		public AssetResourceLoader(EAssetFileType assetFileType, string loadPath)
+			: base(assetFileType, loadPath)
 		{
 		}
 		public override void Update()
 		{
-			if (IsDone())
+			// 如果资源文件加载完毕
+			if (States == EAssetFileLoaderStates.LoadAssetFileOK || States == EAssetFileLoaderStates.LoadAssetFileFailed)
+			{
+				UpdateAllProvider();
 				return;
-
-			if (LoadState == EAssetFileLoadState.None)
-			{
-				LoadState = EAssetFileLoadState.LoadAssetFile;
 			}
 
-			// 1. 加载主资源对象
-			if (LoadState == EAssetFileLoadState.LoadAssetFile)
-			{
-				// Load resource folder file		
-				_cacheRequest = Resources.LoadAsync(LoadPath);
-				LoadState = EAssetFileLoadState.CheckAssetFile;
-			}
-
-			// 2. 检测AssetObject加载结果
-			if (LoadState == EAssetFileLoadState.CheckAssetFile)
-			{
-				if (_cacheRequest.isDone == false)
-					return;
-				_mainAsset = _cacheRequest.asset;
-
-				// Check scene
-				if (IsStreamScene)
-				{
-					LoadState = EAssetFileLoadState.LoadAssetFileOK;
-					LoadCallback?.Invoke(this);
-					return;
-				}
-
-				// Check error
-				if (_mainAsset == null)
-				{
-					LogSystem.Log(ELogType.Warning, $"Failed to load resource file : {LoadPath}");
-					LoadState = EAssetFileLoadState.LoadAssetFileFailed;
-					LoadCallback?.Invoke(this);
-				}
-				else
-				{
-					LoadState = EAssetFileLoadState.LoadAssetFileOK;
-					LoadCallback?.Invoke(this);
-				}
-			}
+			States = EAssetFileLoaderStates.LoadAssetFileOK;
 		}
-		public override void LoadMainAsset(System.Type assetType, System.Action<UnityEngine.Object> callback)
+		public override bool IsDone()
 		{
-			// Check error
-			if (LoadState != EAssetFileLoadState.LoadAssetFileOK)
-			{
-				LogSystem.Log(ELogType.Error, $"Can not load asset object, {nameof(AssetResourceLoader)} is not ok : {LoadPath}");
-				callback?.Invoke(null);
-				return;
-			}
+			if (base.IsDone() == false)
+				return false;
 
-			callback?.Invoke(_mainAsset);
+			return CheckAllProviderIsDone();
 		}
 	}
 }

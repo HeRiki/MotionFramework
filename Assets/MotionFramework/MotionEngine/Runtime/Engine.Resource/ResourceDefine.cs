@@ -7,9 +7,30 @@
 namespace MotionFramework.Resource
 {
 	/// <summary>
-	/// 资源加载模式
+	/// 资源文件类型
 	/// </summary>
-	public enum EAssetLoadMode
+	public enum EAssetFileType
+	{
+		/// <summary>
+		/// 主资源
+		/// </summary>
+		MainAsset,
+
+		/// <summary>
+		/// 场景资源
+		/// </summary>
+		SceneAsset,
+
+		/// <summary>
+		/// 资源包
+		/// </summary>
+		Package,
+	}
+
+	/// <summary>
+	/// 资源系统模式
+	/// </summary>
+	public enum EAssetSystemMode
 	{
 		/// <summary>
 		/// AssetDatabase加载模式
@@ -28,20 +49,9 @@ namespace MotionFramework.Resource
 	}
 
 	/// <summary>
-	/// 资源加载结果
+	/// 资源文件加载器的状态
 	/// </summary>
-	public enum EAssetResult
-	{
-		None,
-		Loading,
-		Failed,
-		OK,
-	}
-
-	/// <summary>
-	/// 资源文件加载状态
-	/// </summary>
-	public enum EAssetFileLoadState
+	public enum EAssetFileLoaderStates
 	{
 		None = 0,
 		LoadDepends,
@@ -53,14 +63,14 @@ namespace MotionFramework.Resource
 	}
 
 	/// <summary>
-	/// 资源对象加载状态
+	/// 资源提供者的状态
 	/// </summary>
-	public enum EAssetObjectLoadState
+	public enum EAssetProviderStates
 	{
 		None = 0,
-		LoadAssetObject,
-		CheckAssetObject,
-		LoadAssetObjectOK,
-		LoadAssetObjectFailed,
+		Loading,
+		Checking,
+		Succeed,
+		Failed,
 	}
 }

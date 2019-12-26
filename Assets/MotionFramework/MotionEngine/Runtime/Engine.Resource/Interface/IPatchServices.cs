@@ -6,7 +6,7 @@
 
 namespace MotionFramework.Resource
 {
-	public interface IBundleMethod
+	public interface IPatchServices
 	{
 		/// <summary>
 		/// 获取AssetBundle的加载路径

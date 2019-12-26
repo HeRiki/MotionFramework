@@ -18,12 +18,14 @@ namespace MotionFramework.Debug
 		private class InfoWrapper : IReference, IComparer<InfoWrapper>, IComparable<InfoWrapper>
 		{
 			public string Info;
-			public EAssetFileLoadState LoadState;
+			public EAssetFileLoaderStates LoadState;
+			public int ProviderFailedCount;
 
 			public void OnRelease()
 			{
 				Info = string.Empty;
-				LoadState = EAssetFileLoadState.None;
+				LoadState = EAssetFileLoaderStates.None;
+				ProviderFailedCount = 0;
 			}
 			public int CompareTo(InfoWrapper other)
 			{
@@ -69,7 +71,7 @@ namespace MotionFramework.Debug
 			for (int i = 0; i < _cacheInfos.Count; i++)
 			{
 				var element = _cacheInfos[i];
-				if (element.LoadState == EAssetFileLoadState.LoadAssetFileFailed)
+				if (element.LoadState == EAssetFileLoaderStates.LoadAssetFileFailed || element.ProviderFailedCount > 0)
 					DebugConsole.GUIRedLable(element.Info);
 				else
 					DebugConsole.GUILable(element.Info);
@@ -102,7 +104,8 @@ namespace MotionFramework.Debug
 
 				InfoWrapper element = ReferenceSystem.Spawn<InfoWrapper>();
 				element.Info = info;
-				element.LoadState = loader.LoadState;
+				element.LoadState = loader.States;
+				element.ProviderFailedCount = loader.GetFailedProviderCount();
 
 				// 添加到显示列表
 				_cacheInfos.Add(element);

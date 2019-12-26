@@ -11,32 +11,52 @@ namespace MotionFramework.Audio
 	/// <summary>
 	/// 音频资源类
 	/// </summary>
-	internal class AssetAudio : AssetObject
+	internal class AssetAudio
 	{
+		private AssetReference _assetRef;
+		private AssetOperationHandle _handle;
+		private System.Action<AudioClip> _userCallback;
+
 		/// <summary>
-		/// 标签
+		/// 音频层级
 		/// </summary>
-		public int AudioTag { private set; get; }
+		public EAudioLayer AudioLayer { private set; get; }
 
 		/// <summary>
 		/// 资源对象
 		/// </summary>
 		public AudioClip Clip { private set; get; }
 
-		public AssetAudio(int audioTag)
+
+		public AssetAudio(string location, EAudioLayer audioLayer)
 		{
-			AudioTag = audioTag;
+			AudioLayer = audioLayer;
+			_assetRef = new AssetReference(location);
 		}
-		protected override bool OnPrepare(UnityEngine.Object mainAsset)
+		public void Load(System.Action<AudioClip> callback)
 		{
-			if (base.OnPrepare(mainAsset) == false)
-				return false;
+			if (_handle != null)
+				return;
 
-			Clip = mainAsset as AudioClip;
-			if (Clip == null)
-				return false;
+			_userCallback = callback;
+			_handle = _assetRef.LoadAssetAsync<AudioClip>();
+			_handle.Completed += Handle_Completed;
+		}
+		public void UnLoad()
+		{
+			if (_assetRef != null)
+			{
+				_assetRef.Release();
+				_assetRef = null;
+			}
+			_userCallback = null;
+		}
 
-			return true;
+		// 资源回调
+		private void Handle_Completed(AssetOperationHandle obj)
+		{
+			Clip = _handle.Result as AudioClip;
+			_userCallback?.Invoke(Clip);	
 		}
 	}
 }

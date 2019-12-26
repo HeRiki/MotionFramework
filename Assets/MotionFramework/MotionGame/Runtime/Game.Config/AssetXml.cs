@@ -11,49 +11,81 @@ using MotionFramework.Resource;
 
 namespace MotionFramework.Config
 {
-	public abstract class AssetXml : AssetObject
+	public abstract class AssetXml
 	{
+		private AssetReference _assetRef;
+		private AssetOperationHandle _handle;
+		private System.Action _userCallback;
 		protected SecurityElement _xml;
 
-
-		protected override bool OnPrepare(UnityEngine.Object mainAsset)
+		/// <summary>
+		/// 是否完成
+		/// </summary>
+		public bool IsDone
 		{
-			if (base.OnPrepare(mainAsset) == false)
-				return false;
-
-			TextAsset temp = mainAsset as TextAsset;
-			if (temp == null)
-				return false;
-
-			SecurityParser sp = new SecurityParser();
-			sp.LoadXml(temp.text);
-			_xml = sp.ToXml();
-
-			if (_xml == null)
+			get
 			{
-				LogSystem.Log(ELogType.Error, $"SecurityParser.LoadXml failed. {ResName}");
-				return false;
+				if (_handle == null)
+					return false;
+				return _handle.IsDone;
 			}
-
-			try
-			{
-				// 解析数据
-				ParseData();
-			}
-			catch (Exception ex)
-			{
-				LogSystem.Log(ELogType.Error, $"Failed to parse xml {ResName}. Exception : {ex.ToString()}");
-				return false;
-			}
-
-			// 注意：为了节省内存这里立即释放了资源
-			UnLoad();
-
-			return true;
 		}
 
 		/// <summary>
-		/// 序列化数据的接口
+		/// 资源地址
+		/// </summary>
+		public string Location { private set; get; }
+
+
+		public void Init(string location)
+		{
+			Location = location;
+			_assetRef = new AssetReference(location);
+		}
+		public void Load(System.Action callback)
+		{
+			if (_handle != null)
+				return;
+
+			_userCallback = callback;
+			_handle = _assetRef.LoadAssetAsync<TextAsset>();
+			_handle.Completed += Handle_Completed;
+		}
+
+		// 资源回调
+		private void Handle_Completed(AssetOperationHandle obj)
+		{
+			TextAsset temp = _handle.Result as TextAsset;
+			if(temp != null)
+			{
+				try
+				{
+					SecurityParser sp = new SecurityParser();
+					sp.LoadXml(temp.text);
+					_xml = sp.ToXml();
+
+					// 解析数据
+					if(_xml != null)
+						ParseData();
+				}
+				catch (Exception ex)
+				{
+					LogSystem.Log(ELogType.Error, $"Failed to parse xml {Location}. Exception : {ex.ToString()}");
+				}
+			}
+
+			// 注意：为了节省内存这里立即释放了资源
+			if (_assetRef != null)
+			{
+				_assetRef.Release();
+				_assetRef = null;
+			}
+
+			_userCallback?.Invoke();
+		}
+
+		/// <summary>
+		/// 解析数据
 		/// </summary>
 		protected abstract void ParseData();
 	}

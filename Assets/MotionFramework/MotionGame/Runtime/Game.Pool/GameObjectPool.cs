@@ -12,30 +12,16 @@ using MotionFramework.Resource;
 namespace MotionFramework.Pool
 {
 	/// <summary>
-	/// 实体资源对象池
+	/// 游戏对象池
 	/// </summary>
-	public class AssetObjectPool
+	public class GameObjectPool
 	{
-		// 池子
 		private readonly Stack<GameObject> _pool;
-
-		// 实体资源类
-		private AssetObject _asset;
-
-		// 实体对象
+		private AssetReference _assetRef;
+		private AssetOperationHandle _handle;
 		private GameObject _go;
-
-		// 对象池Root
 		private Transform _root;
-
-		// 资源加载完毕回调
-		private Action<GameObject> _callbacks;
-
-
-		/// <summary>
-		/// 实体资源名称
-		/// </summary>
-		public string ResName { private set; get; }
+		private Action<GameObject> _userCallback;
 
 		/// <summary>
 		/// 对象池容量
@@ -43,28 +29,39 @@ namespace MotionFramework.Pool
 		public int Capacity { private set; get; }
 
 		/// <summary>
-		/// 是否准备完毕
+		/// 资源定位地址
 		/// </summary>
-		public bool IsPrepare
+		public string Location
 		{
 			get
 			{
-				if (_asset == null)
-					return false;
-				return _asset.IsLoadDone();
+				return _assetRef.Location;
 			}
 		}
 
 		/// <summary>
-		/// 加载结果
+		/// 是否加载完毕
 		/// </summary>
-		public EAssetResult LoadResult
+		public bool IsDone
 		{
 			get
 			{
-				if (_asset == null)
-					return EAssetResult.None;
-				return _asset.Result;
+				if (_handle == null)
+					return false;
+				return _handle.IsDone;
+			}
+		}
+
+		/// <summary>
+		/// 当前的加载状态
+		/// </summary>
+		public EAssetProviderStates States
+		{
+			get
+			{
+				if (_handle == null)
+					return EAssetProviderStates.None;
+				return _handle.States;
 			}
 		}
 
@@ -82,28 +79,27 @@ namespace MotionFramework.Pool
 		public int SpawnCount { private set; get; }
 
 
-		public AssetObjectPool(Transform root, string resName, int capacity)
+		public GameObjectPool(Transform root, string location, int capacity)
 		{
 			_root = root;
-			ResName = resName;
 			Capacity = capacity;
 
 			// 创建缓存池
 			_pool = new Stack<GameObject>(capacity);
 
 			// 加载资源
-			_asset = new AssetObject();
-			_asset.Load(resName, OnAssetPrepare);
+			_assetRef = new AssetReference(location);
+			_handle = _assetRef.LoadAssetAsync<GameObject>();
+			_handle.Completed += Handle_Completed;
 		}
 
-		// 当资源加载完毕
-		private void OnAssetPrepare(Asset asset)
+		private void Handle_Completed(AssetOperationHandle obj)
 		{
+			_go = _handle.InstantiateObject;
+
 			// 如果加载失败，创建临时对象
-			if (asset.Result == EAssetResult.Failed)
-				_go = new GameObject(ResName);
-			else
-				_go = _asset.GetMainAsset<GameObject>();
+			if (_go == null)
+				_go = new GameObject(Location);
 
 			// 设置游戏对象
 			_go.SetActive(false);
@@ -113,25 +109,25 @@ namespace MotionFramework.Pool
 			// 创建初始对象
 			for (int i = 0; i < Capacity; i++)
 			{
-				GameObject obj = GameObject.Instantiate(_go) as GameObject;
-				InternalRestore(obj);
+				GameObject gameObject = GameObject.Instantiate(_go) as GameObject;
+				InternalRestore(gameObject);
 			}
 
 			// 最后返回结果
-			if (_callbacks != null)
+			if (_userCallback != null)
 			{
-				Delegate[] actions = _callbacks.GetInvocationList();
+				Delegate[] actions = _userCallback.GetInvocationList();
 				for (int i = 0; i < actions.Length; i++)
 				{
 					var action = (Action<GameObject>)actions[i];
 					Spawn(action);
 				}
-				_callbacks = null;
+				_userCallback = null;
 			}
 		}
 
 		/// <summary>
-		/// 存储一个对象
+		/// 存储一个游戏对象
 		/// </summary>
 		public void Restore(GameObject go)
 		{
@@ -150,14 +146,13 @@ namespace MotionFramework.Pool
 		}
 
 		/// <summary>
-		/// 异步的方式获取一个对象
+		/// 异步的方式获取一个游戏对象
 		/// </summary>
 		public void Spawn(Action<GameObject> callback)
 		{
-			// 如果对象池还没有准备完毕
-			if (IsPrepare == false)
+			if (IsDone == false)
 			{
-				_callbacks += callback;
+				_userCallback += callback;
 				return;
 			}
 
@@ -178,13 +173,12 @@ namespace MotionFramework.Pool
 		}
 
 		/// <summary>
-		/// 同步的方式获取一个对象
+		/// 同步的方式获取一个游戏对象
 		/// </summary>
 		public GameObject Spawn()
 		{
-			// 如果对象池还没有准备完毕
-			if (IsPrepare == false)
-				throw new Exception($"{_asset.ResName} is not prepare");
+			if (IsDone == false)
+				throw new Exception($"{_assetRef.Location} is not done");
 
 			GameObject go = null;
 			if (_pool.Count > 0)
@@ -208,10 +202,10 @@ namespace MotionFramework.Pool
 		public void Destroy()
 		{
 			// 卸载资源对象
-			if (_asset != null)
+			if (_assetRef != null)
 			{
-				_asset.UnLoad();
-				_asset = null;
+				_assetRef.Release();
+				_assetRef = null;
 			}
 
 			// 销毁游戏对象
@@ -222,7 +216,7 @@ namespace MotionFramework.Pool
 			_pool.Clear();
 
 			// 清空回调
-			_callbacks = null;
+			_userCallback = null;
 			SpawnCount = 0;
 		}
 	}

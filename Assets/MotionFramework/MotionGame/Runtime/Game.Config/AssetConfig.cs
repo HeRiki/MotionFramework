@@ -24,38 +24,79 @@ namespace MotionFramework.Config
 	/// <summary>
 	/// 配表资源类
 	/// </summary>
-	public abstract class AssetConfig : AssetObject
+	public abstract class AssetConfig
 	{
+		private AssetReference _assetRef;
+		private AssetOperationHandle _handle;
+		private System.Action<AssetConfig> _userCallback;
+
 		/// <summary>
 		/// 配表数据集合
 		/// </summary>
 		protected readonly Dictionary<int, ConfigTab> _tabs = new Dictionary<int, ConfigTab>();
 
-
-		protected override bool OnPrepare(UnityEngine.Object mainAsset)
+		/// <summary>
+		/// 是否完成
+		/// </summary>
+		public bool IsDone
 		{
-			if (base.OnPrepare(mainAsset) == false)
-				return false;
+			get
+			{
+				if (_handle == null)
+					return false;
+				return _handle.IsDone;
+			}
+		}
 
+		/// <summary>
+		/// 资源地址
+		/// </summary>
+		public string Location { private set; get; }
+
+
+		public void Init(string location)
+		{
+			if (_assetRef != null)
+				return;
+
+			Location = location;
+			_assetRef = new AssetReference(location);
+		}
+		public void Load(System.Action<AssetConfig> callback)
+		{
+			if (_handle != null)
+				return;
+
+			_userCallback = callback;
+			_handle = _assetRef.LoadAssetAsync<TextAsset>();
+			_handle.Completed += Handle_Completed;
+		}
+
+		// 资源回调
+		private void Handle_Completed(AssetOperationHandle obj)
+		{
 			try
 			{
-				TextAsset temp = mainAsset as TextAsset;
-				if (temp == null)
-					return false;
-
-				// 解析数据
-				ParseDataInternal(temp.bytes);
+				TextAsset txt = _handle.Result as TextAsset;
+				if (txt != null)
+				{
+					// 解析数据
+					ParseDataInternal(txt.bytes);
+				}
 			}
 			catch (Exception ex)
 			{
-				LogSystem.Log(ELogType.Error, $"Failed to parse config {ResName}. Error : {ex.ToString()}");
-				return false;
+				LogSystem.Log(ELogType.Error, $"Failed to parse config {Location}. Error : {ex.ToString()}");
 			}
 
 			// 注意：为了节省内存这里立即释放了资源
-			UnLoad();
+			if (_assetRef != null)
+			{
+				_assetRef.Release();
+				_assetRef = null;
+			}
 
-			return true;
+			_userCallback?.Invoke(this);
 		}
 
 		/// <summary>
@@ -78,14 +119,14 @@ namespace MotionFramework.Config
 				short tabHead = bb.ReadShort();
 				if (tabHead != ConfigDefine.TabStreamHead)
 				{
-					throw new Exception($"Table stream head is invalid. File is {ResName} , tab line is {tabLine}");
+					throw new Exception($"Table stream head is invalid. File is {Location} , tab line is {tabLine}");
 				}
 
 				// 检测行大小
 				int tabSize = bb.ReadInt();
 				if (!bb.IsReadable(tabSize) || tabSize > ConfigDefine.TabStreamMaxLen)
 				{
-					throw new Exception($"Table stream size is invalid. File is {ResName}, tab line {tabLine}");
+					throw new Exception($"Table stream size is invalid. File is {Location}, tab line {tabLine}");
 				}
 
 				// 读取行内容
@@ -96,7 +137,7 @@ namespace MotionFramework.Config
 				}
 				catch (Exception ex)
 				{
-					throw new Exception($"ReadTab falied. File is {ResName}, tab line {tabLine}. Error : {ex.ToString()}");
+					throw new Exception($"ReadTab falied. File is {Location}, tab line {tabLine}. Error : {ex.ToString()}");
 				}
 
 				++tabLine;
@@ -104,7 +145,7 @@ namespace MotionFramework.Config
 				// 检测是否重复
 				if (_tabs.ContainsKey(tab.Id))
 				{
-					throw new Exception($"The tab key is already exist. Type is {this.GetType()}, file is {ResName}, key is { tab.Id}");
+					throw new Exception($"The tab key is already exist. Type is {this.GetType()}, file is {Location}, key is { tab.Id}");
 				}
 				else
 				{
@@ -134,7 +175,7 @@ namespace MotionFramework.Config
 			}
 			else
 			{
-				LogSystem.Log(ELogType.Warning, $"Faild to get tab. File is {ResName}, key is {key}");
+				LogSystem.Log(ELogType.Warning, $"Faild to get tab. File is {Location}, key is {key}");
 				return null;
 			}
 		}

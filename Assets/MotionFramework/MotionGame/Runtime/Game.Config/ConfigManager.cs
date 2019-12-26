@@ -22,9 +22,10 @@ namespace MotionFramework.Config
 		private Dictionary<string, AssetConfig> _cfgs = new Dictionary<string, AssetConfig>();
 
 		/// <summary>
-		/// 配表文件夹的相对路径
+		/// 基于AssetSystem.AssetRootPath的相对路径
+		/// 注意：所有的配表文件必须都放在该文件夹下
 		/// </summary>
-		public string ParentFolderPath = "Config/";
+		public string BaseFolderPath = "Config/";
 
 
 		private ConfigManager()
@@ -50,7 +51,7 @@ namespace MotionFramework.Config
 		/// 加载配表
 		/// </summary>
 		/// <param name="cfgName">配表文件名称</param>
-		public void Load(string cfgName, System.Action<Asset> prepareCallback)
+		public void Load(string cfgName, System.Action<AssetConfig> callback)
 		{
 			// 防止重复加载
 			if (_cfgs.ContainsKey(cfgName))
@@ -62,26 +63,15 @@ namespace MotionFramework.Config
 			AssetConfig config = ConfigHandler.Handle(cfgName);
 			if (config != null)
 			{
+				string location = BaseFolderPath + cfgName;
 				_cfgs.Add(cfgName, config);
-				config.Load(ParentFolderPath + cfgName, prepareCallback);
+				config.Init(location);
+				config.Load(callback);
 			}
 			else
 			{
 				LogSystem.Log(ELogType.Error, $"Config {cfgName} calss is invalid.");
 			}
-		}
-
-		/// <summary>
-		/// 加载结果
-		/// </summary>
-		/// <param name="cfgName">配表文件名称</param>
-		public EAssetResult Result(string cfgName)
-		{
-			if (_cfgs.ContainsKey(cfgName))
-			{
-				return _cfgs[cfgName].Result;
-			}
-			return EAssetResult.None;
 		}
 
 		/// <summary>

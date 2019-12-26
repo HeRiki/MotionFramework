@@ -3,6 +3,8 @@
 // Copyright©2018-2020 何冠峰
 // Licensed under the MIT license
 //--------------------------------------------------
+using System.Collections.Generic;
+using System;
 
 namespace MotionFramework.Resource
 {
@@ -12,14 +14,9 @@ namespace MotionFramework.Resource
 	public abstract class AssetFileLoader
 	{
 		/// <summary>
-		/// 引用计数
+		/// 资源文件类型
 		/// </summary>
-		public int RefCount { get; private set; }
-
-		/// <summary>
-		/// 是否是流场景资源
-		/// </summary>
-		public bool IsStreamScene { get; private set; }
+		public EAssetFileType AssetFileType { get; private set; }
 
 		/// <summary>
 		/// 加载路径
@@ -27,23 +24,22 @@ namespace MotionFramework.Resource
 		public string LoadPath { get; private set; }
 
 		/// <summary>
-		/// 加载状态
+		/// 引用计数
 		/// </summary>
-		public EAssetFileLoadState LoadState { get; protected set; }
+		public int RefCount { get; private set; }
 
 		/// <summary>
-		/// 完成回调
+		/// 加载状态
 		/// </summary>
-		public System.Action<AssetFileLoader> LoadCallback { get; set; }
+		public EAssetFileLoaderStates States { get; protected set; }
 
 
-		public AssetFileLoader(bool isStreamScene, string loadPath)
+		public AssetFileLoader(EAssetFileType assetFileType, string loadPath)
 		{
-			RefCount = 0;
-			IsStreamScene = isStreamScene;
+			AssetFileType = assetFileType;
 			LoadPath = loadPath;
-			LoadState = EAssetFileLoadState.None;
-			LoadCallback = null;
+			RefCount = 0;
+			States = EAssetFileLoaderStates.None;
 		}
 
 		/// <summary>
@@ -52,12 +48,7 @@ namespace MotionFramework.Resource
 		public abstract void Update();
 
 		/// <summary>
-		/// 加载主资源对象
-		/// </summary>
-		public abstract void LoadMainAsset(System.Type assetType, System.Action<UnityEngine.Object> callback);
-		
-		/// <summary>
-		/// 引用接口（引用计数递加）
+		/// 引用方法（引用计数递加）
 		/// </summary>
 		public virtual void Reference()
 		{
@@ -65,7 +56,7 @@ namespace MotionFramework.Resource
 		}
 
 		/// <summary>
-		/// 释放接口（引用计数递减）
+		/// 释放方法（引用计数递减）
 		/// </summary>
 		public virtual void Release()
 		{
@@ -73,9 +64,9 @@ namespace MotionFramework.Resource
 		}
 
 		/// <summary>
-		/// 卸载接口
+		/// 销毁方法
 		/// </summary>
-		public virtual void UnLoad(bool force)
+		public virtual void Destroy(bool force)
 		{
 		}
 
@@ -84,7 +75,109 @@ namespace MotionFramework.Resource
 		/// </summary>
 		public virtual bool IsDone()
 		{
-			return LoadState == EAssetFileLoadState.LoadAssetFileOK || LoadState == EAssetFileLoadState.LoadAssetFileFailed;
+			return States == EAssetFileLoaderStates.LoadAssetFileOK || States == EAssetFileLoaderStates.LoadAssetFileFailed;
 		}
+
+
+		#region Asset Provider
+		internal readonly List<IAssetProvider> _providers = new List<IAssetProvider>();
+
+		/// <summary>
+		/// 加载资源对象
+		/// </summary>
+		public AssetOperationHandle LoadAssetAsync(string assetName, System.Type assetType, IAssetParam param)
+		{
+			IAssetProvider provider = TryGetProvider(assetName);
+			if (provider == null)
+			{
+				if (AssetFileType == EAssetFileType.MainAsset)
+				{
+					if (this is AssetBundleLoader)
+						provider = new AssetBundleProvider(LoadPath, assetName, assetType);
+					else if (this is AssetDatabaseLoader)
+						provider = new AssetDatabaseProvider(LoadPath, assetName, assetType);
+					else if (this is AssetResourceLoader)
+						provider = new AssetResourceProvider(LoadPath, assetName, assetType);
+					else
+						throw new NotImplementedException($"{this.GetType()}");
+				}
+				else if (AssetFileType == EAssetFileType.SceneAsset)
+				{
+					SceneInstanceParam sceneParam = param as SceneInstanceParam;
+					provider = new AssetSceneProvider(assetName, assetType, sceneParam);
+				}
+				else if (AssetFileType == EAssetFileType.Package)
+				{
+					throw new NotImplementedException($"{AssetFileType}"); // TODO
+				}
+				else
+				{
+					throw new NotImplementedException($"{AssetFileType}");
+				}
+				_providers.Add(provider);
+			}
+			return provider.Handle;
+		}
+
+		/// <summary>
+		/// 获取失败的资源提供者总数
+		/// </summary>
+		public int GetFailedProviderCount()
+		{
+			int failedCount = 0;
+			for (int i = 0; i < _providers.Count; i++)
+			{
+				var provider = _providers[i];
+				if (provider.States == EAssetProviderStates.Failed)
+					failedCount++;
+			}
+			return failedCount;
+		}
+
+		/// <summary>
+		/// 检测所有资源提供者是否完毕
+		/// </summary>
+		protected bool CheckAllProviderIsDone()
+		{
+			bool isAllLoadDone = true;
+			for (int i = 0; i < _providers.Count; i++)
+			{
+				var provider = _providers[i];
+				if (provider.IsDone == false)
+				{
+					isAllLoadDone = false;
+					break;
+				}
+			}
+			return isAllLoadDone;
+		}
+
+		/// <summary>
+		/// 轮询更新所有资源提供者
+		/// </summary>
+		protected void UpdateAllProvider()
+		{
+			for (int i = 0; i < _providers.Count; i++)
+			{
+				_providers[i].Update();
+			}
+		}
+
+		// 获取一个资源提供者
+		private IAssetProvider TryGetProvider(string assetName)
+		{
+			IAssetProvider provider = null;
+			for (int i = 0; i < _providers.Count; i++)
+			{
+				IAssetProvider temp = _providers[i];
+				if (temp.AssetName.Equals(assetName))
+				{
+					provider = temp;
+					break;
+				}
+			}
+			return provider;
+		}
+		#endregion
 	}
 }

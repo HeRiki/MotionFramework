@@ -35,9 +35,9 @@ namespace MotionFramework.Resource
 		}
 		public void OnGUI()
 		{
-			int totalCount = AssetSystem.GetFileLoaderCount();
-			int failedCount = AssetSystem.GetFileLoaderFailedCount();
-			DebugConsole.GUILable($"[{nameof(ResourceManager)}] AssetLoadMode : {AssetSystem.AssetLoadMode}");
+			int totalCount = AssetSystem.DebugGetFileLoaderCount();
+			int failedCount = AssetSystem.DebugGetFileLoaderFailedCount();
+			DebugConsole.GUILable($"[{nameof(ResourceManager)}] AssetSystemMode : {AssetSystem.LoadMode}");
 			DebugConsole.GUILable($"[{nameof(ResourceManager)}] Asset loader total count : {totalCount}");
 			DebugConsole.GUILable($"[{nameof(ResourceManager)}] Asset loader failed count : {failedCount}");
 		}
@@ -46,35 +46,35 @@ namespace MotionFramework.Resource
 		/// 同步加载接口
 		/// 注意：仅支持特殊的无依赖资源
 		/// </summary>
-		public T SyncLoad<T>(string resName) where T : UnityEngine.Object
+		public T SyncLoad<T>(string location) where T : UnityEngine.Object
 		{
 			UnityEngine.Object result = null;
 
-			if (AssetSystem.AssetLoadMode == EAssetLoadMode.EditorMode)
+			if (AssetSystem.LoadMode == EAssetSystemMode.EditorMode)
 			{
 #if UNITY_EDITOR
-				string loadPath = AssetSystem.GetDatabaseAssetPath(resName);
+				string loadPath = AssetSystem.FindDatabaseAssetPath(location);
 				result = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(loadPath);
 #else
 				throw new Exception("AssetDatabaseLoader only support unity editor.");
 #endif
 			}
-			else if (AssetSystem.AssetLoadMode == EAssetLoadMode.ResourceMode)
+			else if (AssetSystem.LoadMode == EAssetSystemMode.ResourceMode)
 			{
-				result = Resources.Load<T>(resName);
+				result = Resources.Load<T>(location);
 			}
-			else if (AssetSystem.AssetLoadMode == EAssetLoadMode.BundleMode)
+			else if (AssetSystem.LoadMode == EAssetSystemMode.BundleMode)
 			{
-				string fileName = System.IO.Path.GetFileNameWithoutExtension(resName);
-				string manifestPath = AssetPathHelper.ConvertResourcePathToManifestPath(resName);
-				string loadPath = AssetSystem.BundleMethod.GetAssetBundleLoadPath(manifestPath);
+				string fileName = System.IO.Path.GetFileNameWithoutExtension(location);
+				string manifestPath = AssetPathHelper.ConvertLocationToManifestPath(location);
+				string loadPath = AssetSystem.PatchServices.GetAssetBundleLoadPath(manifestPath);
 				AssetBundle bundle = AssetBundle.LoadFromFile(loadPath);
 				result = bundle.LoadAsset<T>(fileName);
 				bundle.Unload(false);
 			}
 			else
 			{
-				throw new NotImplementedException($"{AssetSystem.AssetLoadMode}");
+				throw new NotImplementedException($"{AssetSystem.LoadMode}");
 			}
 
 			return result as T;
