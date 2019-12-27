@@ -51,4 +51,4 @@ public class Test
 }
 ```
 
-1. [MotionGame/Runtime/Game.Event/EventManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionGame/Runtime/Game.Event/EventManager.cs)
+1. [MotionGame/Runtime/Game.Event/EventManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionGame/Runtime/Game.Event/EventManager.cs)

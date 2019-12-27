@@ -38,4 +38,4 @@ public class Test
 ```
 
 更详细的教程请参考示例代码
-1. [MotionGame/Runtime/Game.Resource/ResourceManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionGame/Runtime/Game.Resource/ResourceManager.cs)
+1. [MotionGame/Runtime/Game.Resource/ResourceManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionGame/Runtime/Game.Resource/ResourceManager.cs)

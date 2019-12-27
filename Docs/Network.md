@@ -32,4 +32,4 @@ public class ProtoPackageParser : DefaultPackageParser
 ```
 
 更详细的教程请参考示例代码
-1. [MotionGame/Runtime/Game.Network/PackageParser/DefaultPackageParser.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionGame/Runtime/Game.Network/PackageParser/DefaultPackageParser.cs)
+1. [MotionGame/Runtime/Game.Network/PackageParser/DefaultPackageParser.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionGame/Runtime/Game.Network/PackageParser/DefaultPackageParser.cs)

@@ -107,4 +107,4 @@ public class Test
 ```
 
 更详细的教程请参考示例代码
-1. [MotionEngine/Runtime/Engine.AI/Procedure](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionEngine/Runtime/Engine.AI/Procedure)
+1. [MotionEngine/Runtime/Engine.AI/Procedure](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionEngine/Runtime/Engine.AI/Procedure)

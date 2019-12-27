@@ -28,4 +28,4 @@ namespace MotionGame
 注意：定义完成后，运行游戏即可查看我们自定义的节点
 
 更详细的教程请参考示例代码
-1. [MotionGame/Runtime/Game.Debug](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionGame/Runtime/Game.Debug)
+1. [MotionGame/Runtime/Game.Debug](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionGame/Runtime/Game.Debug)
