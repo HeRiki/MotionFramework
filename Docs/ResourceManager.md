@@ -6,32 +6,32 @@ using MotionFramework.Resource;
 
 public class Test
 {
-  private AssetObject _model;
+  private AssetReference _assetRef;
 
   public void Start()
   {
-    // 加载模型
-    _model = new AssetObject();
-    _model.Load("Model/npc001", OnAssetPrepare);
+     // 加载NPC模型 
+    _assetRef = new AssetReference("Model/npc001");
+    _assetRef.LoadAssetAsync<GameObject>().Completed += Handle_Completed;
   }
 
   public void OnDestroy()
   {
     // 卸载模型
-    if(_model != null)
+    if(_assetRef != null)
     {
-      _model.UnLoad();
-      _model = null;
+      _assetRef.Release();
+      _assetRef = null;
     }
   }
 
-  private void OnAssetPrepare(Asset asset)
+  private void Handle_Completed(AssetOperationHandle obj)
   {
-    if (asset.Result != EAssetResult.OK)
+    if (obj.AssetObject != null)
       return;
     
     // 模型已经加载完毕，我们可以在这里做任何处理
-    GameObject go = _model.GetMainAsset<GameObject>();
+    GameObject go = obj.InstantiateObject;
     go.transform.position = Vector3.zero;
   }
 }

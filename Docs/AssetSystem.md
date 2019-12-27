@@ -2,9 +2,9 @@
 
 **资源系统加载模式**  
 资源系统提供三种加载模式
-1. Editor Mode : 使用UnityEditor.AssetDatabase加载资源，该模式仅支持编辑器下。
-2. Resource Mode : 使用UnityEngine.Resources加载资源。
-3. Bundle Mode : 使用UnityEngine.AssetBundle加载资源。
+1. EAssetSystemMode.EditorMode : 使用UnityEditor.AssetDatabase加载资源，该模式仅支持编辑器下。
+2. EAssetSystemMode.ResourceMode : 使用UnityEngine.Resources加载资源。
+3. EAssetSystemMode.BundleMode : 使用UnityEngine.AssetBundle加载资源。
 
 ```C#
 using MotionFramework.Resource;
@@ -14,45 +14,64 @@ public class Test
 	public void Start()
 	{
 		// 设置资源系统加载模式
-		AssetSystem.AssetLoadMode = EAssetLoadMode.EditorMode;
+		AssetSystem.LoadMode = EAssetSystemMode.EditorMode;
 	}
 }
 ```
 
 **资源加载**  
-资源分为三类
-1. AssetObject : 只能获取AssetBundle里的主资源对象
-2. AssetPackage : 可以获取AssetBundle里所有资源对象
-3. AssetScene : 可以加载流场景文件
 ````C#
-// AssetObject
-AssetObject assetObject = new AssetObject();
-assetObject.Load("Audio/bgMusic", OnAssetLoad);
-...
-AudioClip audioClip = assetObject.GetMainAsset<AudioClip>();
-AudioClip audioClip = assetObject.GetMainAsset() as AudioClip;
+// 加载主资源对象，不用指定资源对象名称
+private void Start()
+{
+	AssetReference assetRef = new AssetReference("Audio/bgMusic");
+	assetRef.LoadAssetAsync<AudioClip>().Completed += Handle_Completed;
+}
+private void Handle_Completed(AssetOperationHandle obj)
+{
+	if(obj.AssetObject == null) return;
+	AudioClip audioClip = obj.AssetObject as AudioClip;
+}
 ````
 
 ````C#
-// AssetPackage
-AssetPackage assetPackage = new AssetPackage();
-assetPackage.Load("Audio/heroSound", OnAssetLoad);
-...
-// 从资源包里加载出生音效
-assetPackage.GetAsset("bornSound", typeof(AudioClip), (UnityEngine.Object asset) => 
+// 加载资源对象，指定资源对象名称
+private void Start()
 {
-	AudioClip audioClip = asset as AudioClip;
-});
-// 从资源包里加载死亡音效
-assetPackage.GetAsset("deadSound", typeof(AudioClip), (UnityEngine.Object asset) => 
+	AssetReference assetRef = new AssetReference("Texture/LoadingTextures");
+	assetRef.LoadAssetAsync<Texture>("bg1").Completed += Handle_Completed1;
+	assetRef.LoadAssetAsync<Texture>("bg2").Completed += Handle_Completed2;
+}
+private void Handle_Completed1(AssetOperationHandle obj)
 {
-	AudioClip audioClip = asset as AudioClip;
-});
+	if(obj.AssetObject == null) return;
+	Texture tex = obj.AssetObject as Texture;
+}
+private void Handle_Completed2(AssetOperationHandle obj)
+{
+	if(obj.AssetObject == null) return;
+	Texture tex = obj.AssetObject as Texture;
+}
 ````
 
 ````C#
-// AssetScene
-// 请参考SceneManager.cs
+// 加载场景
+private void Start()
+{
+	// 场景加载参数
+	SceneInstanceParam param = new SceneInstanceParam();
+	param.IsAdditive = false;
+	param.ActivateOnLoad = true;
+
+	AssetReference assetRef = new AssetReference("Scene/Town");
+	assetRef.LoadAssetAsync<SceneInstance>(param).Completed += Handle_Completed1;
+}
+private void Handle_Completed(AssetOperationHandle obj)
+{
+	if(obj.AssetObject == null) return;
+	SceneInstance instance = obj.AssetObject as SceneInstance;
+	Debug.Log(instance.Scene.name);
+}
 ````
 
 **资源系统根路径**  
@@ -66,20 +85,20 @@ public class Test
 	public void Start()
 	{
 		// 设置资源系统根路径
-		AssetSystem.AssetRootPath = "Assets/Works/MyResource";
+		AssetSystem.AssetRootPath = "Assets/Works/Resource";
 	}
 }
 ```
 
-**AssetBundle**  
-在使用AssetBundle加载模式的时候，我们需要设置AssetSystem.BundleMethod接口，这个接口主要是提供了资源间依赖关系的查询工作。我们可以使用官方提供的AssetBundleManifest文件，也可以使用自己的依赖关系文件。  
+**可寻址服务接口**  
+在使用AssetBundle加载模式的时候，我们需要设置AssetSystem.PatchServices接口，这个接口主要是提供了资源间依赖关系的查询工作，以及获取AssetBundle文件的加载路径。我们可以使用官方提供的AssetBundleManifest文件，也可以使用自己的依赖关系文件。  
 
-定义Bundle接口
+定义IPatchServices接口
 ```C#
 using MotionFramework.Resource;
 using UnityEngine;
 
-public class PatchBundleMethod : IBundleMethod
+public class MyPatchServices : IPatchServices
 {
 	private AssetBundleManifest _manifest;
 
@@ -114,7 +133,7 @@ public class PatchBundleMethod : IBundleMethod
 }
 ```
 
-设置Bundle接口
+设置IPatchServices接口
 ```C#
 using MotionFramework.Resource;
 
@@ -122,11 +141,9 @@ public class Test
 {
 	public void Start()
 	{
-		PatchBundleMethod method = new PatchBundleMethod();
-		method.LoadManifestFile();
-
-		// 设置Bundle接口
-		AssetSystem.BundleMethod = method;
+		MyPatchServices services = new MyPatchServices();
+		services.LoadManifestFile();
+		AssetSystem.PatchServices = services;
 	}
 }
 ```
