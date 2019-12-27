@@ -90,15 +90,15 @@ public class Test
 }
 ```
 
-**可寻址服务接口**  
-在使用AssetBundle加载模式的时候，我们需要设置AssetSystem.PatchServices接口，这个接口主要是提供了资源间依赖关系的查询工作，以及获取AssetBundle文件的加载路径。我们可以使用官方提供的AssetBundleManifest文件，也可以使用自己的依赖关系文件。  
+**AssetBundle服务接口**  
+在使用AssetBundle加载模式的时候，我们需要设置AssetSystem.BundleServices接口，这个接口主要是提供了资源间依赖关系的查询工作，以及获取AssetBundle文件的加载路径。我们可以使用官方提供的AssetBundleManifest文件，也可以使用自己的依赖关系文件。  
 
-定义IPatchServices接口
+定义IBundleServices接口
 ```C#
 using MotionFramework.Resource;
 using UnityEngine;
 
-public class MyPatchServices : IPatchServices
+public class MyBundleServices : IBundleServices
 {
 	private AssetBundleManifest _manifest;
 
@@ -133,7 +133,7 @@ public class MyPatchServices : IPatchServices
 }
 ```
 
-设置IPatchServices接口
+设置IBundleServices接口
 ```C#
 using MotionFramework.Resource;
 
@@ -141,9 +141,9 @@ public class Test
 {
 	public void Start()
 	{
-		MyPatchServices services = new MyPatchServices();
+		MyBundleServices services = new MyBundleServices();
 		services.LoadManifestFile();
-		AssetSystem.PatchServices = services;
+		AssetSystem.BundleServices = services;
 	}
 }
 ```
