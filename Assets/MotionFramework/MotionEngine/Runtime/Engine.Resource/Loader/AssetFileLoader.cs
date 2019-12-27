@@ -14,11 +14,6 @@ namespace MotionFramework.Resource
 	public abstract class AssetFileLoader
 	{
 		/// <summary>
-		/// 资源文件类型
-		/// </summary>
-		public EAssetFileType AssetFileType { get; private set; }
-
-		/// <summary>
 		/// 加载路径
 		/// </summary>
 		public string LoadPath { get; private set; }
@@ -34,9 +29,8 @@ namespace MotionFramework.Resource
 		public EAssetFileLoaderStates States { get; protected set; }
 
 
-		public AssetFileLoader(EAssetFileType assetFileType, string loadPath)
+		public AssetFileLoader(string loadPath)
 		{
-			AssetFileType = assetFileType;
 			LoadPath = loadPath;
 			RefCount = 0;
 			States = EAssetFileLoaderStates.None;
@@ -95,7 +89,16 @@ namespace MotionFramework.Resource
 			IAssetProvider provider = TryGetProvider(assetName);
 			if (provider == null)
 			{
-				if (AssetFileType == EAssetFileType.MainAsset)
+				if (assetType == typeof(SceneInstance))
+				{
+					SceneInstanceParam sceneParam = param as SceneInstanceParam;
+					provider = new AssetSceneProvider(this, assetName, assetType, sceneParam);
+				}
+				else if(assetType == typeof(PackageInstance))
+				{
+					throw new NotImplementedException(nameof(PackageInstance)); // TODO
+				}
+				else
 				{
 					if (this is AssetBundleLoader)
 						provider = new AssetBundleProvider(this, assetName, assetType);
@@ -105,19 +108,6 @@ namespace MotionFramework.Resource
 						provider = new AssetResourceProvider(this, assetName, assetType);
 					else
 						throw new NotImplementedException($"{this.GetType()}");
-				}
-				else if (AssetFileType == EAssetFileType.SceneAsset)
-				{
-					SceneInstanceParam sceneParam = param as SceneInstanceParam;
-					provider = new AssetSceneProvider(this, assetName, assetType, sceneParam);
-				}
-				else if (AssetFileType == EAssetFileType.Package)
-				{
-					throw new NotImplementedException($"{AssetFileType}"); // TODO
-				}
-				else
-				{
-					throw new NotImplementedException($"{AssetFileType}");
 				}
 				_providers.Add(provider);
 			}

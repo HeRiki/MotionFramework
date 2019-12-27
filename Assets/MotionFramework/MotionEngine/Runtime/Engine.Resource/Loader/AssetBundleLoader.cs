@@ -20,8 +20,8 @@ namespace MotionFramework.Resource
 		private AssetBundleCreateRequest _cacheRequest;
 		internal AssetBundle CacheBundle { private set; get; }
 
-		public AssetBundleLoader(EAssetFileType assetFileType, string loadPath, string manifestPath)
-			: base(assetFileType, loadPath)
+		public AssetBundleLoader(string loadPath, string manifestPath)
+			: base(loadPath)
 		{
 			_manifestPath = manifestPath;
 		}
@@ -48,7 +48,7 @@ namespace MotionFramework.Resource
 					foreach (string dpManifestPath in dependencies)
 					{
 						string dpLoadPath = AssetSystem.PatchServices.GetAssetBundleLoadPath(dpManifestPath);
-						AssetFileLoader dpLoader = AssetSystem.CreateFileLoaderInternal(EAssetFileType.MainAsset, dpLoadPath, dpManifestPath);
+						AssetFileLoader dpLoader = AssetSystem.CreateFileLoaderInternal(dpLoadPath, dpManifestPath);
 						_depends.Add(dpLoader);
 					}
 				}
@@ -90,13 +90,6 @@ namespace MotionFramework.Resource
 				if (_cacheRequest.isDone == false)
 					return;
 				CacheBundle = _cacheRequest.assetBundle;
-
-				// Check scene
-				if (AssetFileType == EAssetFileType.SceneAsset)
-				{
-					States = EAssetFileLoaderStates.LoadAssetFileOK;
-					return;
-				}
 
 				// Check error
 				if (CacheBundle == null)

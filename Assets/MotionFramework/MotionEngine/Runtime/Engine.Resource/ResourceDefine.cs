@@ -7,27 +7,6 @@
 namespace MotionFramework.Resource
 {
 	/// <summary>
-	/// 资源文件类型
-	/// </summary>
-	public enum EAssetFileType
-	{
-		/// <summary>
-		/// 主资源
-		/// </summary>
-		MainAsset,
-
-		/// <summary>
-		/// 场景资源
-		/// </summary>
-		SceneAsset,
-
-		/// <summary>
-		/// 资源包
-		/// </summary>
-		Package,
-	}
-
-	/// <summary>
 	/// 资源系统模式
 	/// </summary>
 	public enum EAssetSystemMode

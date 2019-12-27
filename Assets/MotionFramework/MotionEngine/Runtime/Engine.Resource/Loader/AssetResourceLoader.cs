@@ -15,8 +15,8 @@ namespace MotionFramework.Resource
 	/// </summary>
 	public class AssetResourceLoader : AssetFileLoader
 	{
-		public AssetResourceLoader(EAssetFileType assetFileType, string loadPath)
-			: base(assetFileType, loadPath)
+		public AssetResourceLoader(string loadPath)
+			: base(loadPath)
 		{
 		}
 		public override void Update()

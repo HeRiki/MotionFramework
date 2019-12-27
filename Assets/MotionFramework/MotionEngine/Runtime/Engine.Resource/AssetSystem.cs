@@ -57,14 +57,14 @@ namespace MotionFramework.Resource
 		/// <summary>
 		/// 创建资源文件加载器
 		/// </summary>
-		public static AssetFileLoader CreateFileLoader(EAssetFileType assetFileType, string location)
+		public static AssetFileLoader CreateFileLoader(string location)
 		{
 			AssetFileLoader loader;
 			if (LoadMode == EAssetSystemMode.EditorMode)
 			{
 #if UNITY_EDITOR
 				string loadPath = FindDatabaseAssetPath(location);
-				loader = CreateFileLoaderInternal(assetFileType, loadPath, null);
+				loader = CreateFileLoaderInternal(loadPath, null);
 #else
 				throw new Exception("EAssetSystemMode.EditorMode only support unity editor.");
 #endif
@@ -72,7 +72,7 @@ namespace MotionFramework.Resource
 			else if (LoadMode == EAssetSystemMode.ResourceMode)
 			{
 				string loadPath = location;
-				loader = CreateFileLoaderInternal(assetFileType, loadPath, null);
+				loader = CreateFileLoaderInternal(loadPath, null);
 			}
 			else if (LoadMode == EAssetSystemMode.BundleMode)
 			{
@@ -81,7 +81,7 @@ namespace MotionFramework.Resource
 
 				string manifestPath = AssetPathHelper.ConvertLocationToManifestPath(location);
 				string loadPath = PatchServices.GetAssetBundleLoadPath(manifestPath);
-				loader = CreateFileLoaderInternal(assetFileType, loadPath, manifestPath);
+				loader = CreateFileLoaderInternal(loadPath, manifestPath);
 			}
 			else
 			{
@@ -89,7 +89,7 @@ namespace MotionFramework.Resource
 			}
 			return loader;
 		}
-		internal static AssetFileLoader CreateFileLoaderInternal(EAssetFileType assetFileType, string loadPath, string manifestPath)
+		internal static AssetFileLoader CreateFileLoaderInternal(string loadPath, string manifestPath)
 		{
 			// 如果加载器已经存在
 			AssetFileLoader loader = TryGetFileLoader(loadPath);
@@ -102,11 +102,11 @@ namespace MotionFramework.Resource
 			// 创建加载器
 			AssetFileLoader newLoader = null;
 			if (LoadMode == EAssetSystemMode.EditorMode)
-				newLoader = new AssetDatabaseLoader(assetFileType, loadPath);
+				newLoader = new AssetDatabaseLoader(loadPath);
 			else if (LoadMode == EAssetSystemMode.ResourceMode)
-				newLoader = new AssetResourceLoader(assetFileType, loadPath);
+				newLoader = new AssetResourceLoader(loadPath);
 			else if (LoadMode == EAssetSystemMode.BundleMode)
-				newLoader = new AssetBundleLoader(assetFileType, loadPath, manifestPath);
+				newLoader = new AssetBundleLoader(loadPath, manifestPath);
 			else
 				throw new NotImplementedException($"{LoadMode}");
 

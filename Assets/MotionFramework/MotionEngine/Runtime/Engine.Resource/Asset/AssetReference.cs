@@ -82,14 +82,7 @@ namespace MotionFramework.Resource
 		private AssetOperationHandle LoadInternal(string assetName, System.Type assetType, IAssetParam param)
 		{
 			if (_cacheLoader == null)
-			{
-				EAssetFileType assetFileType = EAssetFileType.MainAsset;
-				if (assetType == typeof(SceneInstance))
-					assetFileType = EAssetFileType.SceneAsset;
-				else if (assetType == typeof(PackageInstance))
-					assetFileType = EAssetFileType.Package;
-				_cacheLoader = AssetSystem.CreateFileLoader(assetFileType, Location);
-			}
+				_cacheLoader = AssetSystem.CreateFileLoader(Location);
 			return _cacheLoader.LoadAssetAsync(assetName, assetType, param);
 		}
 	}
