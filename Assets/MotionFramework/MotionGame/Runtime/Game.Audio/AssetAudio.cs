@@ -35,7 +35,7 @@ namespace MotionFramework.Audio
 		}
 		public void Load(System.Action<AudioClip> callback)
 		{
-			if (_handle != null)
+			if (_userCallback != null)
 				return;
 
 			_userCallback = callback;
@@ -55,7 +55,7 @@ namespace MotionFramework.Audio
 		// 资源回调
 		private void Handle_Completed(AssetOperationHandle obj)
 		{
-			Clip = _handle.Result as AudioClip;
+			Clip = _handle.AssetObject as AudioClip;
 			_userCallback?.Invoke(Clip);	
 		}
 	}

@@ -33,8 +33,6 @@ namespace MotionFramework.Scene
 		{
 			get
 			{
-				if (_handle == null)
-					return 0;
 				return (int)(_handle.Progress * 100f);
 			}
 		}
@@ -57,7 +55,7 @@ namespace MotionFramework.Scene
 		}
 		public void Load(bool isAdditive, bool activeOnLoad, System.Action<SceneInstance> callback)
 		{
-			if (_handle != null)
+			if (_userCallback != null)
 				return;
 
 			// 场景加载参数
@@ -82,7 +80,7 @@ namespace MotionFramework.Scene
 		// 资源回调
 		private void Handle_Completed(AssetOperationHandle obj)
 		{
-			_userCallback?.Invoke(_handle.Result as SceneInstance);
+			_userCallback?.Invoke(_handle.AssetObject as SceneInstance);
 		}
 	}
 }

@@ -11,11 +11,11 @@ namespace MotionFramework.Resource
 {
 	internal class AssetDatabaseProvider : IAssetProvider
 	{
-		private string _loadPath;
+		private AssetFileLoader _owner;
 
 		public string AssetName { private set; get; }
 		public System.Type AssetType { private set; get; }
-		public System.Object Result { private set; get; }
+		public System.Object AssetObject { private set; get; }
 		public EAssetProviderStates States { private set; get; }
 		public AssetOperationHandle Handle { private set; get; }
 		public System.Action<AssetOperationHandle> Callback { set; get; }
@@ -36,10 +36,17 @@ namespace MotionFramework.Resource
 				return States == EAssetProviderStates.Succeed || States == EAssetProviderStates.Failed;
 			}
 		}
-
-		public AssetDatabaseProvider(string loadPath, string assetName, System.Type assetType)
+		public bool IsValid
 		{
-			_loadPath = loadPath;
+			get
+			{
+				return _owner.IsDestroy == false;
+			}
+		}
+
+		public AssetDatabaseProvider(AssetFileLoader owner, string assetName, System.Type assetType)
+		{
+			_owner = owner;
 			AssetName = assetName;
 			AssetType = assetType;
 			States = EAssetProviderStates.None;
@@ -59,7 +66,7 @@ namespace MotionFramework.Resource
 			// 1. 加载资源对象
 			if (States == EAssetProviderStates.Loading)
 			{
-				string loadPath = _loadPath;
+				string loadPath = _owner.LoadPath;
 
 				// 注意：如果加载路径指向的是文件夹
 				if (UnityEditor.AssetDatabase.IsValidFolder(loadPath))
@@ -69,16 +76,16 @@ namespace MotionFramework.Resource
 					loadPath = AssetSystem.FindDatabaseAssetPath(folderPath, fileName);
 				}
 
-				Result = UnityEditor.AssetDatabase.LoadAssetAtPath(loadPath, AssetType);
+				AssetObject = UnityEditor.AssetDatabase.LoadAssetAtPath(loadPath, AssetType);
 				States = EAssetProviderStates.Checking;
 			}
 
 			// 2. 检测加载结果
 			if (States == EAssetProviderStates.Checking)
 			{
-				States = Result == null ? EAssetProviderStates.Failed : EAssetProviderStates.Succeed;
+				States = AssetObject == null ? EAssetProviderStates.Failed : EAssetProviderStates.Succeed;
 				if (States == EAssetProviderStates.Failed)
-					LogSystem.Log(ELogType.Warning, $"Failed to load asset object : {_loadPath} : {AssetName}");
+					LogSystem.Log(ELogType.Warning, $"Failed to load asset object : {_owner.LoadPath} : {AssetName}");
 				Callback?.Invoke(Handle);
 			}
 #endif

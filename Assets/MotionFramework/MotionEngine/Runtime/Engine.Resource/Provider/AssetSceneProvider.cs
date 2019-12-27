@@ -12,12 +12,13 @@ namespace MotionFramework.Resource
 {
 	internal class AssetSceneProvider : IAssetProvider
 	{
+		private AssetFileLoader _owner;
 		private AsyncOperation _asyncOp;
 		private SceneInstanceParam _param;
 
 		public string AssetName { private set; get; }
 		public System.Type AssetType { private set; get; }
-		public System.Object Result { private set; get; }
+		public System.Object AssetObject { private set; get; }
 		public EAssetProviderStates States { private set; get; }
 		public AssetOperationHandle Handle { private set; get; }
 		public System.Action<AssetOperationHandle> Callback { set; get; }
@@ -37,9 +38,17 @@ namespace MotionFramework.Resource
 				return States == EAssetProviderStates.Succeed || States == EAssetProviderStates.Failed;
 			}
 		}
-
-		public AssetSceneProvider(string assetName, System.Type assetType, SceneInstanceParam param)
+		public bool IsValid
 		{
+			get
+			{
+				return _owner.IsDestroy == false;
+			}
+		}
+
+		public AssetSceneProvider(AssetFileLoader owner, string assetName, System.Type assetType, SceneInstanceParam param)
+		{
+			_owner = owner;
 			_param = param;
 			AssetName = assetName;
 			AssetType = assetType;
@@ -81,7 +90,7 @@ namespace MotionFramework.Resource
 				{
 					SceneInstance instance = new SceneInstance(_asyncOp);
 					instance.Scene = SceneManager.GetSceneByName(AssetName);
-					Result = instance;
+					AssetObject = instance;
 					States = EAssetProviderStates.Succeed;
 					Callback?.Invoke(Handle);
 				}

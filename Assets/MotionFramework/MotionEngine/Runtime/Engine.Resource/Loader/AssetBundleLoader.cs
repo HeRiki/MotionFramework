@@ -17,9 +17,8 @@ namespace MotionFramework.Resource
 	{
 		private readonly List<AssetFileLoader> _depends = new List<AssetFileLoader>(10);
 		private string _manifestPath = string.Empty;
-		private AssetBundle _cacheBundle;
 		private AssetBundleCreateRequest _cacheRequest;
-
+		internal AssetBundle CacheBundle { private set; get; }
 
 		public AssetBundleLoader(EAssetFileType assetFileType, string loadPath, string manifestPath)
 			: base(assetFileType, loadPath)
@@ -31,7 +30,6 @@ namespace MotionFramework.Resource
 			// 如果资源文件加载完毕
 			if (States == EAssetFileLoaderStates.LoadAssetFileOK || States == EAssetFileLoaderStates.LoadAssetFileFailed)
 			{
-				SetCacheAssetBundle();
 				UpdateAllProvider();
 				return;
 			}
@@ -91,7 +89,7 @@ namespace MotionFramework.Resource
 			{
 				if (_cacheRequest.isDone == false)
 					return;
-				_cacheBundle = _cacheRequest.assetBundle;
+				CacheBundle = _cacheRequest.assetBundle;
 
 				// Check scene
 				if (AssetFileType == EAssetFileType.SceneAsset)
@@ -101,7 +99,7 @@ namespace MotionFramework.Resource
 				}
 
 				// Check error
-				if (_cacheBundle == null)
+				if (CacheBundle == null)
 				{
 					LogSystem.Log(ELogType.Warning, $"Failed to load assetBundle file : {LoadPath}");
 					States = EAssetFileLoaderStates.LoadAssetFileFailed;
@@ -134,6 +132,8 @@ namespace MotionFramework.Resource
 		}
 		public override void Destroy(bool force)
 		{
+			base.Destroy(force);
+
 			// Check fatal
 			if (RefCount > 0)
 				throw new Exception($"Bundle file loader ref is not zero : {LoadPath}");
@@ -141,10 +141,10 @@ namespace MotionFramework.Resource
 				throw new Exception($"Bundle file loader is not done : {LoadPath}");
 
 			// 卸载AssetBundle
-			if (_cacheBundle != null)
+			if (CacheBundle != null)
 			{
-				_cacheBundle.Unload(force);
-				_cacheBundle = null;
+				CacheBundle.Unload(force);
+				CacheBundle = null;
 			}
 
 			_depends.Clear();
@@ -155,19 +155,6 @@ namespace MotionFramework.Resource
 				return false;
 
 			return CheckAllProviderIsDone();
-		}
-
-		private void SetCacheAssetBundle()
-		{
-			for (int i = 0; i < _providers.Count; i++)
-			{
-				var provider = _providers[i];
-				if (provider is AssetBundleProvider)
-				{
-					AssetBundleProvider temp = provider as AssetBundleProvider;
-					temp.CacheBundle = _cacheBundle;
-				}
-			}
 		}
 	}
 }

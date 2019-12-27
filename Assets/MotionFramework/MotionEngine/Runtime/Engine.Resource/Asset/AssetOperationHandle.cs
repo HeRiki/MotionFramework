@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace MotionFramework.Resource
 {
-	public class AssetOperationHandle
+	public struct AssetOperationHandle
 	{
 		private IAssetProvider _provider;
 
@@ -17,11 +17,27 @@ namespace MotionFramework.Resource
 		}
 
 		/// <summary>
+		/// 句柄是否有效（AssetFileLoader销毁会导致所有句柄失效）
+		/// </summary>
+		public bool IsValid
+		{
+			get
+			{
+				return _provider != null && _provider.IsValid;
+			}
+		}
+
+		/// <summary>
 		/// 当前的加载状态
 		/// </summary>
 		public EAssetProviderStates States
 		{
-			get { return _provider.States; }
+			get
+			{
+				if (IsValid == false)
+					return EAssetProviderStates.None;
+				return _provider.States;
+			}
 		}
 
 		/// <summary>
@@ -31,6 +47,8 @@ namespace MotionFramework.Resource
 		{
 			get
 			{
+				if (IsValid == false)
+					return 0;
 				return _provider.Progress;
 			}
 		}
@@ -42,6 +60,8 @@ namespace MotionFramework.Resource
 		{
 			get
 			{
+				if (IsValid == false)
+					return false;
 				return _provider.IsDone;
 			}
 		}
@@ -53,6 +73,8 @@ namespace MotionFramework.Resource
 		{
 			add
 			{
+				if (IsValid == false)
+					throw new System.Exception($"{nameof(AssetOperationHandle)} is invalid");
 				if (_provider.IsDone)
 					value.Invoke(this);
 				else
@@ -60,6 +82,8 @@ namespace MotionFramework.Resource
 			}
 			remove
 			{
+				if (IsValid == false)
+					throw new System.Exception($"{nameof(AssetOperationHandle)} is invalid");
 				_provider.Callback -= value;
 			}
 		}
@@ -67,11 +91,13 @@ namespace MotionFramework.Resource
 		/// <summary>
 		/// 最终结果
 		/// </summary>
-		public System.Object Result
+		public System.Object AssetObject
 		{
 			get
 			{
-				return _provider.Result;
+				if (IsValid == false)
+					return null;
+				return _provider.AssetObject;
 			}
 		}
 
@@ -82,9 +108,11 @@ namespace MotionFramework.Resource
 		{
 			get
 			{
-				if (_provider.Result == null)
+				if (IsValid == false)
 					return null;
-				return UnityEngine.Object.Instantiate(_provider.Result as GameObject);
+				if (_provider.AssetObject == null)
+					return null;
+				return UnityEngine.Object.Instantiate(_provider.AssetObject as GameObject);
 			}
 		}
 	}

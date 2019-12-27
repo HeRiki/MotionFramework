@@ -24,7 +24,7 @@ namespace MotionFramework.Resource
 		/// <summary>
 		/// 最终结果
 		/// </summary>
-		System.Object Result { get; }
+		System.Object AssetObject { get; }
 
 		/// <summary>
 		/// 当前的加载状态
@@ -50,6 +50,11 @@ namespace MotionFramework.Resource
 		/// 是否完毕（成功或失败）
 		/// </summary>
 		bool IsDone { get; }
+
+		/// <summary>
+		/// 是否有效（AssetFileLoader销毁会导致Provider无效）
+		/// </summary>
+		bool IsValid { get; }
 
 		/// <summary>
 		/// 轮询更新方法

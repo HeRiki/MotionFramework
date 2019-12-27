@@ -11,12 +11,12 @@ namespace MotionFramework.Resource
 {
 	internal class AssetResourceProvider : IAssetProvider
 	{
-		private string _loadPath;
+		private AssetFileLoader _owner;
 		private ResourceRequest _cacheRequest;
 		
 		public string AssetName { private set; get; }
 		public System.Type AssetType { private set; get; }
-		public System.Object Result { private set; get; }
+		public System.Object AssetObject { private set; get; }
 		public EAssetProviderStates States { private set; get; }
 		public AssetOperationHandle Handle { private set; get; }
 		public System.Action<AssetOperationHandle> Callback { set; get; }
@@ -36,10 +36,17 @@ namespace MotionFramework.Resource
 				return States == EAssetProviderStates.Succeed || States == EAssetProviderStates.Failed;
 			}		
 		}
-
-		public AssetResourceProvider(string loadPath, string assetName, System.Type assetType)
+		public bool IsValid
 		{
-			_loadPath = loadPath;
+			get
+			{
+				return _owner.IsDestroy == false;
+			}
+		}
+
+		public AssetResourceProvider(AssetFileLoader owner, string assetName, System.Type assetType)
+		{
+			_owner = owner;
 			AssetName = assetName;
 			AssetType = assetType;
 			States = EAssetProviderStates.None;
@@ -58,7 +65,7 @@ namespace MotionFramework.Resource
 			// 1. 加载资源对象
 			if (States == EAssetProviderStates.Loading)
 			{
-				_cacheRequest = Resources.LoadAsync(_loadPath, AssetType);
+				_cacheRequest = Resources.LoadAsync(_owner.LoadPath, AssetType);
 				States = EAssetProviderStates.Checking;
 			}
 
@@ -67,10 +74,10 @@ namespace MotionFramework.Resource
 			{
 				if (_cacheRequest.isDone == false)
 					return;
-				Result = _cacheRequest.asset;
-				States = Result == null ? EAssetProviderStates.Failed : EAssetProviderStates.Succeed;
+				AssetObject = _cacheRequest.asset;
+				States = AssetObject == null ? EAssetProviderStates.Failed : EAssetProviderStates.Succeed;
 				if (States == EAssetProviderStates.Failed)
-					LogSystem.Log(ELogType.Warning, $"Failed to load asset object : {_loadPath} : {AssetName}");
+					LogSystem.Log(ELogType.Warning, $"Failed to load asset object : {_owner.LoadPath} : {AssetName}");
 				Callback?.Invoke(Handle);
 			}
 		}

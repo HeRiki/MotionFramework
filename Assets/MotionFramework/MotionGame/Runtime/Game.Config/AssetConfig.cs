@@ -42,8 +42,6 @@ namespace MotionFramework.Config
 		{
 			get
 			{
-				if (_handle == null)
-					return false;
 				return _handle.IsDone;
 			}
 		}
@@ -64,7 +62,7 @@ namespace MotionFramework.Config
 		}
 		public void Load(System.Action<AssetConfig> callback)
 		{
-			if (_handle != null)
+			if (_userCallback != null)
 				return;
 
 			_userCallback = callback;
@@ -77,7 +75,7 @@ namespace MotionFramework.Config
 		{
 			try
 			{
-				TextAsset txt = _handle.Result as TextAsset;
+				TextAsset txt = _handle.AssetObject as TextAsset;
 				if (txt != null)
 				{
 					// 解析数据

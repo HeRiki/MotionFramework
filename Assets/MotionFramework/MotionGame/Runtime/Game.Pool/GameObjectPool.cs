@@ -46,8 +46,6 @@ namespace MotionFramework.Pool
 		{
 			get
 			{
-				if (_handle == null)
-					return false;
 				return _handle.IsDone;
 			}
 		}
@@ -59,8 +57,6 @@ namespace MotionFramework.Pool
 		{
 			get
 			{
-				if (_handle == null)
-					return EAssetProviderStates.None;
 				return _handle.States;
 			}
 		}

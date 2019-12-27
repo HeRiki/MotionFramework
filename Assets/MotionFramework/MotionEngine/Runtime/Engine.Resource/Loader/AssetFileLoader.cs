@@ -68,6 +68,7 @@ namespace MotionFramework.Resource
 		/// </summary>
 		public virtual void Destroy(bool force)
 		{
+			IsDestroy = true;
 		}
 
 		/// <summary>
@@ -78,6 +79,10 @@ namespace MotionFramework.Resource
 			return States == EAssetFileLoaderStates.LoadAssetFileOK || States == EAssetFileLoaderStates.LoadAssetFileFailed;
 		}
 
+		/// <summary>
+		/// 是否已经销毁
+		/// </summary>
+		public bool IsDestroy { private set; get; }
 
 		#region Asset Provider
 		internal readonly List<IAssetProvider> _providers = new List<IAssetProvider>();
@@ -93,18 +98,18 @@ namespace MotionFramework.Resource
 				if (AssetFileType == EAssetFileType.MainAsset)
 				{
 					if (this is AssetBundleLoader)
-						provider = new AssetBundleProvider(LoadPath, assetName, assetType);
+						provider = new AssetBundleProvider(this, assetName, assetType);
 					else if (this is AssetDatabaseLoader)
-						provider = new AssetDatabaseProvider(LoadPath, assetName, assetType);
+						provider = new AssetDatabaseProvider(this, assetName, assetType);
 					else if (this is AssetResourceLoader)
-						provider = new AssetResourceProvider(LoadPath, assetName, assetType);
+						provider = new AssetResourceProvider(this, assetName, assetType);
 					else
 						throw new NotImplementedException($"{this.GetType()}");
 				}
 				else if (AssetFileType == EAssetFileType.SceneAsset)
 				{
 					SceneInstanceParam sceneParam = param as SceneInstanceParam;
-					provider = new AssetSceneProvider(assetName, assetType, sceneParam);
+					provider = new AssetSceneProvider(this, assetName, assetType, sceneParam);
 				}
 				else if (AssetFileType == EAssetFileType.Package)
 				{
