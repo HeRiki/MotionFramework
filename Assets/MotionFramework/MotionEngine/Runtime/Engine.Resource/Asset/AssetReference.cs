@@ -61,8 +61,8 @@ namespace MotionFramework.Resource
 		/// <param name="assetName">资源对象名称</param>
 		public AssetOperationHandle LoadAssetAsync<TObject>(string assetName)
 		{
-			if(AssetSystem.LoadMode == EAssetSystemMode.ResourceMode)
-				throw new System.Exception($"{nameof(EAssetSystemMode.ResourceMode)} is not support to assign asset name.");
+			if(AssetSystem.SystemMode == EAssetSystemMode.ResourcesMode)
+				throw new System.Exception($"{nameof(EAssetSystemMode.ResourcesMode)} is not support to assign asset name.");
 
 			return LoadInternal(assetName, typeof(TObject), null);
 		}
@@ -73,8 +73,8 @@ namespace MotionFramework.Resource
 		/// </summary>
 		public AssetOperationHandle LoadAssetAsync<TObject>(string assetName, IAssetParam param)
 		{
-			if (AssetSystem.LoadMode == EAssetSystemMode.ResourceMode)
-				throw new System.Exception($"{nameof(EAssetSystemMode.ResourceMode)} is not support to assign asset name.");
+			if (AssetSystem.SystemMode == EAssetSystemMode.ResourcesMode)
+				throw new System.Exception($"{nameof(EAssetSystemMode.ResourcesMode)} is not support to assign asset name.");
 
 			return LoadInternal(assetName, typeof(TObject), param);
 		}

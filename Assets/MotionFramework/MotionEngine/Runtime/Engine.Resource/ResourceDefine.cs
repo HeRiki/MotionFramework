@@ -12,17 +12,17 @@ namespace MotionFramework.Resource
 	public enum EAssetSystemMode
 	{
 		/// <summary>
-		/// AssetDatabase加载模式
+		/// AssetDatabase模式
 		/// </summary>
 		EditorMode,
 
 		/// <summary>
-		/// Resource加载模式
+		/// Resources模式
 		/// </summary>
-		ResourceMode,
+		ResourcesMode,
 
 		/// <summary>
-		/// AssetBundle加载模式
+		/// AssetBundle模式
 		/// </summary>
 		BundleMode,
 	}

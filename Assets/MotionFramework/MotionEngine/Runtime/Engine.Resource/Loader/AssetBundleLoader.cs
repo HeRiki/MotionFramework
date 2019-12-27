@@ -42,12 +42,12 @@ namespace MotionFramework.Resource
 			// 1. 加载所有依赖项
 			if (States == EAssetFileLoaderStates.LoadDepends)
 			{
-				string[] dependencies = AssetSystem.PatchServices.GetDirectDependencies(_manifestPath);
+				string[] dependencies = AssetSystem.BundleServices.GetDirectDependencies(_manifestPath);
 				if (dependencies.Length > 0)
 				{
 					foreach (string dpManifestPath in dependencies)
 					{
-						string dpLoadPath = AssetSystem.PatchServices.GetAssetBundleLoadPath(dpManifestPath);
+						string dpLoadPath = AssetSystem.BundleServices.GetAssetBundleLoadPath(dpManifestPath);
 						AssetFileLoader dpLoader = AssetSystem.CreateFileLoaderInternal(dpLoadPath, dpManifestPath);
 						_depends.Add(dpLoader);
 					}

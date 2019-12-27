@@ -33,14 +33,14 @@ namespace MotionFramework.Resource
 		public static string AssetRootPath { set; get; }
 
 		/// <summary>
-		/// 资源系统加载模式
+		/// 资源系统模式
 		/// </summary>
-		public static EAssetSystemMode LoadMode { set; get; }
+		public static EAssetSystemMode SystemMode { set; get; }
 
 		/// <summary>
-		/// 补丁服务接口（Bundle模式下需要设置该接口）
+		/// AssetBundle服务接口（BundleMode模式下需要设置该接口）
 		/// </summary>
-		public static IPatchServices PatchServices { set; get; }
+		public static IBundleServices BundleServices { set; get; }
 
 
 		/// <summary>
@@ -60,7 +60,7 @@ namespace MotionFramework.Resource
 		public static AssetFileLoader CreateFileLoader(string location)
 		{
 			AssetFileLoader loader;
-			if (LoadMode == EAssetSystemMode.EditorMode)
+			if (SystemMode == EAssetSystemMode.EditorMode)
 			{
 #if UNITY_EDITOR
 				string loadPath = FindDatabaseAssetPath(location);
@@ -69,23 +69,23 @@ namespace MotionFramework.Resource
 				throw new Exception("EAssetSystemMode.EditorMode only support unity editor.");
 #endif
 			}
-			else if (LoadMode == EAssetSystemMode.ResourceMode)
+			else if (SystemMode == EAssetSystemMode.ResourcesMode)
 			{
 				string loadPath = location;
 				loader = CreateFileLoaderInternal(loadPath, null);
 			}
-			else if (LoadMode == EAssetSystemMode.BundleMode)
+			else if (SystemMode == EAssetSystemMode.BundleMode)
 			{
-				if (PatchServices == null)
-					throw new Exception($"{nameof(IPatchServices)} is null.");
+				if (BundleServices == null)
+					throw new Exception($"{nameof(IBundleServices)} is null.");
 
 				string manifestPath = AssetPathHelper.ConvertLocationToManifestPath(location);
-				string loadPath = PatchServices.GetAssetBundleLoadPath(manifestPath);
+				string loadPath = BundleServices.GetAssetBundleLoadPath(manifestPath);
 				loader = CreateFileLoaderInternal(loadPath, manifestPath);
 			}
 			else
 			{
-				throw new NotImplementedException($"{LoadMode}");
+				throw new NotImplementedException($"{SystemMode}");
 			}
 			return loader;
 		}
@@ -101,14 +101,14 @@ namespace MotionFramework.Resource
 
 			// 创建加载器
 			AssetFileLoader newLoader = null;
-			if (LoadMode == EAssetSystemMode.EditorMode)
+			if (SystemMode == EAssetSystemMode.EditorMode)
 				newLoader = new AssetDatabaseLoader(loadPath);
-			else if (LoadMode == EAssetSystemMode.ResourceMode)
+			else if (SystemMode == EAssetSystemMode.ResourcesMode)
 				newLoader = new AssetResourceLoader(loadPath);
-			else if (LoadMode == EAssetSystemMode.BundleMode)
+			else if (SystemMode == EAssetSystemMode.BundleMode)
 				newLoader = new AssetBundleLoader(loadPath, manifestPath);
 			else
-				throw new NotImplementedException($"{LoadMode}");
+				throw new NotImplementedException($"{SystemMode}");
 
 			// 新增下载需求
 			_fileLoaders.Add(newLoader);

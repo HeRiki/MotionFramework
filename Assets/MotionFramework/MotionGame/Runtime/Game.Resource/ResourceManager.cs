@@ -37,7 +37,7 @@ namespace MotionFramework.Resource
 		{
 			int totalCount = AssetSystem.DebugGetFileLoaderCount();
 			int failedCount = AssetSystem.DebugGetFileLoaderFailedCount();
-			DebugConsole.GUILable($"[{nameof(ResourceManager)}] AssetSystemMode : {AssetSystem.LoadMode}");
+			DebugConsole.GUILable($"[{nameof(ResourceManager)}] AssetSystemMode : {AssetSystem.SystemMode}");
 			DebugConsole.GUILable($"[{nameof(ResourceManager)}] Asset loader total count : {totalCount}");
 			DebugConsole.GUILable($"[{nameof(ResourceManager)}] Asset loader failed count : {failedCount}");
 		}
@@ -50,7 +50,7 @@ namespace MotionFramework.Resource
 		{
 			UnityEngine.Object result = null;
 
-			if (AssetSystem.LoadMode == EAssetSystemMode.EditorMode)
+			if (AssetSystem.SystemMode == EAssetSystemMode.EditorMode)
 			{
 #if UNITY_EDITOR
 				string loadPath = AssetSystem.FindDatabaseAssetPath(location);
@@ -59,22 +59,22 @@ namespace MotionFramework.Resource
 				throw new Exception("AssetDatabaseLoader only support unity editor.");
 #endif
 			}
-			else if (AssetSystem.LoadMode == EAssetSystemMode.ResourceMode)
+			else if (AssetSystem.SystemMode == EAssetSystemMode.ResourcesMode)
 			{
 				result = Resources.Load<T>(location);
 			}
-			else if (AssetSystem.LoadMode == EAssetSystemMode.BundleMode)
+			else if (AssetSystem.SystemMode == EAssetSystemMode.BundleMode)
 			{
 				string fileName = System.IO.Path.GetFileNameWithoutExtension(location);
 				string manifestPath = AssetPathHelper.ConvertLocationToManifestPath(location);
-				string loadPath = AssetSystem.PatchServices.GetAssetBundleLoadPath(manifestPath);
+				string loadPath = AssetSystem.BundleServices.GetAssetBundleLoadPath(manifestPath);
 				AssetBundle bundle = AssetBundle.LoadFromFile(loadPath);
 				result = bundle.LoadAsset<T>(fileName);
 				bundle.Unload(false);
 			}
 			else
 			{
-				throw new NotImplementedException($"{AssetSystem.LoadMode}");
+				throw new NotImplementedException($"{AssetSystem.SystemMode}");
 			}
 
 			return result as T;
