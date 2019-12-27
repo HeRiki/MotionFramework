@@ -9,11 +9,11 @@ public class Test
 	public void Start()
 	{
 		// 播放短音效
-		AudioManager.Instance.PlaySound("UISound/click");
+		AudioManager.Instance.PlaySound("Audio/UISound/click");
 
 		// 播放背景音乐
 		bool loop = true;
-		AudioManager.Instance.PlayMusic("Music/cityBgMusic", loop);
+		AudioManager.Instance.PlayMusic("Audio/Music/cityBgMusic", loop);
 
 		// 全部静音
 		AudioManager.Instance.Mute(true);

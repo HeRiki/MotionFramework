@@ -27,22 +27,16 @@ public class Test
 		ConfigManager.Instance.Load("AutoGenerateLanguage", OnLanguagePrepare);	
 	}
 
-	private void OnLanguagePrepare(Asset asset, EAssetResult result)
+	private void OnLanguagePrepare(AssetConfig config)
 	{
-		if (result != EAssetResult.OK)
-			return;
-
 		// 多语言表加载完毕后，加载剩余其它表格
 		ConfigManager.Instance.Load("Hero", OnConfigPrepare);
 	}
 	
-	private void OnConfigPrepare(Asset asset, EAssetResult result)
+	private void OnConfigPrepare(AssetConfig config)
 	{
-		if (result != EAssetResult.OK)
-			return;
-
 		// 打印表格数据
-		if (asset is CfgHero)
+		if (config is CfgHero)
 		{
 			CfgHeroTab tab1 = CfgHero.GetCfgTab(1001);
 			Debug.Log($"{tab1.Name}");
