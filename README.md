@@ -21,7 +21,7 @@ C# && .Net4.x
 
 5. [引用池系统](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/ReferenceSystem.md) **(ReferenceSystem)** - 用于C#引用类型的对象池，对于频繁创建的引用类型，使用引用池可以帮助减少GC。
 
-6. [资源系统](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/AssetSystem.md) **(AssetSystem)** - 资源系统提供了三种加载方式：AssetDatabase加载方式，Resources加载方式，AssetBundle加载方式。资源系统底层是基于引用计数的设计方案。业务逻辑支持协程，异步，委托多种方式。
+6. [资源系统](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/AssetSystem.md) **(AssetSystem)** - 资源系统提供了三种加载方式：AssetDatabase加载方式，Resources加载方式，AssetBundle加载方式，三种方式可以自由切换。业务逻辑支持协程，异步，委托多种方式。如果资源需要热更新，在AssetBundle模式下提供了灵活的可寻址接口。
 
 7. [网络系统](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/Network.md) **(Network)** - 异步IOCP SOCKET长连接方案，支持TCP和UDP协议。还支持同时建立多个通信通道，例如连接逻辑服务器的同时还可以连接聊天服务器。不同的通信频道支持使用不同的网络包解析器。我们可以定义支持ProtoBuf的网络包解析器，当然也可以使用自己的序列化和反序列化方案。
 
