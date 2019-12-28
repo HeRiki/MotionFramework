@@ -44,7 +44,7 @@ namespace MotionFramework.Resource
 
 		/// <summary>
 		/// 同步加载接口
-		/// 注意：仅支持特殊的无依赖资源
+		/// 注意：仅支持无依赖关系的资源
 		/// </summary>
 		public T SyncLoad<T>(string location) where T : UnityEngine.Object
 		{
@@ -55,6 +55,8 @@ namespace MotionFramework.Resource
 #if UNITY_EDITOR
 				string loadPath = AssetSystem.FindDatabaseAssetPath(location);
 				result = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(loadPath);
+				if (result == null)
+					LogSystem.Log(ELogType.Error, $"Failed to load {loadPath}");
 #else
 				throw new Exception("AssetDatabaseLoader only support unity editor.");
 #endif
@@ -62,6 +64,8 @@ namespace MotionFramework.Resource
 			else if (AssetSystem.SystemMode == EAssetSystemMode.ResourcesMode)
 			{
 				result = Resources.Load<T>(location);
+				if (result == null)
+					LogSystem.Log(ELogType.Error, $"Failed to load {location}");
 			}
 			else if (AssetSystem.SystemMode == EAssetSystemMode.BundleMode)
 			{
@@ -69,8 +73,12 @@ namespace MotionFramework.Resource
 				string manifestPath = AssetPathHelper.ConvertLocationToManifestPath(location);
 				string loadPath = AssetSystem.BundleServices.GetAssetBundleLoadPath(manifestPath);
 				AssetBundle bundle = AssetBundle.LoadFromFile(loadPath);
-				result = bundle.LoadAsset<T>(fileName);
-				bundle.Unload(false);
+				if(bundle != null)
+					result = bundle.LoadAsset<T>(fileName);
+				if (result == null)
+					LogSystem.Log(ELogType.Error, $"Failed to load {loadPath}");
+				if(bundle != null)
+					bundle.Unload(false);
 			}
 			else
 			{
