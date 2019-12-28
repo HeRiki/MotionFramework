@@ -7,7 +7,7 @@ public class Test
 {
 	public void Start()
 	{
-		// 注意：NetProtoPackageParser是我们自定义的网络包解析器
+		// 注意：ProtoPackageParser是我们自定义的网络包解析器
 		NetworkManager.Instance.ConnectServer("127.0.0.1", 10002, typeof(ProtoPackageParser));
 		NetworkManager.Instance.MonoPackageCallback += OnHandleMonoPackage;
 	}
