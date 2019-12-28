@@ -19,6 +19,22 @@ public class Test
 }
 ```
 
+**资源系统根路径**  
+所有通过代码加载的资源文件都需要放在资源系统根路径下，在加载这些资源的时候只需要提供相对路径即可。资源系统统一约定该相对路径名称**location**   
+
+```C#
+using MotionFramework.Resource;
+
+public class Test
+{
+	public void Start()
+	{
+		// 设置资源系统根路径
+		AssetSystem.AssetRootPath = "Assets/Works/Resource";
+	}
+}
+```
+
 **资源加载 - 委托方式**  
 ````C#
 // 加载主资源对象，不用指定资源对象名称
@@ -106,22 +122,6 @@ private async Task AsyncLoad()
 	Debug.Log(bg.name);
 }
 ````
-
-**资源系统根路径**  
-所有通过代码加载的资源文件都需要放在资源系统根路径下，在加载这些资源的时候只需要提供相对路径即可。  
-
-```C#
-using MotionFramework.Resource;
-
-public class Test
-{
-	public void Start()
-	{
-		// 设置资源系统根路径
-		AssetSystem.AssetRootPath = "Assets/Works/Resource";
-	}
-}
-```
 
 **AssetBundle服务接口**  
 在使用AssetBundle加载模式的时候，我们需要设置AssetSystem.BundleServices接口，这个接口主要是提供了资源间依赖关系的查询工作，以及获取AssetBundle文件的加载路径。我们可以使用官方提供的AssetBundleManifest文件，也可以使用自己的依赖关系文件。  
