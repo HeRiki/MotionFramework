@@ -3,7 +3,7 @@
 **资源系统加载模式**  
 资源系统提供三种加载模式
 1. EAssetSystemMode.EditorMode : 使用UnityEditor.AssetDatabase加载资源，该模式仅支持编辑器下。
-2. EAssetSystemMode.ResourceMode : 使用UnityEngine.Resources加载资源。
+2. EAssetSystemMode.ResourcesMode : 使用UnityEngine.Resources加载资源。
 3. EAssetSystemMode.BundleMode : 使用UnityEngine.AssetBundle加载资源。
 
 ```C#
@@ -20,7 +20,7 @@ public class Test
 ```
 
 **资源系统根路径**  
-所有通过代码加载的资源文件都需要放在资源系统根路径下，在加载这些资源的时候只需要提供相对路径即可。资源系统统一约定该相对路径名称**location**   
+所有通过代码加载的资源文件都需要放在资源系统根路径下，在加载这些资源的时候只需要提供相对路径即可。资源系统统一约定该相对路径名称为：**location**   
 
 ```C#
 using MotionFramework.Resource;
