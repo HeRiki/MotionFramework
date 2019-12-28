@@ -19,7 +19,7 @@ public class Test
 }
 ```
 
-**资源加载**  
+**资源加载 - 委托方式**  
 ````C#
 // 加载主资源对象，不用指定资源对象名称
 private void Start()
@@ -71,6 +71,39 @@ private void Handle_Completed(AssetOperationHandle obj)
 	if(obj.AssetObject == null) return;
 	SceneInstance instance = obj.AssetObject as SceneInstance;
 	Debug.Log(instance.Scene.name);
+}
+````
+
+**资源加载 - 异步方式**  
+````C#
+// 协程加载方式
+public void Start()
+{
+	 AppEngine.Instance.StartCoroutine(AsyncLoad());
+}
+private IEnumerator AsyncLoad()
+{
+	AssetReference assetRef = new AssetReference("UITexture/bg1");
+	AssetOperationHandle handle = assetRef.LoadAssetAsync<Texture>();
+	yield return handle;
+	Texture bg = handle.AssetObject as Texture;
+	Debug.Log(bg.name);
+}
+````
+
+````C#
+// 异步加载方式
+public async void Start()
+{
+	await AsyncLoad();
+}
+private async Task AsyncLoad()
+{
+	AssetReference assetRef = new AssetReference("UITexture/bg1");
+	AssetOperationHandle handle = assetRef.LoadAssetAsync<Texture>();
+	await handle.Task;
+	Texture bg = handle.AssetObject as Texture;
+	Debug.Log(bg.name);
 }
 ````
 
