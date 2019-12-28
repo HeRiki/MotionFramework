@@ -9,18 +9,12 @@ using UnityEngine;
 
 namespace MotionFramework.Resource
 {
-	internal class AssetBundleProvider : IAssetProvider
+	internal class AssetBundleProvider : AsyncAssetProvider
 	{
-		private AssetBundleLoader _owner;
+		private AssetBundleLoader _loader;
 		private AssetBundleRequest _cacheRequest;
 
-		public string AssetName { private set; get; }
-		public System.Type AssetType { private set; get; }
-		public System.Object AssetObject { private set; get; }
-		public EAssetProviderStates States { private set; get; }
-		public AssetOperationHandle Handle { private set; get; }
-		public System.Action<AssetOperationHandle> Callback { set; get; }
-		public float Progress
+		public override float Progress
 		{
 			get
 			{
@@ -29,38 +23,21 @@ namespace MotionFramework.Resource
 				return _cacheRequest.progress;
 			}
 		}
-		public bool IsDone
-		{
-			get
-			{
-				return States == EAssetProviderStates.Succeed || States == EAssetProviderStates.Failed;
-			}
-		}
-		public bool IsValid
-		{
-			get
-			{
-				return _owner.IsDestroy == false;
-			}
-		}
 
 		public AssetBundleProvider(AssetFileLoader owner, string assetName, System.Type assetType)
+			: base(owner, assetName, assetType)
 		{
-			_owner = owner as AssetBundleLoader;
-			AssetName = assetName;
-			AssetType = assetType;
-			States = EAssetProviderStates.None;
-			Handle = new AssetOperationHandle(this);
+			_loader = owner as AssetBundleLoader;
 		}
-		public void Update()
+		public override void Update()
 		{
 			if (IsDone)
 				return;
 
-			if (_owner.CacheBundle == null)
+			if (_loader.CacheBundle == null)
 			{
 				States = EAssetProviderStates.Failed;
-				Callback?.Invoke(Handle);
+				InvokeCompletion();
 			}
 
 			if (States == EAssetProviderStates.None)
@@ -72,9 +49,9 @@ namespace MotionFramework.Resource
 			if (States == EAssetProviderStates.Loading)
 			{
 				if (AssetType == null)
-					_cacheRequest = _owner.CacheBundle.LoadAssetAsync(AssetName);
+					_cacheRequest = _loader.CacheBundle.LoadAssetAsync(AssetName);
 				else
-					_cacheRequest = _owner.CacheBundle.LoadAssetAsync(AssetName, AssetType);
+					_cacheRequest = _loader.CacheBundle.LoadAssetAsync(AssetName, AssetType);
 				States = EAssetProviderStates.Checking;
 			}
 
@@ -86,8 +63,8 @@ namespace MotionFramework.Resource
 				AssetObject = _cacheRequest.asset;
 				States = AssetObject == null ? EAssetProviderStates.Failed : EAssetProviderStates.Succeed;
 				if (States == EAssetProviderStates.Failed)
-					LogSystem.Log(ELogType.Warning, $"Failed to load asset object : {_owner.LoadPath} : {AssetName}");
-				Callback?.Invoke(Handle);
+					LogSystem.Log(ELogType.Warning, $"Failed to load asset object : {_loader.LoadPath} : {AssetName}");
+				InvokeCompletion();
 			}
 		}
 	}

@@ -42,11 +42,6 @@ namespace MotionFramework.Resource
 		System.Action<AssetOperationHandle> Callback { set; get; }
 
 		/// <summary>
-		/// 加载进度
-		/// </summary>
-		float Progress { get; }
-
-		/// <summary>
 		/// 是否完毕（成功或失败）
 		/// </summary>
 		bool IsDone { get; }
@@ -57,8 +52,18 @@ namespace MotionFramework.Resource
 		bool IsValid { get; }
 
 		/// <summary>
+		/// 加载进度
+		/// </summary>
+		float Progress { get; }
+
+		/// <summary>
 		/// 轮询更新方法
 		/// </summary>
 		void Update();
+
+		/// <summary>
+		/// 异步操作任务
+		/// </summary>
+		System.Threading.Tasks.Task<object> Task { get; }
 	}
 }

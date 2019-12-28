@@ -10,19 +10,12 @@ using UnityEngine.SceneManagement;
 
 namespace MotionFramework.Resource
 {
-	internal class AssetSceneProvider : IAssetProvider
+	internal class AssetSceneProvider : AsyncAssetProvider
 	{
-		private AssetFileLoader _owner;
-		private AsyncOperation _asyncOp;
 		private SceneInstanceParam _param;
+		private AsyncOperation _asyncOp;	
 
-		public string AssetName { private set; get; }
-		public System.Type AssetType { private set; get; }
-		public System.Object AssetObject { private set; get; }
-		public EAssetProviderStates States { private set; get; }
-		public AssetOperationHandle Handle { private set; get; }
-		public System.Action<AssetOperationHandle> Callback { set; get; }
-		public float Progress
+		public override float Progress
 		{
 			get
 			{
@@ -31,31 +24,13 @@ namespace MotionFramework.Resource
 				return _asyncOp.progress;
 			}
 		}
-		public bool IsDone
-		{
-			get
-			{
-				return States == EAssetProviderStates.Succeed || States == EAssetProviderStates.Failed;
-			}
-		}
-		public bool IsValid
-		{
-			get
-			{
-				return _owner.IsDestroy == false;
-			}
-		}
 
 		public AssetSceneProvider(AssetFileLoader owner, string assetName, System.Type assetType, SceneInstanceParam param)
+			: base(owner, assetName, assetType)
 		{
-			_owner = owner;
 			_param = param;
-			AssetName = assetName;
-			AssetType = assetType;
-			States = EAssetProviderStates.None;
-			Handle = new AssetOperationHandle(this);
 		}
-		public void Update()
+		public override void Update()
 		{
 			if (IsDone)
 				return;
@@ -79,7 +54,7 @@ namespace MotionFramework.Resource
 				{
 					LogSystem.Log(ELogType.Warning, $"Failed to load scene : {AssetName}");
 					States = EAssetProviderStates.Failed;
-					Callback?.Invoke(Handle);
+					InvokeCompletion();
 				}
 			}
 
@@ -92,7 +67,7 @@ namespace MotionFramework.Resource
 					instance.Scene = SceneManager.GetSceneByName(AssetName);
 					AssetObject = instance;
 					States = EAssetProviderStates.Succeed;
-					Callback?.Invoke(Handle);
+					InvokeCompletion();
 				}
 			}
 		}

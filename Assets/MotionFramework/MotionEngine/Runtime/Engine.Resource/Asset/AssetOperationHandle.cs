@@ -3,11 +3,12 @@
 // Copyright©2018-2020 何冠峰
 // Licensed under the MIT license
 //--------------------------------------------------
+using System.Collections;
 using UnityEngine;
 
 namespace MotionFramework.Resource
 {
-	public struct AssetOperationHandle
+	public struct AssetOperationHandle : IEnumerator
 	{
 		private IAssetProvider _provider;
 
@@ -115,5 +116,28 @@ namespace MotionFramework.Resource
 				return UnityEngine.Object.Instantiate(_provider.AssetObject as GameObject);
 			}
 		}
+
+		#region 异步操作相关
+		/// <summary>
+		/// 异步操作任务
+		/// </summary>
+		public System.Threading.Tasks.Task<object> Task
+		{
+			get { return _provider.Task; }
+		}
+
+		// 协程相关
+		bool IEnumerator.MoveNext()
+		{
+			return !IsDone;
+		}
+		void IEnumerator.Reset()
+		{
+		}
+		object IEnumerator.Current
+		{
+			get { return AssetObject; }
+		}
+		#endregion
 	}
 }

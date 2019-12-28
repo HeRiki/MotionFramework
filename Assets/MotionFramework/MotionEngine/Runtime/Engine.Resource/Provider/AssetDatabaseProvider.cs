@@ -9,17 +9,9 @@ using UnityEngine;
 
 namespace MotionFramework.Resource
 {
-	internal class AssetDatabaseProvider : IAssetProvider
+	internal class AssetDatabaseProvider : AsyncAssetProvider
 	{
-		private AssetFileLoader _owner;
-
-		public string AssetName { private set; get; }
-		public System.Type AssetType { private set; get; }
-		public System.Object AssetObject { private set; get; }
-		public EAssetProviderStates States { private set; get; }
-		public AssetOperationHandle Handle { private set; get; }
-		public System.Action<AssetOperationHandle> Callback { set; get; }
-		public float Progress
+		public override float Progress
 		{
 			get
 			{
@@ -29,30 +21,12 @@ namespace MotionFramework.Resource
 					return 0;
 			}
 		}
-		public bool IsDone
-		{
-			get
-			{
-				return States == EAssetProviderStates.Succeed || States == EAssetProviderStates.Failed;
-			}
-		}
-		public bool IsValid
-		{
-			get
-			{
-				return _owner.IsDestroy == false;
-			}
-		}
 
 		public AssetDatabaseProvider(AssetFileLoader owner, string assetName, System.Type assetType)
+			: base(owner, assetName, assetType)
 		{
-			_owner = owner;
-			AssetName = assetName;
-			AssetType = assetType;
-			States = EAssetProviderStates.None;
-			Handle = new AssetOperationHandle(this);
 		}
-		public void Update()
+		public override void Update()
 		{
 #if UNITY_EDITOR
 			if (IsDone)
@@ -86,7 +60,7 @@ namespace MotionFramework.Resource
 				States = AssetObject == null ? EAssetProviderStates.Failed : EAssetProviderStates.Succeed;
 				if (States == EAssetProviderStates.Failed)
 					LogSystem.Log(ELogType.Warning, $"Failed to load asset object : {_owner.LoadPath} : {AssetName}");
-				Callback?.Invoke(Handle);
+				InvokeCompletion();
 			}
 #endif
 		}
