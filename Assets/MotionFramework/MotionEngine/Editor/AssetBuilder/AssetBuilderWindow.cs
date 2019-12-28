@@ -141,12 +141,12 @@ public class AssetBuilderWindow : EditorWindow
 					EditorApplication.delayCall += CheckAllPrefabValid;
 				}
 
-				if (GUILayout.Button("刷新流目录（清空后拷贝所有补丁包到流目录）", GUILayout.MaxWidth(300), GUILayout.MaxHeight(40)))
+				if (GUILayout.Button("清空并拷贝所有补丁包到Assets/StreamingAssets目录", GUILayout.MaxWidth(300), GUILayout.MaxHeight(40)))
 				{
 					EditorApplication.delayCall += RefreshStreammingFolder;
 				}
 
-				if (GUILayout.Button("刷新输出主目录（清空后拷贝所有补丁包到输出主目录）", GUILayout.MaxWidth(300), GUILayout.MaxHeight(40)))
+				if (GUILayout.Button("清空并拷贝所有补丁包到BuildBundles/Manifest目录", GUILayout.MaxWidth(300), GUILayout.MaxHeight(40)))
 				{
 					EditorApplication.delayCall += RefreshOutputMainFolder;
 				}

@@ -114,6 +114,9 @@ public static class AssetHelper
 			Debug.Log($"拷贝版本文件到流目录：{sourcePath}");
 			EditorTools.CopyDirectory(sourcePath, streamingPath);
 		}
+
+		// 刷新目录
+		AssetDatabase.Refresh();
 	}
 
 	/// <summary>
