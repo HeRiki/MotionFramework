@@ -13,8 +13,8 @@ public class Test
 {
 	public void Start()
 	{
-		// 设置资源系统加载模式
-		AssetSystem.LoadMode = EAssetSystemMode.EditorMode;
+		// 设置资源系统模式
+		AssetSystem.SystemMode = EAssetSystemMode.EditorMode;
 	}
 }
 ```
