@@ -10,20 +10,24 @@ using UnityEngine.Networking;
 
 namespace MotionFramework.Network
 {
-	public class WebFileRequest : WebRequest
+	public class WebFileRequest : AbstractWebRequest
 	{
 		/// <summary>
 		/// 文件存储路径
 		/// </summary>
-		public string SavePath = string.Empty;
+		public string SavePath { private set; get; }
 
+		public WebFileRequest(string url, string savePath) : base(url)
+		{
+			SavePath = savePath;
+		}
 		public override IEnumerator DownLoad()
 		{
 			// Check fatal
-			if (LoadState != EWebLoadState.None)
-				throw new Exception($"Web file download state is not none state. {URL}");
+			if (States != EWebLoadStates.None)
+				throw new Exception($"{nameof(WebFileRequest)} is downloading yet : {URL}");
 
-			LoadState = EWebLoadState.Loading;
+			States = EWebLoadStates.Loading;
 
 			// 下载文件
 			CacheRequest = new UnityWebRequest(URL, UnityWebRequest.kHttpVerbGET);
@@ -38,15 +42,12 @@ namespace MotionFramework.Network
 			if (CacheRequest.isNetworkError || CacheRequest.isHttpError)
 			{
 				LogSystem.Log(ELogType.Warning, $"Failed to download web file : {URL} Error : {CacheRequest.error}");
-				LoadState = EWebLoadState.LoadFailed;
+				States = EWebLoadStates.Failed;
 			}
 			else
 			{
-				LoadState = EWebLoadState.LoadSucceed;
+				States = EWebLoadStates.Succeed;
 			}
-
-			// Invoke callback
-			LoadCallback?.Invoke(this);
 		}
 	}
 }

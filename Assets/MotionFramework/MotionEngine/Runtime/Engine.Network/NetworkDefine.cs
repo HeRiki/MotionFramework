@@ -16,11 +16,11 @@ namespace MotionFramework.Network
 	/// <summary>
 	/// 网络加载状态
 	/// </summary>
-	public enum EWebLoadState
+	public enum EWebLoadStates
 	{
 		None = 0,
-		Loading, //加载中
-		LoadSucceed, //加载成功
-		LoadFailed, //加载失败
+		Loading,
+		Succeed,
+		Failed,
 	}
 }

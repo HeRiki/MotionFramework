@@ -11,21 +11,23 @@ using UnityEngine.Networking;
 
 namespace MotionFramework.Network
 {
-	public class WebBundleRequest : WebRequest
+	public class WebBundleRequest : AbstractWebRequest
 	{
 		/// <summary>
 		/// 缓存的AssetBundle
 		/// </summary>
-		public AssetBundle CacheBundle = null;
+		public AssetBundle CacheBundle { private set; get; }
 
-
+		public WebBundleRequest(string url) : base(url)
+		{
+		}
 		public override IEnumerator DownLoad()
 		{
 			// Check fatal
-			if (LoadState != EWebLoadState.None)
-				throw new Exception($"Web bundle download state is not none state. {URL}");
+			if (States != EWebLoadStates.None)
+				throw new Exception($"{nameof(WebBundleRequest)} is downloading yet : {URL}");
 
-			LoadState = EWebLoadState.Loading;
+			States = EWebLoadStates.Loading;
 
 			// 下载文件
 #if UNITY_2017_4
@@ -41,19 +43,16 @@ namespace MotionFramework.Network
 			if (CacheRequest.isNetworkError || CacheRequest.isHttpError)
 			{
 				LogSystem.Log(ELogType.Warning, $"Failed to download web bundle : {URL} Error : {CacheRequest.error}");
-				LoadState = EWebLoadState.LoadFailed;
+				States = EWebLoadStates.Failed;
 			}
 			else
 			{
 				CacheBundle = DownloadHandlerAssetBundle.GetContent(CacheRequest);
 				if (CacheBundle == null)
-					LoadState = EWebLoadState.LoadFailed;
+					States = EWebLoadStates.Failed;
 				else
-					LoadState = EWebLoadState.LoadSucceed;
+					States = EWebLoadStates.Succeed;
 			}
-
-			// Invoke callback
-			LoadCallback?.Invoke(this);
 		}
 	}
 }

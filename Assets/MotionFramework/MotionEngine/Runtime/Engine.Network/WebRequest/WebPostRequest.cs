@@ -11,21 +11,24 @@ using UnityEngine.Networking;
 
 namespace MotionFramework.Network
 {
-	public class WebPostRequest : WebRequest
+	public class WebPostRequest : AbstractWebRequest
 	{
 		public string PostContent = null;
 
+		public WebPostRequest(string url) : base(url)
+		{
+		}
 		public override IEnumerator DownLoad()
 		{
 			// Check fatal
 			if (string.IsNullOrEmpty(PostContent))
-				throw new Exception($"Web post content is null or empty. {URL}");
+				throw new Exception($"{nameof(WebPostRequest)} post content is null or empty : {URL}");
 
 			// Check fatal
-			if (LoadState != EWebLoadState.None)
-				throw new Exception($"Web post download state is not none state. {URL}");
+			if (States != EWebLoadStates.None)
+				throw new Exception($"{nameof(WebPostRequest)} is downloading yet : {URL}");
 
-			LoadState = EWebLoadState.Loading;
+			States = EWebLoadStates.Loading;
 
 			// 投递数据
 			byte[] bodyRaw = Encoding.UTF8.GetBytes(PostContent);
@@ -44,20 +47,17 @@ namespace MotionFramework.Network
 			if (CacheRequest.isNetworkError || CacheRequest.isHttpError)
 			{
 				LogSystem.Log(ELogType.Warning, $"Failed to request web post : {URL} Error : {CacheRequest.error}");
-				LoadState = EWebLoadState.LoadFailed;
+				States = EWebLoadStates.Failed;
 			}
 			else
 			{
-				LoadState = EWebLoadState.LoadSucceed;
+				States = EWebLoadStates.Succeed;
 			}
-
-			// Invoke callback
-			LoadCallback?.Invoke(this);
 		}
 
 		public string GetResponse()
 		{
-			if (LoadState == EWebLoadState.LoadSucceed)
+			if (States == EWebLoadStates.Succeed)
 				return CacheRequest.downloadHandler.text;
 			else
 				return null;

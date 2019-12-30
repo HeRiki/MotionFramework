@@ -10,15 +10,18 @@ using UnityEngine.Networking;
 
 namespace MotionFramework.Network
 {
-	public class WebDataRequest : WebRequest
+	public class WebDataRequest : AbstractWebRequest
 	{
+		public WebDataRequest(string url) : base(url)
+		{
+		}
 		public override IEnumerator DownLoad()
 		{
 			// Check fatal
-			if (LoadState != EWebLoadState.None)
-				throw new Exception($"Web data download state is not none state. {URL}");
+			if (States != EWebLoadStates.None)
+				throw new Exception($"{nameof(WebDataRequest)} is downloading yet : {URL}");
 
-			LoadState = EWebLoadState.Loading;
+			States = EWebLoadStates.Loading;
 
 			// 下载文件
 			CacheRequest = new UnityWebRequest(URL, UnityWebRequest.kHttpVerbGET);
@@ -32,27 +35,24 @@ namespace MotionFramework.Network
 			if (CacheRequest.isNetworkError || CacheRequest.isHttpError)
 			{
 				LogSystem.Log(ELogType.Warning, $"Failed to download web data : {URL} Error : {CacheRequest.error}");
-				LoadState = EWebLoadState.LoadFailed;
+				States = EWebLoadStates.Failed;
 			}
 			else
 			{
-				LoadState = EWebLoadState.LoadSucceed;
+				States = EWebLoadStates.Succeed;
 			}
-
-			// Invoke callback
-			LoadCallback?.Invoke(this);
 		}
 
 		public byte[] GetData()
 		{
-			if (LoadState == EWebLoadState.LoadSucceed)
+			if (States == EWebLoadStates.Succeed)
 				return CacheRequest.downloadHandler.data;
 			else
 				return null;
 		}
 		public string GetText()
 		{
-			if (LoadState == EWebLoadState.LoadSucceed)
+			if (States == EWebLoadStates.Succeed)
 				return CacheRequest.downloadHandler.text;
 			else
 				return null;

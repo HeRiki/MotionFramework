@@ -13,20 +13,15 @@ namespace MotionFramework.Network
 	/// 下载器基类
 	/// 说明：UnityWebRequest(UWR) supports reading streaming assets since 2017.1
 	/// </summary>
-	public abstract class WebRequest
+	public abstract class AbstractWebRequest
 	{
 		/// <summary>
 		/// 下载路径
 		/// </summary>
-		public string URL;
+		public string URL { private set; get; }
 
 		/// <summary>
-		/// 下载完成回调
-		/// </summary>
-		public System.Action<WebRequest> LoadCallback;
-
-		/// <summary>
-		/// 下载进度（0-100）
+		/// 下载进度（0-100f）
 		/// </summary>
 		public float DownloadProgress
 		{
@@ -54,7 +49,7 @@ namespace MotionFramework.Network
 		/// <summary>
 		/// 下载状态
 		/// </summary>
-		public EWebLoadState LoadState { get; protected set; }
+		public EWebLoadStates States { get; protected set; }
 
 		/// <summary>
 		/// 缓存的UnityWebRequest
@@ -62,9 +57,10 @@ namespace MotionFramework.Network
 		protected UnityWebRequest CacheRequest;
 
 
-		public WebRequest()
+		public AbstractWebRequest(string url)
 		{
-			LoadState = EWebLoadState.None;
+			URL = url;
+			States = EWebLoadStates.None;
 		}
 
 		/// <summary>
@@ -89,7 +85,7 @@ namespace MotionFramework.Network
 		/// </summary>
 		public bool IsDone()
 		{
-			return LoadState == EWebLoadState.LoadSucceed || LoadState == EWebLoadState.LoadFailed;
+			return States == EWebLoadStates.Succeed || States == EWebLoadStates.Failed;
 		}
 	}
 }
