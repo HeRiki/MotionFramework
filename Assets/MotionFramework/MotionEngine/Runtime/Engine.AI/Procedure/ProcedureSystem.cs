@@ -62,7 +62,7 @@ namespace MotionFramework.AI
 		/// <summary>
 		/// 当前流程类型
 		/// </summary>
-		public int CurrentProcedure()
+		public int Current()
 		{
 			return _system.RunStateType;
 		}
@@ -70,7 +70,7 @@ namespace MotionFramework.AI
 		/// <summary>
 		/// 切换流程
 		/// </summary>
-		public void SwitchProcedure(int procedure)
+		public void Switch(int procedure)
 		{
 			_system.ChangeState(procedure);
 		}
@@ -78,7 +78,7 @@ namespace MotionFramework.AI
 		/// <summary>
 		/// 切换至下一流程
 		/// </summary>
-		public void SwitchNextProcedure()
+		public void SwitchNext()
 		{
 			int index = _types.IndexOf(_system.RunStateType);
 			if (index >= _types.Count - 1)
@@ -87,14 +87,14 @@ namespace MotionFramework.AI
 			}
 			else
 			{
-				SwitchProcedure(_types[index + 1]);
+				Switch(_types[index + 1]);
 			}
 		}
 
 		/// <summary>
 		/// 切换至上一流程
 		/// </summary>
-		public void SwitchLastProcedure()
+		public void SwitchLast()
 		{
 			int index = _types.IndexOf(_system.RunStateType);
 			if (index <= 0)
@@ -103,7 +103,7 @@ namespace MotionFramework.AI
 			}
 			else
 			{
-				SwitchProcedure(_types[index - 1]);
+				Switch(_types[index - 1]);
 			}
 		}
 	}
