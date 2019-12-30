@@ -57,7 +57,7 @@ public class AssetBuilder
 		// 构建版本
 		BuildVersion = buildVersion;
 		// 输出路径
-		OutputPath = $"{_outputRoot}/{buildTarget}/{PatchDefine.StrBuildManifestFileName}";
+		OutputPath = $"{_outputRoot}/{buildTarget}/{PatchDefine.StrManifestFileName}";
 	}
 
 	/// <summary>
@@ -69,22 +69,22 @@ public class AssetBuilder
 
 		// 检测构建平台是否合法
 		if (BuildTarget == BuildTarget.NoTarget)
-			throw new Exception("[BuildPackage] 请选择目标平台");
+			throw new Exception("[BuildPatch] 请选择目标平台");
 
 		// 检测构建版本是否合法
 		if (EditorTools.IsNumber(BuildVersion.ToString()) == false)
-			throw new Exception($"[BuildPackage] 版本号格式非法：{BuildVersion}");
+			throw new Exception($"[BuildPatch] 版本号格式非法：{BuildVersion}");
 		if (BuildVersion < 0)
-			throw new Exception("[BuildPackage] 请先设置版本号");
+			throw new Exception("[BuildPatch] 请先设置版本号");
 
 		// 检测输出目录是否为空
 		if (string.IsNullOrEmpty(OutputPath))
-			throw new Exception("[BuildPackage] 输出目录不能为空");
+			throw new Exception("[BuildPatch] 输出目录不能为空");
 
 		// 检测补丁包是否已经存在
-		string packagePath = GetPackagePath();
-		if (Directory.Exists(packagePath))
-			throw new Exception($"[BuildPackage] 补丁包已经存在：{packagePath}");
+		string patchFolderPath = GetPatchFolderPath();
+		if (Directory.Exists(patchFolderPath))
+			throw new Exception($"[BuildPatch] 补丁包已经存在：{patchFolderPath}");
 
 		// 检测标签是否有冲突
 		CheckTagNameConflict();
@@ -120,7 +120,7 @@ public class AssetBuilder
 		List<AssetBundleBuild> buildInfoList = new List<AssetBundleBuild>();
 		List<AssetInfo> assetInfoList = PrepareWork();
 		if (assetInfoList.Count == 0)
-			throw new Exception("[BuildPackage] 构建列表不能为空");
+			throw new Exception("[BuildPatch] 构建列表不能为空");
 
 		ShowBuildLog($"构建列表里总共有{assetInfoList.Count}个资源需要构建");
 		for (int i = 0; i < assetInfoList.Count; i++)
@@ -138,7 +138,7 @@ public class AssetBuilder
 		BuildAssetBundleOptions opt = MakeBuildOptions();
 		AssetBundleManifest buildManifest = BuildPipeline.BuildAssetBundles(OutputPath, buildInfoList.ToArray(), opt, BuildTarget);
 		if (buildManifest == null)
-			throw new Exception("[BuildPackage] 构建过程中发生错误！");
+			throw new Exception("[BuildPatch] 构建过程中发生错误！");
 
 		// 清单列表
 		string[] allAssetBundles = buildManifest.GetAllAssetBundles();
@@ -150,7 +150,7 @@ public class AssetBuilder
 		EncryptFiles(allAssetBundles);
 
 		// 创建补丁文件
-		CreatePackageFile(allAssetBundles);
+		CreatePatchFile(allAssetBundles);
 		// 创建说明文件
 		CreateReadmeFile(allAssetBundles);
 
@@ -193,7 +193,7 @@ public class AssetBuilder
 	/// </summary>
 	private void ShowBuildLog(string log)
 	{
-		Debug.Log($"[BuildPackage] {log}");
+		Debug.Log($"[BuildPatch] {log}");
 	}
 
 	/// <summary>
@@ -257,7 +257,7 @@ public class AssetBuilder
 		// 获取所有的打包路径
 		List<string> collectPathList = BuildSettingData.GetAllCollectPath();
 		if (collectPathList.Count == 0)
-			throw new Exception("[BuildPackage] 配置的打包路径列表为空");
+			throw new Exception("[BuildPatch] 配置的打包路径列表为空");
 
 		// 获取所有资源
 		string[] guids = AssetDatabase.FindAssets(string.Empty, collectPathList.ToArray());
@@ -467,13 +467,13 @@ public class AssetBuilder
 	/// <summary>
 	/// 1. 创建补丁文件到输出目录
 	/// </summary>
-	private void CreatePackageFile(string[] allAssetBundles)
+	private void CreatePatchFile(string[] allAssetBundles)
 	{
 		// 加载旧文件
 		PatchFile patchFile = LoadPatchFile();
 
 		// 删除旧文件
-		string filePath = OutputPath + $"/{PatchDefine.StrBuildPackageFileName}";
+		string filePath = OutputPath + $"/{PatchDefine.StrPatchFileName}";
 		if (File.Exists(filePath))
 			File.Delete(filePath);
 
@@ -490,7 +490,7 @@ public class AssetBuilder
 
 			// 写入Manifest文件的信息
 			{
-				string assetName = PatchDefine.StrBuildManifestFileName;
+				string assetName = PatchDefine.StrManifestFileName;
 				string path = $"{OutputPath}/{assetName}";
 				string md5 = HashUtility.FileMD5(path);
 				long sizeKB = EditorTools.GetFileSize(path) / 1024;
@@ -588,41 +588,41 @@ public class AssetBuilder
 	}
 
 	/// <summary>
-	/// 3. 复制更新文件到补丁目录
+	/// 3. 复制更新文件到补丁包目录
 	/// </summary>
 	private void CopyUpdateFiles()
 	{
-		string packagePath = GetPackagePath();
-		ShowBuildLog($"开始复制更新文件到版本目录：{packagePath}");
+		string patchFolderPath = GetPatchFolderPath();
+		ShowBuildLog($"开始复制更新文件到补丁包目录：{patchFolderPath}");
 
 		// 复制Readme文件
 		{
 			string sourcePath = $"{OutputPath}/readme.txt";
-			string destPath = $"{packagePath}/readme.txt";
+			string destPath = $"{patchFolderPath}/readme.txt";
 			EditorTools.CopyFile(sourcePath, destPath, true);
 			ShowBuildLog($"复制Readme文件到：{destPath}");
 		}
 
 		// 复制补丁文件
 		{
-			string sourcePath = $"{OutputPath}/{PatchDefine.StrBuildPackageFileName}";
-			string destPath = $"{packagePath}/{PatchDefine.StrBuildPackageFileName}";
+			string sourcePath = $"{OutputPath}/{PatchDefine.StrPatchFileName}";
+			string destPath = $"{patchFolderPath}/{PatchDefine.StrPatchFileName}";
 			EditorTools.CopyFile(sourcePath, destPath, true);
-			ShowBuildLog($"复制Package文件到：{destPath}");
+			ShowBuildLog($"复制Patch文件到：{destPath}");
 		}
 
 		// 复制Manifest文件
 		{
-			string sourcePath = $"{OutputPath}/{PatchDefine.StrBuildManifestFileName}";
-			string destPath = $"{packagePath}/{PatchDefine.StrBuildManifestFileName}";
+			string sourcePath = $"{OutputPath}/{PatchDefine.StrManifestFileName}";
+			string destPath = $"{patchFolderPath}/{PatchDefine.StrManifestFileName}";
 			EditorTools.CopyFile(sourcePath, destPath, true);
 			ShowBuildLog($"复制Manifest文件到：{destPath}");
 		}
 
 		// 复制Manifest文件
 		{
-			string sourcePath = $"{OutputPath}/{PatchDefine.StrBuildManifestFileName}.manifest";
-			string destPath = $"{packagePath}/{PatchDefine.StrBuildManifestFileName}.manifest";
+			string sourcePath = $"{OutputPath}/{PatchDefine.StrManifestFileName}.manifest";
+			string destPath = $"{patchFolderPath}/{PatchDefine.StrManifestFileName}.manifest";
 			EditorTools.CopyFile(sourcePath, destPath, true);
 		}
 
@@ -633,13 +633,13 @@ public class AssetBuilder
 			if (pair.Value.Version == BuildVersion)
 			{
 				string sourcePath = $"{OutputPath}/{pair.Key}";
-				string destPath = $"{packagePath}/{pair.Key}";
+				string destPath = $"{patchFolderPath}/{pair.Key}";
 				EditorTools.CopyFile(sourcePath, destPath, true);
 				ShowBuildLog($"复制更新文件：{destPath}");
 			}
 		}
 	}
-	private string GetPackagePath()
+	private string GetPatchFolderPath()
 	{
 		return $"{_outputRoot}/{BuildTarget}/{BuildVersion}";
 	}
@@ -649,7 +649,7 @@ public class AssetBuilder
 	/// </summary>
 	private PatchFile LoadPatchFile()
 	{
-		string filePath = $"{OutputPath}/{PatchDefine.StrBuildPackageFileName}";
+		string filePath = $"{OutputPath}/{PatchDefine.StrPatchFileName}";
 
 		PatchFile patchFile = new PatchFile();
 

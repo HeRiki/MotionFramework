@@ -126,7 +126,7 @@ public static class AssetHelper
 	public static void CopyPackageToManifestFolder(BuildTarget buildTarget, string outputRoot, int targetPackageVersion = -1)
 	{
 		string parentPath = $"{outputRoot}/{buildTarget}";
-		string outputPath = $"{outputRoot}/{buildTarget}/{PatchDefine.StrBuildManifestFileName}";
+		string outputPath = $"{outputRoot}/{buildTarget}/{PatchDefine.StrManifestFileName}";
 
 		// 获取所有Package文件夹
 		List<int> versionList = GetPackageVersionList(buildTarget, outputRoot);
