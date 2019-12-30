@@ -25,19 +25,19 @@ namespace MotionFramework
 		{
 			if (_callback != null)
 			{
-				string message = string.Format(format, args);
-				_callback.Invoke(logType, message);
+				string log = string.Format(format, args);
+				_callback.Invoke(logType, log);
 			}
 		}
 
 		/// <summary>
 		/// 输出日志
 		/// </summary>
-		public static void Log(ELogType logType, string message)
+		public static void Log(ELogType logType, string log)
 		{
 			if (_callback != null)
 			{
-				_callback.Invoke(logType, message);
+				_callback.Invoke(logType, log);
 			}
 		}
 	}
