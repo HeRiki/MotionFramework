@@ -20,21 +20,43 @@ namespace MotionFramework.Patch
 		public static readonly PatchManager Instance = new PatchManager();
 
 		private readonly ProcedureSystem _system = new ProcedureSystem();
-
-		/// <summary>
-		/// 沙盒内静态文件名称
-		/// </summary>
 		private const string StrStaticFileName = "static.bytes";
+		private string _strCDNServerIP;
+		private string _strWebServerIP;
 
 		/// <summary>
 		/// CDN地址
 		/// </summary>
-		public string StrCDNServerIP;
+		public string StrCDNServerIP
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(_strCDNServerIP))
+					throw new Exception("Web server ip is null or empty");
+				return _strCDNServerIP;
+			}
+			set
+			{
+				_strCDNServerIP = value;
+			}
+		}
 
 		/// <summary>
 		/// WEB地址
 		/// </summary>
-		public string StrWebServerIP;
+		public string StrWebServerIP
+		{
+			get
+			{
+				if (string.IsNullOrEmpty(_strWebServerIP))
+					throw new Exception("Web server ip is null or empty");
+				return _strWebServerIP;
+			}
+			set
+			{
+				_strWebServerIP = value;
+			}
+		}
 
 		/// <summary>
 		/// 是否跳过CDN服务器
@@ -64,11 +86,6 @@ namespace MotionFramework.Patch
 		}
 		public void Start()
 		{
-			if (string.IsNullOrEmpty(StrCDNServerIP))
-				throw new Exception("CDN server ip is null or empty");
-			if (string.IsNullOrEmpty(StrWebServerIP))
-				throw new Exception("Web server ip is null or empty");
-
 			// 注意：按照先后顺序添加流程节点
 			_system.AddProcedure(new FsmPatchPrepare(_system));
 			_system.AddProcedure(new FsmCheckSandboxDirty(_system));
@@ -81,6 +98,7 @@ namespace MotionFramework.Patch
 			_system.AddProcedure(new FsmDownloadWebFilesFinish(_system));
 			_system.AddProcedure(new FsmPatchOver(_system));
 			_system.AddProcedure(new FsmPatchError(_system));
+			_system.Run();
 		}
 		public void Update()
 		{
@@ -282,7 +300,7 @@ namespace MotionFramework.Patch
 		}
 
 		/// <summary>
-		/// 获取沙盒目录下静态文件的路径
+		/// 获取沙盒内静态文件的路径
 		/// </summary>
 		public static string GetSandboxStaticFilePath()
 		{
@@ -290,7 +308,7 @@ namespace MotionFramework.Patch
 		}
 
 		/// <summary>
-		/// 检测沙盒目录下静态文件是否存在
+		/// 检测沙盒内静态文件是否存在
 		/// </summary>
 		public static bool CheckSandboxStaticFileExist()
 		{
@@ -299,7 +317,7 @@ namespace MotionFramework.Patch
 		}
 
 		/// <summary>
-		/// 检测沙盒目录下补丁文件是否存在
+		/// 检测沙盒内补丁文件是否存在
 		/// </summary>
 		public static bool CheckSandboxPatchFileExist()
 		{
@@ -308,7 +326,7 @@ namespace MotionFramework.Patch
 		}
 
 		/// <summary>
-		/// 检测沙盒目录下清单文件是否存在
+		/// 检测沙盒内清单文件是否存在
 		/// </summary>
 		public static bool CheckSandboxManifestFileExist()
 		{
@@ -335,34 +353,39 @@ namespace MotionFramework.Patch
 		{
 			PatchEventMessageDefine.PatchStatesChange msg = new PatchEventMessageDefine.PatchStatesChange();
 			msg.CurrentStates = currentStates;
-			EventManager.Instance.Send(EPatchEventMessageTag.PatchManagerEvent.ToString(), msg);
+			EventManager.Instance.SendMessage(EPatchEventMessageTag.PatchManagerEvent.ToString(), msg);
 		}
 		public static void SendFoundNewAPPMsg(string newVersion)
 		{
 			PatchEventMessageDefine.FoundNewAPP msg = new PatchEventMessageDefine.FoundNewAPP();
 			msg.NewVersion = newVersion;
-			EventManager.Instance.Send(EPatchEventMessageTag.PatchManagerEvent.ToString(), msg);
+			EventManager.Instance.SendMessage(EPatchEventMessageTag.PatchManagerEvent.ToString(), msg);
 		}
-		public static void SendDownloadProgressMsg(int totalDownloadCount, int currentDownloadCount, long totalDownloadSizeKB, long currentDownloadSizeKB)
+		public static void SendDownloadFilesProgressMsg(int totalDownloadCount, int currentDownloadCount, long totalDownloadSizeKB, long currentDownloadSizeKB)
 		{
-			PatchEventMessageDefine.DownloadProgress msg = new PatchEventMessageDefine.DownloadProgress();
+			PatchEventMessageDefine.DownloadFilesProgress msg = new PatchEventMessageDefine.DownloadFilesProgress();
 			msg.TotalDownloadCount = totalDownloadCount;
 			msg.CurrentDownloadCount = currentDownloadCount;			
 			msg.TotalDownloadSizeKB = totalDownloadSizeKB;
 			msg.CurrentDownloadSizeKB = currentDownloadSizeKB;
-			EventManager.Instance.Send(EPatchEventMessageTag.PatchManagerEvent.ToString(), msg);
+			EventManager.Instance.SendMessage(EPatchEventMessageTag.PatchManagerEvent.ToString(), msg);
 		}
 		public static void SendWebFileDownloadFailedMsg(string filePath)
 		{
 			PatchEventMessageDefine.WebFileDownloadFailed msg = new PatchEventMessageDefine.WebFileDownloadFailed();
 			msg.FilePath = filePath;
-			EventManager.Instance.Send(EPatchEventMessageTag.PatchManagerEvent.ToString(), msg);
+			EventManager.Instance.SendMessage(EPatchEventMessageTag.PatchManagerEvent.ToString(), msg);
 		}
 		public static void SendWebFileMD5VerifyFailedMsg(string filePath)
 		{
 			PatchEventMessageDefine.WebFileMD5VerifyFailed msg = new PatchEventMessageDefine.WebFileMD5VerifyFailed();
 			msg.FilePath = filePath;
-			EventManager.Instance.Send(EPatchEventMessageTag.PatchManagerEvent.ToString(), msg);
+			EventManager.Instance.SendMessage(EPatchEventMessageTag.PatchManagerEvent.ToString(), msg);
+		}
+		public static void SendPatchOverMsg()
+		{
+			PatchEventMessageDefine.PatchOver msg = new PatchEventMessageDefine.PatchOver();
+			EventManager.Instance.SendMessage(EPatchEventMessageTag.PatchManagerEvent.ToString(), msg);
 		}
 		#endregion
 	}

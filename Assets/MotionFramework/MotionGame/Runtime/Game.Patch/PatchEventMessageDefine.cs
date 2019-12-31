@@ -35,9 +35,9 @@ namespace MotionFramework.Patch
 		}
 
 		/// <summary>
-		/// 文件下载进度
+		/// 下载文件列表进度
 		/// </summary>
-		public class DownloadProgress : IEventMessage
+		public class DownloadFilesProgress : IEventMessage
 		{
 			public int TotalDownloadCount;
 			public int CurrentDownloadCount;	
@@ -59,6 +59,13 @@ namespace MotionFramework.Patch
 		public class WebFileMD5VerifyFailed : IEventMessage
 		{
 			public string FilePath;
+		}
+
+		/// <summary>
+		/// 补丁更新结束
+		/// </summary>
+		public class PatchOver : IEventMessage
+		{
 		}
 	}
 }

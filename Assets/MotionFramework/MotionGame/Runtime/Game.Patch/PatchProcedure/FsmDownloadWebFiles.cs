@@ -76,7 +76,7 @@ namespace MotionFramework.Patch
 				download.Dispose();
 				currentDownloadCount++;
 				currentDownloadSizeKB += element.SizeKB;
-				PatchManager.SendDownloadProgressMsg(totalDownloadCount, currentDownloadCount, totalDownloadSizeKB, currentDownloadSizeKB);
+				PatchManager.SendDownloadFilesProgressMsg(totalDownloadCount, currentDownloadCount, totalDownloadSizeKB, currentDownloadSizeKB);
 			}
 
 			// 验证下载文件的MD5

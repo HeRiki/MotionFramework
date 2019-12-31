@@ -20,6 +20,7 @@ namespace MotionFramework.Patch
 		public override void Enter()
 		{
 			PatchManager.SendPatchStatesChangeMsg((EPatchStates)_system.Current());
+			PatchManager.SendPatchOverMsg();
 			PatchManager.Log(ELogType.Log, "Patch Over");
 		}
 		public override void Execute()

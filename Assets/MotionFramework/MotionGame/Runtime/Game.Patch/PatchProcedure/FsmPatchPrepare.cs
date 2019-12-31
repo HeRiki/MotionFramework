@@ -6,6 +6,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using MotionFramework.AI;
+using MotionFramework.Resource;
 
 namespace MotionFramework.Patch
 {
@@ -24,7 +25,10 @@ namespace MotionFramework.Patch
 		}
 		public override void Execute()
 		{
-			_system.SwitchNext();
+			if (AssetSystem.SystemMode == EAssetSystemMode.BundleMode)
+				_system.SwitchNext();
+			else
+				_system.Switch((int)EPatchStates.PatchOver);
 		}
 		public override void Exit()
 		{

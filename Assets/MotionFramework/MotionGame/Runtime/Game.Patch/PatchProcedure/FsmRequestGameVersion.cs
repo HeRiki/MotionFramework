@@ -35,7 +35,7 @@ namespace MotionFramework.Patch
 			// 如果跳过CDN服务器
 			if (PatchManager.Instance.SkipCDN)
 			{
-				PatchManager.Log(ELogType.Log, $"Skip CDN server !");
+				PatchManager.Log(ELogType.Warning, $"Skip CDN server !");
 				system.Switch((int)EPatchStates.PatchOver);
 				yield break;
 			}
