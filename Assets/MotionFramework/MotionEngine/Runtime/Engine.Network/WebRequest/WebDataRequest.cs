@@ -10,7 +10,7 @@ using UnityEngine.Networking;
 
 namespace MotionFramework.Network
 {
-	public class WebDataRequest : AbstractWebRequest
+	public class WebDataRequest : WebRequest
 	{
 		public WebDataRequest(string url) : base(url)
 		{
@@ -18,10 +18,10 @@ namespace MotionFramework.Network
 		public override IEnumerator DownLoad()
 		{
 			// Check fatal
-			if (States != EWebLoadStates.None)
+			if (States != EWebRequestStates.None)
 				throw new Exception($"{nameof(WebDataRequest)} is downloading yet : {URL}");
 
-			States = EWebLoadStates.Loading;
+			States = EWebRequestStates.Loading;
 
 			// 下载文件
 			CacheRequest = new UnityWebRequest(URL, UnityWebRequest.kHttpVerbGET);
@@ -35,24 +35,24 @@ namespace MotionFramework.Network
 			if (CacheRequest.isNetworkError || CacheRequest.isHttpError)
 			{
 				LogSystem.Log(ELogType.Warning, $"Failed to download web data : {URL} Error : {CacheRequest.error}");
-				States = EWebLoadStates.Failed;
+				States = EWebRequestStates.Failed;
 			}
 			else
 			{
-				States = EWebLoadStates.Succeed;
+				States = EWebRequestStates.Succeed;
 			}
 		}
 
 		public byte[] GetData()
 		{
-			if (States == EWebLoadStates.Succeed)
+			if (States == EWebRequestStates.Succeed)
 				return CacheRequest.downloadHandler.data;
 			else
 				return null;
 		}
 		public string GetText()
 		{
-			if (States == EWebLoadStates.Succeed)
+			if (States == EWebRequestStates.Succeed)
 				return CacheRequest.downloadHandler.text;
 			else
 				return null;

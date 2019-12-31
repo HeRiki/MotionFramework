@@ -11,7 +11,7 @@ using UnityEngine.Networking;
 
 namespace MotionFramework.Network
 {
-	public class WebPostRequest : AbstractWebRequest
+	public class WebPostRequest : WebRequest
 	{
 		public string PostContent = null;
 
@@ -25,10 +25,10 @@ namespace MotionFramework.Network
 				throw new Exception($"{nameof(WebPostRequest)} post content is null or empty : {URL}");
 
 			// Check fatal
-			if (States != EWebLoadStates.None)
+			if (States != EWebRequestStates.None)
 				throw new Exception($"{nameof(WebPostRequest)} is downloading yet : {URL}");
 
-			States = EWebLoadStates.Loading;
+			States = EWebRequestStates.Loading;
 
 			// 投递数据
 			byte[] bodyRaw = Encoding.UTF8.GetBytes(PostContent);
@@ -47,17 +47,17 @@ namespace MotionFramework.Network
 			if (CacheRequest.isNetworkError || CacheRequest.isHttpError)
 			{
 				LogSystem.Log(ELogType.Warning, $"Failed to request web post : {URL} Error : {CacheRequest.error}");
-				States = EWebLoadStates.Failed;
+				States = EWebRequestStates.Failed;
 			}
 			else
 			{
-				States = EWebLoadStates.Succeed;
+				States = EWebRequestStates.Succeed;
 			}
 		}
 
 		public string GetResponse()
 		{
-			if (States == EWebLoadStates.Succeed)
+			if (States == EWebRequestStates.Succeed)
 				return CacheRequest.downloadHandler.text;
 			else
 				return null;

@@ -10,7 +10,7 @@ using UnityEngine.Networking;
 
 namespace MotionFramework.Network
 {
-	public class WebFileRequest : AbstractWebRequest
+	public class WebFileRequest : WebRequest
 	{
 		/// <summary>
 		/// 文件存储路径
@@ -24,10 +24,10 @@ namespace MotionFramework.Network
 		public override IEnumerator DownLoad()
 		{
 			// Check fatal
-			if (States != EWebLoadStates.None)
+			if (States != EWebRequestStates.None)
 				throw new Exception($"{nameof(WebFileRequest)} is downloading yet : {URL}");
 
-			States = EWebLoadStates.Loading;
+			States = EWebRequestStates.Loading;
 
 			// 下载文件
 			CacheRequest = new UnityWebRequest(URL, UnityWebRequest.kHttpVerbGET);
@@ -42,11 +42,11 @@ namespace MotionFramework.Network
 			if (CacheRequest.isNetworkError || CacheRequest.isHttpError)
 			{
 				LogSystem.Log(ELogType.Warning, $"Failed to download web file : {URL} Error : {CacheRequest.error}");
-				States = EWebLoadStates.Failed;
+				States = EWebRequestStates.Failed;
 			}
 			else
 			{
-				States = EWebLoadStates.Succeed;
+				States = EWebRequestStates.Succeed;
 			}
 		}
 	}
