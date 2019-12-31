@@ -10,9 +10,9 @@ using UnityEngine;
 
 namespace MotionFramework.Resource
 {
-	public class AssetDatabaseLoader : AssetFileLoader
+	public class AssetDatabaseFileLoader : AssetFileLoader
 	{
-		public AssetDatabaseLoader(string loadPath)
+		public AssetDatabaseFileLoader(string loadPath)
 			: base(loadPath)
 		{
 		}

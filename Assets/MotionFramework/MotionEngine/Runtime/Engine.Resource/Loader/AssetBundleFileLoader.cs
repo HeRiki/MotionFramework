@@ -10,17 +10,14 @@ using UnityEngine;
 
 namespace MotionFramework.Resource
 {
-	/// <summary>
-	/// AssetBundle接口加载器
-	/// </summary>
-	public class AssetBundleLoader : AssetFileLoader
+	public class AssetBundleFileLoader : AssetFileLoader
 	{
 		private readonly List<AssetFileLoader> _depends = new List<AssetFileLoader>(10);
 		private string _manifestPath = string.Empty;
 		private AssetBundleCreateRequest _cacheRequest;
 		internal AssetBundle CacheBundle { private set; get; }
 
-		public AssetBundleLoader(string loadPath, string manifestPath)
+		public AssetBundleFileLoader(string loadPath, string manifestPath)
 			: base(loadPath)
 		{
 			_manifestPath = manifestPath;

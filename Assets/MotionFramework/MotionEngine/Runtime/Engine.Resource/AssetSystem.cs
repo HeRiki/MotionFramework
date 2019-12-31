@@ -102,11 +102,11 @@ namespace MotionFramework.Resource
 			// 创建加载器
 			AssetFileLoader newLoader = null;
 			if (SystemMode == EAssetSystemMode.EditorMode)
-				newLoader = new AssetDatabaseLoader(loadPath);
+				newLoader = new AssetDatabaseFileLoader(loadPath);
 			else if (SystemMode == EAssetSystemMode.ResourcesMode)
-				newLoader = new AssetResourceLoader(loadPath);
+				newLoader = new AssetResourcesFileLoader(loadPath);
 			else if (SystemMode == EAssetSystemMode.BundleMode)
-				newLoader = new AssetBundleLoader(loadPath, manifestPath);
+				newLoader = new AssetBundleFileLoader(loadPath, manifestPath);
 			else
 				throw new NotImplementedException($"{SystemMode}");
 

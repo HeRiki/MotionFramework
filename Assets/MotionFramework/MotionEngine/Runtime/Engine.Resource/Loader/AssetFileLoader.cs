@@ -9,7 +9,7 @@ using System;
 namespace MotionFramework.Resource
 {
 	/// <summary>
-	/// 资源加载器基类
+	/// 资源文件加载器
 	/// </summary>
 	public abstract class AssetFileLoader
 	{
@@ -100,12 +100,12 @@ namespace MotionFramework.Resource
 				}
 				else
 				{
-					if (this is AssetBundleLoader)
+					if (this is AssetBundleFileLoader)
 						provider = new AssetBundleProvider(this, assetName, assetType);
-					else if (this is AssetDatabaseLoader)
+					else if (this is AssetDatabaseFileLoader)
 						provider = new AssetDatabaseProvider(this, assetName, assetType);
-					else if (this is AssetResourceLoader)
-						provider = new AssetResourceProvider(this, assetName, assetType);
+					else if (this is AssetResourcesFileLoader)
+						provider = new AssetResourcesProvider(this, assetName, assetType);
 					else
 						throw new NotImplementedException($"{this.GetType()}");
 				}
