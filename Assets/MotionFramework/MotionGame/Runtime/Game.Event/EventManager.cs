@@ -57,9 +57,9 @@ namespace MotionFramework.Event
 		}
 
 		/// <summary>
-		/// 发送事件
+		/// 发送事件消息
 		/// </summary>
-		public void Send(string eventTag, IEventMessage message)
+		public void SendMessage(string eventTag, IEventMessage message)
 		{
 			InternalSystem.Broadcast(eventTag, message);
 		}
