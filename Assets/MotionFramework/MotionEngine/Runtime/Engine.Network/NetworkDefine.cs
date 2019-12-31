@@ -14,9 +14,9 @@ namespace MotionFramework.Network
 	}
 
 	/// <summary>
-	/// 网络加载状态
+	/// 网络请求状态
 	/// </summary>
-	public enum EWebLoadStates
+	public enum EWebRequestStates
 	{
 		None = 0,
 		Loading,

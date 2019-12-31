@@ -259,16 +259,9 @@ namespace MotionFramework.Network
 		#region 主动连接
 		private class UserToken
 		{
-			public OnConnectServer Callback;
+			public System.Action<TChannel, SocketError> Callback;
 			public System.Type PackageParseType;
 		}
-
-		/// <summary>
-		/// 网络连接的委托类型
-		/// </summary>
-		/// <param name="channel">通信频道</param>
-		/// <param name="error">连接结果</param>
-		public delegate void OnConnectServer(TChannel channel, SocketError error);
 
 		/// <summary>
 		/// 异步连接
@@ -276,7 +269,7 @@ namespace MotionFramework.Network
 		/// <param name="remote">IP终端</param>
 		/// <param name="callback">连接回调</param>
 		/// <param name="packageParseType">网络包解析器</param>
-		public void ConnectAsync(IPEndPoint remote, OnConnectServer callback, System.Type packageParseType)
+		public void ConnectAsync(IPEndPoint remote, System.Action<TChannel, SocketError> callback, System.Type packageParseType)
 		{
 			UserToken token = new UserToken()
 			{

@@ -21,7 +21,7 @@ namespace MotionFramework.Network
 		private readonly Queue<System.Object> _receiveQueue = new Queue<System.Object>(10000);
 		private readonly List<System.Object> _decodeTempList = new List<object>(100);
 
-		private NetPackageParser _packageParser = null;
+		private NetMessagePacker _packageParser = null;
 
 		private bool _isSending = false;
 		private bool _isReceiving = false;
@@ -53,7 +53,7 @@ namespace MotionFramework.Network
 			IOSocket.NoDelay = true;
 
 			// 创建解析器
-			_packageParser = (NetPackageParser)Activator.CreateInstance(packageParseType);
+			_packageParser = (NetMessagePacker)Activator.CreateInstance(packageParseType);
 			_packageParser.InitChannel(this);
 
 			_receiveArgs.Completed += new EventHandler<SocketAsyncEventArgs>(IO_Completed);

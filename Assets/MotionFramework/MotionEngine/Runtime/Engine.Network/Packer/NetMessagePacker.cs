@@ -9,17 +9,14 @@ using MotionFramework.IO;
 
 namespace MotionFramework.Network
 {
-	/// <summary>
-	/// 网络消息解析器基类
-	/// </summary>
-	public abstract class NetPackageParser
+	public abstract class NetMessagePacker
 	{
 		protected readonly ByteBuffer _sendBuffer = new ByteBuffer(NetworkDefine.ByteBufferSize);
 		protected readonly ByteBuffer _receiveBuffer = new ByteBuffer(NetworkDefine.ByteBufferSize);
 		public TChannel Channel { private set; get; }
 
 
-		public NetPackageParser()
+		public NetMessagePacker()
 		{	
 		}
 
