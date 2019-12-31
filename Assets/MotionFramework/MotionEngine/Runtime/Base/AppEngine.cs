@@ -17,16 +17,15 @@ namespace MotionFramework
 		/// </summary>
 		private class ModuleWrapper
 		{
-			internal bool IsStart = false;
+			public bool IsStart = false;
 			public int Priority { get; private set; }
-			public IModule Module { get; private set; }
+			public IGameModule Module { get; private set; }
 
-			public ModuleWrapper(IModule module, int priority)
+			public ModuleWrapper(IGameModule module, int priority)
 			{
 				Module = module;
 				Priority = priority;
 			}
-
 			public void SetPriority(int priority)
 			{
 				Priority = priority;
@@ -61,7 +60,7 @@ namespace MotionFramework
 		/// </summary>
 		/// <param name="module">要注册的模块</param>
 		/// <param name="priority">运行时的优先级，优先级越大越早执行。如果没有设置优先级，那么会按照添加顺序执行</param>
-		public void RegisterModule(IModule module, int priority = 0)
+		public void RegisterModule(IGameModule module, int priority = 0)
 		{
 			if (module == null)
 				throw new ArgumentNullException();

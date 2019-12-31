@@ -7,9 +7,9 @@
 namespace MotionFramework
 {
 	/// <summary>
-	/// 模块接口
+	/// 游戏模块接口
 	/// </summary>
-	public interface IModule
+	public interface IGameModule
 	{
 		/// <summary>
 		/// 当模块被注册的时候被调用，仅被执行一次
