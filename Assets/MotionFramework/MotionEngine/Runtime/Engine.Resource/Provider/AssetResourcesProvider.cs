@@ -9,10 +9,9 @@ using UnityEngine;
 
 namespace MotionFramework.Resource
 {
-	internal class AssetBundleProvider : AssetProvider
+	internal class AssetResourcesProvider : AssetProvider
 	{
-		private AssetBundleFileLoader _loader;
-		private AssetBundleRequest _cacheRequest;
+		private ResourceRequest _cacheRequest;
 
 		public override float Progress
 		{
@@ -24,21 +23,14 @@ namespace MotionFramework.Resource
 			}
 		}
 
-		public AssetBundleProvider(AssetFileLoader owner, string assetName, System.Type assetType)
+		public AssetResourcesProvider(AssetFileLoader owner, string assetName, System.Type assetType)
 			: base(owner, assetName, assetType)
 		{
-			_loader = owner as AssetBundleFileLoader;
 		}
 		public override void Update()
 		{
 			if (IsDone)
 				return;
-
-			if (_loader.CacheBundle == null)
-			{
-				States = EAssetProviderStates.Failed;
-				InvokeCompletion();
-			}
 
 			if (States == EAssetProviderStates.None)
 			{
@@ -48,10 +40,7 @@ namespace MotionFramework.Resource
 			// 1. 加载资源对象
 			if (States == EAssetProviderStates.Loading)
 			{
-				if (AssetType == null)
-					_cacheRequest = _loader.CacheBundle.LoadAssetAsync(AssetName);
-				else
-					_cacheRequest = _loader.CacheBundle.LoadAssetAsync(AssetName, AssetType);
+				_cacheRequest = Resources.LoadAsync(_owner.LoadPath, AssetType);
 				States = EAssetProviderStates.Checking;
 			}
 
@@ -63,7 +52,7 @@ namespace MotionFramework.Resource
 				AssetObject = _cacheRequest.asset;
 				States = AssetObject == null ? EAssetProviderStates.Failed : EAssetProviderStates.Succeed;
 				if (States == EAssetProviderStates.Failed)
-					LogSystem.Log(ELogType.Warning, $"Failed to load asset object : {_loader.LoadPath} : {AssetName}");
+					LogSystem.Log(ELogType.Warning, $"Failed to load asset object : {_owner.LoadPath} : {AssetName}");
 				InvokeCompletion();
 			}
 		}

@@ -6,7 +6,7 @@
 
 namespace MotionFramework.Resource
 {
-	internal abstract class AsyncAssetProvider : IAssetProvider
+	internal abstract class AssetProvider : IAssetProvider
 	{
 		protected AssetFileLoader _owner { private set; get; }
 
@@ -38,7 +38,7 @@ namespace MotionFramework.Resource
 			}
 		}
 
-		public AsyncAssetProvider(AssetFileLoader owner, string assetName, System.Type assetType)
+		public AssetProvider(AssetFileLoader owner, string assetName, System.Type assetType)
 		{
 			_owner = owner;
 			AssetName = assetName;
