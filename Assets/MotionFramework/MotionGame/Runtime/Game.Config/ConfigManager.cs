@@ -12,7 +12,7 @@ namespace MotionFramework.Config
 	/// <summary>
 	/// 配表管理器
 	/// </summary>
-	public sealed class ConfigManager : IModule
+	public sealed class ConfigManager : IGameModule
 	{
 		public static readonly ConfigManager Instance = new ConfigManager();
 

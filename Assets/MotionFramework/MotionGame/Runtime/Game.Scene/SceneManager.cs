@@ -13,7 +13,7 @@ namespace MotionFramework.Scene
 	/// <summary>
 	/// 场景管理器
 	/// </summary>
-	public sealed class SceneManager : IModule
+	public sealed class SceneManager : IGameModule
 	{
 		public static readonly SceneManager Instance = new SceneManager();
 

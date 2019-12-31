@@ -10,7 +10,7 @@ namespace MotionFramework.Event
 	/// <summary>
 	/// 事件管理器
 	/// </summary>
-	public sealed class EventManager : IModule
+	public sealed class EventManager : IGameModule
 	{
 		public static readonly EventManager Instance = new EventManager();
 

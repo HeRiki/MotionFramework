@@ -39,7 +39,7 @@ namespace MotionFramework.Patch
 			WebDataRequest downloader = new WebDataRequest(url);
 			yield return downloader.DownLoad();
 
-			if (downloader.States == EWebLoadStates.Succeed)
+			if (downloader.States == EWebRequestStates.Succeed)
 			{
 				PatchManager.Log(ELogType.Log, "Parse app patch file.");
 				PatchManager.Instance.ParseAppPatchFile(downloader.GetText());

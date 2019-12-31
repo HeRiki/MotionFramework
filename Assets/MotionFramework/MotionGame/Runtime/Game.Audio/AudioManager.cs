@@ -15,7 +15,7 @@ namespace MotionFramework.Audio
 	/// <summary>
 	/// 音频管理器
 	/// </summary>
-	public sealed class AudioManager : IModule
+	public sealed class AudioManager : IGameModule
 	{
 		/// <summary>
 		/// 音频源封装类

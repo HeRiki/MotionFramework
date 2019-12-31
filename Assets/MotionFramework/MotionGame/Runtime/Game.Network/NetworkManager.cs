@@ -25,7 +25,7 @@ namespace MotionFramework.Network
 	/// <summary>
 	/// 网络管理器
 	/// </summary>
-	public sealed class NetworkManager : IModule
+	public sealed class NetworkManager : IGameModule
 	{
 		public static readonly NetworkManager Instance = new NetworkManager();
 

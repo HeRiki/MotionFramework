@@ -49,7 +49,7 @@ namespace MotionFramework.Patch
 				yield return download.DownLoad();
 
 				//Check fatal
-				if (download.States != EWebLoadStates.Succeed)
+				if (download.States != EWebRequestStates.Succeed)
 				{
 					download.Dispose();
 					system.Switch((int)EPatchStates.PatchError);

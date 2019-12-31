@@ -15,7 +15,7 @@ using MotionFramework.Event;
 
 namespace MotionFramework.Patch
 {
-	public class PatchManager : IModule, IBundleServices
+	public class PatchManager : IGameModule, IBundleServices
 	{
 		public static readonly PatchManager Instance = new PatchManager();
 

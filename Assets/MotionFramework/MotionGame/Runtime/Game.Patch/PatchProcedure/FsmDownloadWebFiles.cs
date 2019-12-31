@@ -65,7 +65,7 @@ namespace MotionFramework.Patch
 				PatchManager.Log(ELogType.Log, $"Web file is done : {url}");
 
 				// 检测是否下载失败
-				if (download.States != EWebLoadStates.Succeed)
+				if (download.States != EWebRequestStates.Succeed)
 				{
 					_system.Switch((int)EPatchStates.PatchError);
 					PatchManager.SendWebFileDownloadFailedMsg(url);

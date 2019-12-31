@@ -12,7 +12,7 @@ namespace MotionFramework.Resource
 	/// <summary>
 	/// 资源管理器
 	/// </summary>
-	public sealed class ResourceManager : IModule
+	public sealed class ResourceManager : IGameModule
 	{
 		public static readonly ResourceManager Instance = new ResourceManager();
 

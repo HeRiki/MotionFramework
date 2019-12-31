@@ -10,7 +10,7 @@ namespace MotionFramework.AI
 	/// <summary>
 	/// 状态机管理器
 	/// </summary>
-	public sealed class FsmManager : IModule
+	public sealed class FsmManager : IGameModule
 	{
 		public static readonly FsmManager Instance = new FsmManager();
 
