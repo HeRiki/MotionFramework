@@ -157,9 +157,9 @@ namespace MotionFramework.Network
 		}
 
 		/// <summary>
-		/// 发送消息
+		/// 发送网络消息
 		/// </summary>
-		public void SendMsg(INetPackage package)
+		public void SendMessage(INetPackage package)
 		{
 			if (State != ENetworkState.Connected)
 			{
