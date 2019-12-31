@@ -8,12 +8,12 @@ namespace MotionFramework
 {
 	public static class LogSystem
 	{
-		private static LogCallback _callback;
+		private static System.Action<ELogType, string> _callback;
 
 		/// <summary>
 		/// 注册监听日志的委托
 		/// </summary>
-		public static void RegisterCallback(LogCallback callback)
+		public static void RegisterCallback(System.Action<ELogType, string> callback)
 		{
 			_callback += callback;
 		}
