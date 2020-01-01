@@ -43,7 +43,7 @@ namespace MotionFramework.Utility
 			}
 			catch (Exception e)
 			{
-				LogSystem.Log(ELogType.Exception, e.ToString());
+				Logger.Log(ELogType.Exception, e.ToString());
 				return string.Empty;
 			}
 		}
@@ -86,7 +86,7 @@ namespace MotionFramework.Utility
 			}
 			catch (Exception e)
 			{
-				LogSystem.Log(ELogType.Exception, e.ToString());
+				Logger.Log(ELogType.Exception, e.ToString());
 				return string.Empty;
 			}
 		}
