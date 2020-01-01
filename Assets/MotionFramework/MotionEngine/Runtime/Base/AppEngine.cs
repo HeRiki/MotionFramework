@@ -10,94 +10,115 @@ using UnityEngine;
 
 namespace MotionFramework
 {
-	public class AppEngine
+	public class AppEngine : IEngine
 	{
+		public readonly static AppEngine Instance = new AppEngine();
+
 		/// <summary>
 		/// 模块封装类
 		/// </summary>
 		private class ModuleWrapper
 		{
 			public bool IsStart = false;
-			public int Priority { get; private set; }
-			public IGameModule Module { get; private set; }
+			public int Priority { private set; get; }
+			public IModule Module { private set; get; }
 
-			public ModuleWrapper(IGameModule module, int priority)
+			public ModuleWrapper(IModule module, int priority)
 			{
 				Module = module;
 				Priority = priority;
 			}
-			public void SetPriority(int priority)
-			{
-				Priority = priority;
-			}
 		}
 
-
-		public static readonly AppEngine Instance = new AppEngine();
-
-		/// <summary>
-		/// 模块集合
-		/// </summary>
 		private readonly List<ModuleWrapper> _coms = new List<ModuleWrapper>(100);
-
-		/// <summary>
-		/// 临时集合
-		/// </summary>
-		private readonly List<ModuleWrapper> _temps = new List<ModuleWrapper>(100);
-
-		/// <summary>
-		/// 协程脚本
-		/// </summary>
 		private MonoBehaviour _bhvCoroutine;
-
-
-		private AppEngine()
-		{
-		}
+		private bool _isDirty = false;
 
 		/// <summary>
-		/// 注册模块
+		/// 查询游戏模块是否存在
 		/// </summary>
-		/// <param name="module">要注册的模块</param>
-		/// <param name="priority">运行时的优先级，优先级越大越早执行。如果没有设置优先级，那么会按照添加顺序执行</param>
-		public void RegisterModule(IGameModule module, int priority = 0)
+		public bool Contains(System.Type moduleType)
 		{
-			if (module == null)
-				throw new ArgumentNullException();
-
-			ModuleWrapper wrapper = new ModuleWrapper(module, priority);		
-			_temps.Add(wrapper);
-
-			// 执行Awake
-			module.Awake();
-		}
-
-		/// <summary>
-		/// 该方法需要外部主动调用执行
-		/// </summary>
-		public void Update()
-		{
-			// 如果有新模块需要加入
-			if (_temps.Count > 0)
+			for(int i=0; i< _coms.Count; i++)
 			{
-				for (int i = 0; i < _temps.Count; i++)
-				{
-					ModuleWrapper wrapper = _temps[i];
+				if (_coms[i].Module.GetType() == moduleType)
+					return true;
+			}
+			return false;
+		}
 
-					// 如果没有设置优先级
-					if (wrapper.Priority == 0)
-					{
-						int minPriority = GetMinPriority();
-						wrapper.SetPriority(--minPriority);
-					}
+		/// <summary>
+		/// 创建游戏模块
+		/// </summary>
+		/// <typeparam name="T">模块类</typeparam>
+		/// <param name="priority">运行时的优先级，优先级越大越早执行。如果没有设置优先级，那么会按照添加顺序执行</param>
+		public T CreateModule<T>(int priority = 0) where T : class, IModule
+		{
+			return CreateModule<T>(null, priority);
+		}
 
-					_coms.Add(wrapper);
-				}
+		/// <summary>
+		/// 创建游戏模块
+		/// </summary>
+		/// <typeparam name="T">模块类</typeparam>
+		/// <param name="createParam">创建参数</param>
+		/// <param name="priority">运行时的优先级，优先级越大越早执行。如果没有设置优先级，那么会按照添加顺序执行</param>
+		public T CreateModule<T>(System.Object createParam, int priority = 0) where T : class, IModule
+		{
+			if (Contains(typeof(T)))
+				throw new Exception($"Game module {typeof(T)} is already existed");
 
-				// 清空临时列表
-				_temps.Clear();
+			// 如果没有设置优先级
+			if (priority == 0)
+			{
+				int minPriority = GetMinPriority();
+				priority = --minPriority;
+			}
 
-				// 最后重新排序
+			Logger.Log(ELogType.Log, $"Create game module : {typeof(T)}");
+			T module = Activator.CreateInstance<T>();
+			ModuleWrapper wrapper = new ModuleWrapper(module, priority);
+			wrapper.Module.OnCreate(createParam);			
+			_coms.Add(wrapper);
+			_isDirty = true;
+			return module;
+		}
+
+		/// <summary>
+		/// 获取游戏模块
+		/// </summary>
+		/// <typeparam name="T">模块类</typeparam>
+		public T GetModule<T>() where T : class, IModule
+		{
+			System.Type type = typeof(T);
+			for (int i = 0; i < _coms.Count; i++)
+			{
+				if (_coms[i].Module.GetType() == type)
+					return _coms[i].Module as T;
+			}
+
+			Logger.Log(ELogType.Warning, $"Not found game module {type}");
+			return null;
+		}
+
+		// 获取当前模块里最小的优先级
+		private int GetMinPriority()
+		{
+			int minPriority = 0;
+			for (int i = 0; i < _coms.Count; i++)
+			{
+				if (_coms[i].Priority < minPriority)
+					minPriority = _coms[i].Priority;
+			}
+			return minPriority; //小于等于零
+		}
+
+		void IEngine.OnUpdate()
+		{
+			// 如果有新模块需要重新排序
+			if (_isDirty)
+			{
+				_isDirty = false;
 				_coms.Sort((left, right) =>
 				{
 					if (left.Priority > right.Priority)
@@ -109,54 +130,25 @@ namespace MotionFramework
 				});
 			}
 
-			// 更新所有模块
+			// 轮询所有模块
 			for (int i = 0; i < _coms.Count; i++)
 			{
 				ModuleWrapper wrapper = _coms[i];
 				if (wrapper.IsStart == false)
 				{
-					LogSystem.Log(ELogType.Log, $"{wrapper.Module.GetType()} is start.");
+					Logger.Log(ELogType.Log, $"{wrapper.Module.GetType()} is start.");
 					wrapper.IsStart = true;
-					wrapper.Module.Start();
+					wrapper.Module.OnStart();
 				}
-				wrapper.Module.Update();
+				wrapper.Module.OnUpdate();
 			}
 		}
-
-		/// <summary>
-		/// 该方法需要外部主动调用执行
-		/// </summary>
-		public void LateUpdate()
-		{
-			for (int i = 0; i < _coms.Count; i++)
-			{
-				_coms[i].Module.LateUpdate();
-			}
-		}
-
-		/// <summary>
-		/// 该方法需要外部主动调用执行
-		/// </summary>
-		public void OnGUI()
+		void IEngine.OnGUI()
 		{
 			for (int i = 0; i < _coms.Count; i++)
 			{
 				_coms[i].Module.OnGUI();
 			}
-		}
-
-		/// <summary>
-		/// 获取当前模块里最小的优先级
-		/// </summary>
-		private int GetMinPriority()
-		{
-			int minPriority = 0;
-			for (int i = 0; i < _coms.Count; i++)
-			{
-				if (_coms[i].Priority < minPriority)
-					minPriority = _coms[i].Priority;
-			}
-			return minPriority; //小于等于零
 		}
 
 		#region 协程相关
@@ -174,7 +166,7 @@ namespace MotionFramework
 		public Coroutine StartCoroutine(IEnumerator coroutine)
 		{
 			if (_bhvCoroutine == null)
-				throw new Exception("Coroutine mono behaviour is null.");
+				throw new Exception($"Coroutine mono behaviour is null. Use {nameof(AppEngine.InitCoroutineBehaviour)}");
 			return _bhvCoroutine.StartCoroutine(coroutine);
 		}
 
@@ -185,7 +177,7 @@ namespace MotionFramework
 		public void StopCoroutine(Coroutine coroutine)
 		{
 			if (_bhvCoroutine == null)
-				throw new Exception("Coroutine mono behaviour is null.");
+				throw new Exception($"Coroutine mono behaviour is null. Use {nameof(AppEngine.InitCoroutineBehaviour)}");
 			_bhvCoroutine.StopCoroutine(coroutine);
 		}
 
@@ -195,7 +187,7 @@ namespace MotionFramework
 		public void StopAllCoroutines()
 		{
 			if (_bhvCoroutine == null)
-				throw new Exception("Coroutine mono behaviour is null.");
+				throw new Exception($"Coroutine mono behaviour is null. Use {nameof(AppEngine.InitCoroutineBehaviour)}");
 			_bhvCoroutine.StopAllCoroutines();
 		}
 		#endregion
