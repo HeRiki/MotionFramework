@@ -14,14 +14,14 @@ namespace MotionFramework.AI
 	/// </summary>
 	public class FsmGraph
 	{
-		private readonly Dictionary<int, List<int>> _graph = new Dictionary<int, List<int>>();
-		private readonly int _globalNode;
+		private readonly Dictionary<string, List<string>> _graph = new Dictionary<string, List<string>>();
+		private readonly string _globalNode;
 
 		/// <summary>
 		/// 构造函数
 		/// </summary>
 		/// <param name="globalNode">全局节点不受转换关系的限制</param>
-		public FsmGraph(int globalNode)
+		public FsmGraph(string globalNode)
 		{
 			_globalNode = globalNode;
 		}
@@ -29,26 +29,26 @@ namespace MotionFramework.AI
 		/// <summary>
 		/// 添加转换关系
 		/// </summary>
-		/// <param name="nodeType">节点</param>
+		/// <param name="nodeName">节点名称</param>
 		/// <param name="transitionNodes">可以转换到的节点列表</param>
-		public void AddTransition(int nodeType, List<int> transitionNodes)
+		public void AddTransition(string nodeName, List<string> transitionNodes)
 		{
 			if (transitionNodes == null)
 				throw new ArgumentNullException();
 
-			if (_graph.ContainsKey(nodeType))
+			if (_graph.ContainsKey(nodeName))
 			{
-				Logger.Log(ELogType.Warning, $"Graph node {nodeType} already existed.");
+				Logger.Log(ELogType.Warning, $"Graph node {nodeName} already existed.");
 				return;
 			}
 
-			_graph.Add(nodeType, transitionNodes);
+			_graph.Add(nodeName, transitionNodes);
 		}
 
 		/// <summary>
 		/// 检测转换关系
 		/// </summary>
-		public bool CanTransition(int from, int to)
+		public bool CanTransition(string from, string to)
 		{
 			if (_graph.ContainsKey(from) == false)
 			{

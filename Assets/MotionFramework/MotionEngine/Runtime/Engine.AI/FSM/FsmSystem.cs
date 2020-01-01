@@ -14,31 +14,31 @@ namespace MotionFramework.AI
 	/// </summary>
 	public class FsmSystem
 	{
-		private readonly List<FsmNode> _nodes = new List<FsmNode>();
-		private FsmNode _curNode;
-		private FsmNode _preNode;
+		private readonly List<IFsmNode> _nodes = new List<IFsmNode>();
+		private IFsmNode _curNode;
+		private IFsmNode _preNode;
 		private FsmGraph _graph;
 
 		/// <summary>
-		/// 当前运行的节点类型
+		/// 当前运行的节点名称
 		/// </summary>
-		public int CurrentNodeType
+		public string CurrentNodeName
 		{
-			get { return _curNode != null ? _curNode.Type : -1; }
+			get { return _curNode != null ? _curNode.Name : string.Empty; }
 		}
 
 		/// <summary>
-		/// 之前运行的节点类型
+		/// 之前运行的节点名称
 		/// </summary>
-		public int PreviousNodeType
+		public string PreviousNodeName
 		{
-			get { return _preNode != null ? _preNode.Type : -1; }
+			get { return _preNode != null ? _preNode.Name : string.Empty; }
 		}
 
 		/// <summary>
 		/// 加入一个节点
 		/// </summary>
-		public void AddNode(FsmNode node)
+		public void AddNode(IFsmNode node)
 		{
 			if (node == null)
 				throw new ArgumentNullException();
@@ -49,25 +49,25 @@ namespace MotionFramework.AI
 			}
 			else
 			{
-				Logger.Log(ELogType.Warning, $"Node {node.Type} already existed");
+				Logger.Log(ELogType.Warning, $"Node {node.Name} already existed");
 			}
 		}
 
 		/// <summary>
 		/// 启动状态机
 		/// </summary>
-		/// <param name="runNodeType">初始运行的节点类型</param>
+		/// <param name="runNode">初始运行的节点</param>
 		/// <param name="graph">节点转换关系图，如果为NULL则不检测转换关系</param>
-		public void Run(int runNodeType, FsmGraph graph)
+		public void Run(string runNode, FsmGraph graph)
 		{
 			_graph = graph;
-			_curNode = GetNode(runNodeType);
-			_preNode = GetNode(runNodeType);
+			_curNode = GetNode(runNode);
+			_preNode = GetNode(runNode);
 
 			if (_curNode != null)
 				_curNode.OnEnter();
 			else
-				Logger.Log(ELogType.Error, $"Not found run node : {runNodeType}");
+				Logger.Log(ELogType.Error, $"Not found run node : {runNode}");
 		}
 
 		/// <summary>
@@ -82,19 +82,22 @@ namespace MotionFramework.AI
 		/// <summary>
 		/// 转换节点
 		/// </summary>
-		public void Transition(int nodeType)
+		public void Transition(string nodeName)
 		{
-			FsmNode node = GetNode(nodeType);
+			if (string.IsNullOrEmpty(nodeName))
+				throw new ArgumentNullException();
+
+			IFsmNode node = GetNode(nodeName);
 			if (node == null)
 			{
-				Logger.Log(ELogType.Error, $"Can not found node {nodeType}");
+				Logger.Log(ELogType.Error, $"Can not found node {nodeName}");
 				return;
 			}
 
 			// 检测转换关系
 			if (_graph != null)
 			{
-				if (_graph.CanTransition(_curNode.Type, node.Type) == false)
+				if (_graph.CanTransition(_curNode.Name, node.Name) == false)
 				{
 					Logger.Log(ELogType.Error, $"Can not transition {_curNode} to {node}");
 					return;
@@ -113,7 +116,7 @@ namespace MotionFramework.AI
 		/// </summary>
 		public void RevertToPreviousNode()
 		{
-			Transition(PreviousNodeType);
+			Transition(PreviousNodeName);
 		}
 		
 		/// <summary>
@@ -125,20 +128,20 @@ namespace MotionFramework.AI
 				_curNode.OnHandleMessage(msg);
 		}
 
-		private bool IsContains(int nodeType)
+		private bool IsContains(string nodeName)
 		{
 			for (int i = 0; i < _nodes.Count; i++)
 			{
-				if (_nodes[i].Type == nodeType)
+				if (_nodes[i].Name == nodeName)
 					return true;
 			}
 			return false;
 		}
-		private FsmNode GetNode(int nodeType)
+		private IFsmNode GetNode(string nodeName)
 		{
 			for (int i = 0; i < _nodes.Count; i++)
 			{
-				if (_nodes[i].Type == nodeType)
+				if (_nodes[i].Name == nodeName)
 					return _nodes[i];
 			}
 			return null;
