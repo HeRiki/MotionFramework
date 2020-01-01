@@ -10,17 +10,19 @@ using MotionFramework.Resource;
 
 namespace MotionFramework.Patch
 {
-	public class FsmParseSandboxPatchFile : FsmNode
+	internal class FsmParseSandboxPatchFile : IFsmNode
 	{
 		private ProcedureSystem _system;
+		public string Name { private set; get; }
 
-		public FsmParseSandboxPatchFile(ProcedureSystem system) : base((int)EPatchStates.ParseSandboxPatchFile)
+		public FsmParseSandboxPatchFile(ProcedureSystem system)
 		{
 			_system = system;
+			Name = EPatchStates.ParseSandboxPatchFile.ToString();
 		}
-		public override void OnEnter()
+		void IFsmNode.OnEnter()
 		{
-			PatchManager.SendPatchStatesChangeMsg((EPatchStates)_system.Current());
+			PatchManager.SendPatchStatesChangeMsg(_system.Current());
 
 			// 读取并解析沙盒内的补丁文件
 			if (PatchManager.CheckSandboxPatchFileExist())
@@ -39,10 +41,13 @@ namespace MotionFramework.Patch
 
 			_system.SwitchNext();
 		}
-		public override void OnUpdate()
+		void IFsmNode.OnUpdate()
 		{
 		}
-		public override void OnExit()
+		void IFsmNode.OnExit()
+		{
+		}
+		void IFsmNode.OnHandleMessage(object msg)
 		{
 		}
 	}

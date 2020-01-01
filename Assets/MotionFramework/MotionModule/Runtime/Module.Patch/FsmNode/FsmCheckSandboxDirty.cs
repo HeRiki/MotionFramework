@@ -10,17 +10,20 @@ using MotionFramework.AI;
 
 namespace MotionFramework.Patch
 {
-	public class FsmCheckSandboxDirty : FsmNode
+	internal class FsmCheckSandboxDirty : IFsmNode
 	{
 		private ProcedureSystem _system;
-
-		public FsmCheckSandboxDirty(ProcedureSystem system) : base((int)EPatchStates.CheckSandboxDirty)
+		public string Name { private set; get; }
+		
+		public FsmCheckSandboxDirty(ProcedureSystem system)
 		{
 			_system = system;
+			Name = EPatchStates.CheckSandboxDirty.ToString();
 		}
-		public override void OnEnter()
+
+		void IFsmNode.OnEnter()
 		{
-			PatchManager.SendPatchStatesChangeMsg((EPatchStates)_system.Current());
+			PatchManager.SendPatchStatesChangeMsg(_system.Current());
 
 			string appVersion = PatchManager.Instance.GetAPPVersion();
 			string filePath = PatchManager.GetSandboxStaticFilePath();
@@ -51,10 +54,13 @@ namespace MotionFramework.Patch
 				_system.SwitchNext();
 			}
 		}
-		public override void OnUpdate()
+		void IFsmNode.OnUpdate()
 		{
 		}
-		public override void OnExit()
+		void IFsmNode.OnExit()
+		{
+		}
+		void IFsmNode.OnHandleMessage(object msg)
 		{
 		}
 	}

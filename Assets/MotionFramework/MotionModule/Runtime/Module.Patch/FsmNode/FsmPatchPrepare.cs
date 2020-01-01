@@ -10,27 +10,32 @@ using MotionFramework.Resource;
 
 namespace MotionFramework.Patch
 {
-	public class FsmPatchPrepare : FsmNode
+	internal class FsmPatchPrepare : IFsmNode
 	{
 		private ProcedureSystem _system;
+		public string Name { private set; get; }
 
-		public FsmPatchPrepare(ProcedureSystem system) : base((int)EPatchStates.PatchPrepare)
+		public FsmPatchPrepare(ProcedureSystem system)
 		{
 			_system = system;
+			Name = EPatchStates.PatchPrepare.ToString();
 		}
 
-		public override void OnEnter()
+		void IFsmNode.OnEnter()
 		{
-			PatchManager.SendPatchStatesChangeMsg((EPatchStates)_system.Current());
+			PatchManager.SendPatchStatesChangeMsg(_system.Current());
 		}
-		public override void OnUpdate()
+		void IFsmNode.OnUpdate()
 		{
 			if (AssetSystem.Instance.AssetSystemMode == EAssetSystemMode.BundleMode)
 				_system.SwitchNext();
 			else
-				_system.Switch((int)EPatchStates.PatchOver);
+				_system.Switch(EPatchStates.PatchOver.ToString());
 		}
-		public override void OnExit()
+		void IFsmNode.OnExit()
+		{
+		}
+		void IFsmNode.OnHandleMessage(object msg)
 		{
 		}
 	}

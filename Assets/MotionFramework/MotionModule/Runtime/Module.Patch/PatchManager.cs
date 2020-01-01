@@ -351,7 +351,7 @@ namespace MotionFramework.Patch
 		#endregion
 
 		#region 事件相关
-		public static void SendPatchStatesChangeMsg(EPatchStates currentStates)
+		public static void SendPatchStatesChangeMsg(string currentStates)
 		{
 			PatchEventMessageDefine.PatchStatesChange msg = new PatchEventMessageDefine.PatchStatesChange();
 			msg.CurrentStates = currentStates;

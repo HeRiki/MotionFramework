@@ -10,30 +10,32 @@ using MotionFramework.Network;
 
 namespace MotionFramework.Patch
 {
-	public class FsmParseWebPatchFile : FsmNode
+	internal class FsmParseWebPatchFile : IFsmNode
 	{
 		private ProcedureSystem _system;
+		public string Name { private set; get; }
 
-		public FsmParseWebPatchFile(ProcedureSystem system) : base((int)EPatchStates.ParseWebPatchFile)
+		public FsmParseWebPatchFile(ProcedureSystem system)
 		{
 			_system = system;
+			Name = EPatchStates.ParseWebPatchFile.ToString();
 		}
-		public override void OnEnter()
+		void IFsmNode.OnEnter()
 		{
-			PatchManager.SendPatchStatesChangeMsg((EPatchStates)_system.Current());
+			PatchManager.SendPatchStatesChangeMsg(_system.Current());
 			AppEngine.Instance.StartCoroutine(Download(_system));
 		}
-		public override void OnUpdate()
+		void IFsmNode.OnUpdate()
 		{
 		}
-		public override void OnExit()
+		void IFsmNode.OnExit()
+		{
+		}
+		void IFsmNode.OnHandleMessage(object msg)
 		{
 		}
 
-		/// <summary>
-		/// 第五阶段
-		/// </summary>
-		public IEnumerator Download(ProcedureSystem system)
+		private IEnumerator Download(ProcedureSystem system)
 		{
 			// 从网络上解析最新的补丁文件
 			int newResourceVersion = PatchManager.Instance.GameVersion.Revision;
@@ -45,7 +47,7 @@ namespace MotionFramework.Patch
 			if (download.States != EWebRequestStates.Succeed)
 			{
 				download.Dispose();
-				system.Switch((int)EPatchStates.PatchError);
+				system.Switch(EPatchStates.PatchError.ToString());
 				yield break;
 			}
 

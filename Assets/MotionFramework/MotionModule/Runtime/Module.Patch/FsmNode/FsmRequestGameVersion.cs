@@ -10,23 +10,29 @@ using MotionFramework.Network;
 
 namespace MotionFramework.Patch
 {
-	public class FsmRequestGameVersion : FsmNode
+	internal class FsmRequestGameVersion : IFsmNode
 	{
 		private ProcedureSystem _system;
+		public string Name { private set; get; }
 
-		public FsmRequestGameVersion(ProcedureSystem system) : base((int)EPatchStates.RequestGameVersion)
+		public FsmRequestGameVersion(ProcedureSystem system)
 		{
 			_system = system;
+			Name = EPatchStates.RequestGameVersion.ToString();
 		}
-		public override void OnEnter()
+
+		void IFsmNode.OnEnter()
 		{
-			PatchManager.SendPatchStatesChangeMsg((EPatchStates)_system.Current());
+			PatchManager.SendPatchStatesChangeMsg(_system.Current());
 			AppEngine.Instance.StartCoroutine(Download(_system));
 		}
-		public override void OnUpdate()
+		void IFsmNode.OnUpdate()
 		{
 		}
-		public override void OnExit()
+		void IFsmNode.OnExit()
+		{
+		}
+		void IFsmNode.OnHandleMessage(object msg)
 		{
 		}
 
@@ -36,7 +42,7 @@ namespace MotionFramework.Patch
 			if (PatchManager.Instance.SkipCDN)
 			{
 				PatchManager.Log(ELogType.Warning, $"Skip CDN server !");
-				system.Switch((int)EPatchStates.PatchOver);
+				system.Switch(EPatchStates.PatchOver.ToString());
 				yield break;
 			}
 
@@ -52,7 +58,7 @@ namespace MotionFramework.Patch
 				if (download.States != EWebRequestStates.Succeed)
 				{
 					download.Dispose();
-					system.Switch((int)EPatchStates.PatchError);
+					system.Switch(EPatchStates.PatchError.ToString());
 					yield break;
 				}
 
@@ -76,7 +82,7 @@ namespace MotionFramework.Patch
 			if (newResourceVersion == oldResourceVersion)
 			{
 				PatchManager.Log(ELogType.Log, $"Not found file to download.");
-				system.Switch((int)EPatchStates.PatchOver);
+				system.Switch(EPatchStates.PatchOver.ToString());
 			}
 			else
 			{

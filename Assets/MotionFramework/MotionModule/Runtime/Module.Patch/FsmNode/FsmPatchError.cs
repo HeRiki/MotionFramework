@@ -9,23 +9,28 @@ using MotionFramework.AI;
 
 namespace MotionFramework.Patch
 {
-	public class FsmPatchOver : FsmNode
+	internal class FsmPatchError : IFsmNode
 	{
 		private ProcedureSystem _system;
+		public string Name { private set; get; }
 
-		public FsmPatchOver(ProcedureSystem system) : base((int)EPatchStates.PatchOver)
+		public FsmPatchError(ProcedureSystem system)
 		{
 			_system = system;
+			Name = EPatchStates.PatchError.ToString();
 		}
-		public override void OnEnter()
+
+		void IFsmNode.OnEnter()
 		{
-			PatchManager.SendPatchStatesChangeMsg((EPatchStates)_system.Current());
-			PatchManager.SendPatchOverMsg();
+			PatchManager.SendPatchStatesChangeMsg(_system.Current());
 		}
-		public override void OnUpdate()
+		void IFsmNode.OnUpdate()
 		{
 		}
-		public override void OnExit()
+		void IFsmNode.OnExit()
+		{
+		}
+		void IFsmNode.OnHandleMessage(object msg)
 		{
 		}
 	}

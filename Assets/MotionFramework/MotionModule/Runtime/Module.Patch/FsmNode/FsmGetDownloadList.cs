@@ -11,23 +11,28 @@ using MotionFramework.Utility;
 
 namespace MotionFramework.Patch
 {
-	public class FsmGetDonwloadList : FsmNode
+	internal class FsmGetDonwloadList : IFsmNode
 	{
 		private ProcedureSystem _system;
+		public string Name { private set; get; }
 
-		public FsmGetDonwloadList(ProcedureSystem system) : base((int)EPatchStates.GetDonwloadList)
+		public FsmGetDonwloadList(ProcedureSystem system)
 		{
 			_system = system;
+			Name = EPatchStates.GetDonwloadList.ToString();
 		}
-		public override void OnEnter()
+		void IFsmNode.OnEnter()
 		{
-			PatchManager.SendPatchStatesChangeMsg((EPatchStates)_system.Current());
+			PatchManager.SendPatchStatesChangeMsg(_system.Current());
 			GetDownloadList();
 		}
-		public override void OnUpdate()
+		void IFsmNode.OnUpdate()
 		{
 		}
-		public override void OnExit()
+		void IFsmNode.OnExit()
+		{
+		}
+		void IFsmNode.OnHandleMessage(object msg)
 		{
 		}
 

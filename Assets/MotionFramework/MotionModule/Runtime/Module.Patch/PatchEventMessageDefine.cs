@@ -23,7 +23,7 @@ namespace MotionFramework.Patch
 		/// </summary>
 		public class PatchStatesChange : IEventMessage
 		{
-			public EPatchStates CurrentStates;
+			public string CurrentStates;
 		}
 
 		/// <summary>

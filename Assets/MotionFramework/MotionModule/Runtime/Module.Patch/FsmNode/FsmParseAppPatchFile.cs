@@ -11,23 +11,28 @@ using MotionFramework.Network;
 
 namespace MotionFramework.Patch
 {
-	public class FsmParseAppPatchFile : FsmNode
+	internal class FsmParseAppPatchFile : IFsmNode
 	{
 		private ProcedureSystem _system;
+		public string Name { private set; get; }
 
-		public FsmParseAppPatchFile(ProcedureSystem system) : base((int)EPatchStates.ParseAppPatchFile)
+		public FsmParseAppPatchFile(ProcedureSystem system)
 		{
 			_system = system;
+			Name = EPatchStates.ParseAppPatchFile.ToString();
 		}
-		public override void OnEnter()
+		void IFsmNode.OnEnter()
 		{
-			PatchManager.SendPatchStatesChangeMsg((EPatchStates)_system.Current());
+			PatchManager.SendPatchStatesChangeMsg(_system.Current());
 			AppEngine.Instance.StartCoroutine(DownLoad(_system));
 		}
-		public override void OnUpdate()
+		void IFsmNode.OnUpdate()
 		{
 		}
-		public override void OnExit()
+		void IFsmNode.OnExit()
+		{
+		}
+		void IFsmNode.OnHandleMessage(object msg)
 		{
 		}
 
