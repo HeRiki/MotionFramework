@@ -68,13 +68,56 @@ namespace MotionFramework.Resource
 		{
 			if (CachedManifestRootPath == null)
 			{
-				if (string.IsNullOrEmpty(AssetSystem.AssetRootPath))
+				if (string.IsNullOrEmpty(AssetSystem.Instance.AssetRootPath))
 					throw new System.Exception("Asset system root path is null or empty.");
-				CachedManifestRootPath = AssetSystem.AssetRootPath.ToLower();
+				CachedManifestRootPath = AssetSystem.Instance.AssetRootPath.ToLower();
 			}
 
 			location = location.ToLower(); //转换为小写形式
 			return StringFormat.Format("{0}/{1}{2}", CachedManifestRootPath, location, PatchDefine.StrBundleSuffixName);
+		}
+
+		/// <summary>
+		/// 获取AssetDatabase的加载路径
+		/// </summary>
+		public static string FindDatabaseAssetPath(string location)
+		{
+#if UNITY_EDITOR
+			// 如果定位地址的资源是一个文件夹
+			string path = $"{AssetSystem.Instance.AssetRootPath}/{location}";
+			if (UnityEditor.AssetDatabase.IsValidFolder(path))
+				return path;
+
+			string fileName = Path.GetFileName(path);
+			string folderPath = Path.GetDirectoryName(path);
+			string assetPath = FindDatabaseAssetPath(folderPath, fileName);
+			if (string.IsNullOrEmpty(assetPath))
+				return path;
+			return assetPath;
+#else
+			throw new Exception($"AssetSystem.FindDatabaseAssetPath method only support unity editor.");
+#endif
+		}
+
+		/// <summary>
+		/// 获取AssetDatabase的加载路径
+		/// </summary>
+		public static string FindDatabaseAssetPath(string folderPath, string fileName)
+		{
+#if UNITY_EDITOR
+			// AssetDatabase加载资源需要提供文件后缀格式，然而资源定位地址并没有文件格式信息。
+			// 所以我们通过查找该文件所在文件夹内同名的首个文件来确定AssetDatabase的加载路径。
+			string[] guids = UnityEditor.AssetDatabase.FindAssets(string.Empty, new[] { folderPath });
+			for (int i = 0; i < guids.Length; i++)
+			{
+				string assetPath = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[i]);
+				string assetName = Path.GetFileNameWithoutExtension(assetPath);
+				if (assetName == fileName)
+					return assetPath;
+			}
+#endif
+			// 没有找到同名的资源文件
+			return string.Empty;
 		}
 	}
 }

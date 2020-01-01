@@ -22,7 +22,7 @@ namespace MotionFramework.Resource
 		System.Type AssetType { get; }
 
 		/// <summary>
-		/// 最终结果
+		/// 获取的资源对象
 		/// </summary>
 		System.Object AssetObject { get; }
 

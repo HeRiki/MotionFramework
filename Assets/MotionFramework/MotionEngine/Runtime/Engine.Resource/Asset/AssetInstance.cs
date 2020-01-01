@@ -20,7 +20,7 @@ namespace MotionFramework.Resource
 		}
 
 		/// <summary>
-		/// 场景对象
+		/// UnityEngine场景对象
 		/// </summary>
 		public UnityEngine.SceneManagement.Scene Scene { internal set; get; }
 

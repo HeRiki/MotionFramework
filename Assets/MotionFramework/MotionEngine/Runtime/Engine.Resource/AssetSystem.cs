@@ -14,39 +14,61 @@ namespace MotionFramework.Resource
 	/// <summary>
 	/// 资源系统
 	/// </summary>
-	public static class AssetSystem
+	public class AssetSystem
 	{
-		/// <summary>
-		/// 加载器集合
-		/// </summary>
-		private static readonly List<AssetFileLoader> _fileLoaders = new List<AssetFileLoader>(1000);
+		private readonly static AssetSystem _instance = new AssetSystem();
+		private static bool _isInitialize = false;
+		public static AssetSystem Instance
+		{
+			get
+			{
+				if (_isInitialize == false)
+					throw new Exception($"{nameof(AssetSystem)} is not initialize.");
+				return _instance;
+			}
+		}
 
-		/// <summary>
-		/// 资源卸载辅助集合
-		/// </summary>
-		private static readonly List<string> _removeKeys = new List<string>(100);
-
+		private readonly List<AssetFileLoader> _fileLoaders = new List<AssetFileLoader>(1000);
+		private readonly List<string> _removeKeys = new List<string>(100);
+		
 
 		/// <summary>
 		/// 资源系统根路径
 		/// </summary>
-		public static string AssetRootPath { set; get; }
+		public string AssetRootPath { private set; get; }
 
 		/// <summary>
 		/// 资源系统模式
 		/// </summary>
-		public static EAssetSystemMode SystemMode { set; get; }
+		public EAssetSystemMode AssetSystemMode { private set; get; }
 
 		/// <summary>
-		/// AssetBundle服务接口（BundleMode模式下需要设置该接口）
+		/// AssetBundle服务接口（EAssetSystemMode.BundleMode模式下需要设置该接口）
 		/// </summary>
-		public static IBundleServices BundleServices { set; get; }
+		public IBundleServices BundleServices { set; get; }
 
 
+		private AssetSystem()
+		{
+		}
+
+		/// <summary>
+		/// 初始化资源系统
+		/// </summary>
+		public void Initialize(string assetRootPath, EAssetSystemMode assetSystemMode)
+		{
+			if(_isInitialize == false)
+			{
+				_isInitialize = true;
+				AssetRootPath = assetRootPath;
+				AssetSystemMode = assetSystemMode;
+			}
+		}
+		
 		/// <summary>
 		/// 轮询更新
 		/// </summary>
-		public static void UpdatePoll()
+		public void UpdatePoll()
 		{
 			for (int i = 0; i < _fileLoaders.Count; i++)
 			{
@@ -57,27 +79,27 @@ namespace MotionFramework.Resource
 		/// <summary>
 		/// 创建资源文件加载器
 		/// </summary>
-		public static AssetFileLoader CreateFileLoader(string location)
+		public AssetFileLoader CreateFileLoader(string location)
 		{
 			AssetFileLoader loader;
-			if (SystemMode == EAssetSystemMode.EditorMode)
+			if (AssetSystemMode == EAssetSystemMode.EditorMode)
 			{
 #if UNITY_EDITOR
-				string loadPath = FindDatabaseAssetPath(location);
+				string loadPath = AssetPathHelper.FindDatabaseAssetPath(location);
 				loader = CreateFileLoaderInternal(loadPath, null);
 #else
 				throw new Exception("EAssetSystemMode.EditorMode only support unity editor.");
 #endif
 			}
-			else if (SystemMode == EAssetSystemMode.ResourcesMode)
+			else if (AssetSystemMode == EAssetSystemMode.ResourcesMode)
 			{
 				string loadPath = location;
 				loader = CreateFileLoaderInternal(loadPath, null);
 			}
-			else if (SystemMode == EAssetSystemMode.BundleMode)
+			else if (AssetSystemMode == EAssetSystemMode.BundleMode)
 			{
 				if (BundleServices == null)
-					throw new Exception($"{nameof(IBundleServices)} is null.");
+					throw new Exception($"{nameof(AssetSystem.BundleServices)} is null.");
 
 				string manifestPath = AssetPathHelper.ConvertLocationToManifestPath(location);
 				string loadPath = BundleServices.GetAssetBundleLoadPath(manifestPath);
@@ -85,11 +107,11 @@ namespace MotionFramework.Resource
 			}
 			else
 			{
-				throw new NotImplementedException($"{SystemMode}");
+				throw new NotImplementedException($"{AssetSystemMode}");
 			}
 			return loader;
 		}
-		internal static AssetFileLoader CreateFileLoaderInternal(string loadPath, string manifestPath)
+		internal AssetFileLoader CreateFileLoaderInternal(string loadPath, string manifestPath)
 		{
 			// 如果加载器已经存在
 			AssetFileLoader loader = TryGetFileLoader(loadPath);
@@ -101,14 +123,14 @@ namespace MotionFramework.Resource
 
 			// 创建加载器
 			AssetFileLoader newLoader = null;
-			if (SystemMode == EAssetSystemMode.EditorMode)
+			if (AssetSystemMode == EAssetSystemMode.EditorMode)
 				newLoader = new AssetDatabaseFileLoader(loadPath);
-			else if (SystemMode == EAssetSystemMode.ResourcesMode)
+			else if (AssetSystemMode == EAssetSystemMode.ResourcesMode)
 				newLoader = new AssetResourcesFileLoader(loadPath);
-			else if (SystemMode == EAssetSystemMode.BundleMode)
+			else if (AssetSystemMode == EAssetSystemMode.BundleMode)
 				newLoader = new AssetBundleFileLoader(loadPath, manifestPath);
 			else
-				throw new NotImplementedException($"{SystemMode}");
+				throw new NotImplementedException($"{AssetSystemMode}");
 
 			// 新增下载需求
 			_fileLoaders.Add(newLoader);
@@ -120,7 +142,7 @@ namespace MotionFramework.Resource
 		/// 资源回收
 		/// 卸载引用计数为零的资源
 		/// </summary>
-		public static void Release()
+		public void Release()
 		{
 			for (int i = _fileLoaders.Count - 1; i >= 0; i--)
 			{
@@ -136,7 +158,7 @@ namespace MotionFramework.Resource
 		/// <summary>
 		/// 强制回收所有资源
 		/// </summary>
-		public static void ForceReleaseAll()
+		public void ForceReleaseAll()
 		{
 			for (int i = 0; i < _fileLoaders.Count; i++)
 			{
@@ -149,51 +171,8 @@ namespace MotionFramework.Resource
 			Resources.UnloadUnusedAssets();
 		}
 
-		/// <summary>
-		/// 获取AssetDatabase的加载路径
-		/// </summary>
-		public static string FindDatabaseAssetPath(string location)
-		{
-#if UNITY_EDITOR
-			// 如果定位地址的资源是一个文件夹
-			string path = $"{AssetSystem.AssetRootPath}/{location}";
-			if (UnityEditor.AssetDatabase.IsValidFolder(path))
-				return path;
-
-			string fileName = Path.GetFileName(path);
-			string folderPath = Path.GetDirectoryName(path);
-			string assetPath = FindDatabaseAssetPath(folderPath, fileName);
-			if (string.IsNullOrEmpty(assetPath))
-				return path;
-			return assetPath;
-#else
-			throw new Exception($"AssetSystem.FindDatabaseAssetPath method only support unity editor.");
-#endif
-		}
-
-		/// <summary>
-		/// 获取AssetDatabase的加载路径
-		/// </summary>
-		public static string FindDatabaseAssetPath(string folderPath, string fileName)
-		{
-#if UNITY_EDITOR
-			// AssetDatabase加载资源需要提供文件后缀格式，然而资源定位地址并没有文件格式信息。
-			// 所以我们通过查找该文件所在文件夹内同名的首个文件来确定AssetDatabase的加载路径。
-			string[] guids = UnityEditor.AssetDatabase.FindAssets(string.Empty, new[] { folderPath });
-			for (int i = 0; i < guids.Length; i++)
-			{
-				string assetPath = UnityEditor.AssetDatabase.GUIDToAssetPath(guids[i]);
-				string assetName = Path.GetFileNameWithoutExtension(assetPath);
-				if (assetName == fileName)
-					return assetPath;
-			}
-#endif
-			// 没有找到同名的资源文件
-			return string.Empty;
-		}
-
 		// 从列表里获取加载器
-		private static AssetFileLoader TryGetFileLoader(string loadPath)
+		private AssetFileLoader TryGetFileLoader(string loadPath)
 		{
 			AssetFileLoader loader = null;
 			for (int i = 0; i < _fileLoaders.Count; i++)
@@ -209,11 +188,11 @@ namespace MotionFramework.Resource
 		}
 
 		#region 调试专属方法
-		public static int DebugGetFileLoaderCount()
+		public int DebugGetFileLoaderCount()
 		{
 			return _fileLoaders.Count;
 		}
-		public static int DebugGetFileLoaderFailedCount()
+		public int DebugGetFileLoaderFailedCount()
 		{
 			int count = 0;
 			for (int i = 0; i < _fileLoaders.Count; i++)
@@ -224,7 +203,7 @@ namespace MotionFramework.Resource
 			}
 			return count;
 		}
-		public static List<AssetFileLoader> DebugAllLoaders()
+		public List<AssetFileLoader> DebugGetAllLoaders()
 		{
 			return _fileLoaders;
 		}

@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace MotionFramework.Resource
 {
-	public class AssetBundleFileLoader : AssetFileLoader
+	internal class AssetBundleFileLoader : AssetFileLoader
 	{
 		private readonly List<AssetFileLoader> _depends = new List<AssetFileLoader>(10);
 		private string _manifestPath = string.Empty;
@@ -39,13 +39,13 @@ namespace MotionFramework.Resource
 			// 1. 加载所有依赖项
 			if (States == EAssetFileLoaderStates.LoadDepends)
 			{
-				string[] dependencies = AssetSystem.BundleServices.GetDirectDependencies(_manifestPath);
+				string[] dependencies = AssetSystem.Instance.BundleServices.GetDirectDependencies(_manifestPath);
 				if (dependencies.Length > 0)
 				{
 					foreach (string dpManifestPath in dependencies)
 					{
-						string dpLoadPath = AssetSystem.BundleServices.GetAssetBundleLoadPath(dpManifestPath);
-						AssetFileLoader dpLoader = AssetSystem.CreateFileLoaderInternal(dpLoadPath, dpManifestPath);
+						string dpLoadPath = AssetSystem.Instance.BundleServices.GetAssetBundleLoadPath(dpManifestPath);
+						AssetFileLoader dpLoader = AssetSystem.Instance.CreateFileLoaderInternal(dpLoadPath, dpManifestPath);
 						_depends.Add(dpLoader);
 					}
 				}
@@ -70,7 +70,7 @@ namespace MotionFramework.Resource
 				// 注意：Unity2017.4编辑器模式下，如果AssetBundle文件不存在会导致编辑器崩溃，这里做了预判。
 				if (System.IO.File.Exists(LoadPath) == false)
 				{
-					LogSystem.Log(ELogType.Warning, $"Not found assetBundle file : {LoadPath}");
+					Logger.Log(ELogType.Warning, $"Not found assetBundle file : {LoadPath}");
 					States = EAssetFileLoaderStates.LoadAssetFileFailed;
 					return;
 				}
@@ -91,7 +91,7 @@ namespace MotionFramework.Resource
 				// Check error
 				if (CacheBundle == null)
 				{
-					LogSystem.Log(ELogType.Warning, $"Failed to load assetBundle file : {LoadPath}");
+					Logger.Log(ELogType.Warning, $"Failed to load assetBundle file : {LoadPath}");
 					States = EAssetFileLoaderStates.LoadAssetFileFailed;
 				}
 				else

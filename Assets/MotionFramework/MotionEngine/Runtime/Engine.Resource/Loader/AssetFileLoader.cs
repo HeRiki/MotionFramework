@@ -37,12 +37,12 @@ namespace MotionFramework.Resource
 		}
 
 		/// <summary>
-		/// 轮询更新方法
+		/// 轮询更新
 		/// </summary>
 		public abstract void Update();
 
 		/// <summary>
-		/// 引用方法（引用计数递加）
+		/// 引用（引用计数递加）
 		/// </summary>
 		public virtual void Reference()
 		{
@@ -50,7 +50,7 @@ namespace MotionFramework.Resource
 		}
 
 		/// <summary>
-		/// 释放方法（引用计数递减）
+		/// 释放（引用计数递减）
 		/// </summary>
 		public virtual void Release()
 		{
@@ -58,7 +58,7 @@ namespace MotionFramework.Resource
 		}
 
 		/// <summary>
-		/// 销毁方法
+		/// 销毁
 		/// </summary>
 		public virtual void Destroy(bool force)
 		{
@@ -84,6 +84,10 @@ namespace MotionFramework.Resource
 		/// <summary>
 		/// 加载资源对象
 		/// </summary>
+		/// <param name="assetName">资源名称</param>
+		/// <param name="assetType">资源类型</param>
+		/// <param name="param">附加参数</param>
+		/// <returns></returns>
 		public AssetOperationHandle LoadAssetAsync(string assetName, System.Type assetType, IAssetParam param)
 		{
 			IAssetProvider provider = TryGetProvider(assetName);

@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace MotionFramework.Resource
 {
-	public class AssetResourcesFileLoader : AssetFileLoader
+	internal class AssetResourcesFileLoader : AssetFileLoader
 	{
 		public AssetResourcesFileLoader(string loadPath)
 			: base(loadPath)

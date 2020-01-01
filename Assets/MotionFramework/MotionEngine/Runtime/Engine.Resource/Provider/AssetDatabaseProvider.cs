@@ -47,7 +47,7 @@ namespace MotionFramework.Resource
 				{
 					string folderPath = loadPath;
 					string fileName = AssetName;
-					loadPath = AssetSystem.FindDatabaseAssetPath(folderPath, fileName);
+					loadPath = AssetPathHelper.FindDatabaseAssetPath(folderPath, fileName);
 				}
 
 				AssetObject = UnityEditor.AssetDatabase.LoadAssetAtPath(loadPath, AssetType);
@@ -59,7 +59,7 @@ namespace MotionFramework.Resource
 			{
 				States = AssetObject == null ? EAssetProviderStates.Failed : EAssetProviderStates.Succeed;
 				if (States == EAssetProviderStates.Failed)
-					LogSystem.Log(ELogType.Warning, $"Failed to load asset object : {_owner.LoadPath} : {AssetName}");
+					Logger.Log(ELogType.Warning, $"Failed to load asset object : {_owner.LoadPath} : {AssetName}");
 				InvokeCompletion();
 			}
 #endif

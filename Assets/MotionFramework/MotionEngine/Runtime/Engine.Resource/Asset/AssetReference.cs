@@ -15,8 +15,10 @@ namespace MotionFramework.Resource
 		/// </summary>
 		public string Location { private set; get; }
 
-		// 加载器
-		protected AssetFileLoader _cacheLoader;
+		/// <summary>
+		/// 加载器
+		/// </summary>
+		private AssetFileLoader _cacheLoader;
 
 
 		public AssetReference(string location)
@@ -61,7 +63,7 @@ namespace MotionFramework.Resource
 		/// <param name="assetName">资源对象名称</param>
 		public AssetOperationHandle LoadAssetAsync<TObject>(string assetName)
 		{
-			if(AssetSystem.SystemMode == EAssetSystemMode.ResourcesMode)
+			if(AssetSystem.Instance.AssetSystemMode == EAssetSystemMode.ResourcesMode)
 				throw new System.Exception($"{nameof(EAssetSystemMode.ResourcesMode)} is not support to assign asset name.");
 
 			return LoadInternal(assetName, typeof(TObject), null);
@@ -73,7 +75,7 @@ namespace MotionFramework.Resource
 		/// </summary>
 		public AssetOperationHandle LoadAssetAsync<TObject>(string assetName, IAssetParam param)
 		{
-			if (AssetSystem.SystemMode == EAssetSystemMode.ResourcesMode)
+			if (AssetSystem.Instance.AssetSystemMode == EAssetSystemMode.ResourcesMode)
 				throw new System.Exception($"{nameof(EAssetSystemMode.ResourcesMode)} is not support to assign asset name.");
 
 			return LoadInternal(assetName, typeof(TObject), param);
@@ -82,7 +84,7 @@ namespace MotionFramework.Resource
 		private AssetOperationHandle LoadInternal(string assetName, System.Type assetType, IAssetParam param)
 		{
 			if (_cacheLoader == null)
-				_cacheLoader = AssetSystem.CreateFileLoader(Location);
+				_cacheLoader = AssetSystem.Instance.CreateFileLoader(Location);
 			return _cacheLoader.LoadAssetAsync(assetName, assetType, param);
 		}
 	}

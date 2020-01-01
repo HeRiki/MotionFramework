@@ -52,7 +52,7 @@ namespace MotionFramework.Resource
 				}
 				else
 				{
-					LogSystem.Log(ELogType.Warning, $"Failed to load scene : {AssetName}");
+					Logger.Log(ELogType.Warning, $"Failed to load scene : {AssetName}");
 					States = EAssetProviderStates.Failed;
 					InvokeCompletion();
 				}
