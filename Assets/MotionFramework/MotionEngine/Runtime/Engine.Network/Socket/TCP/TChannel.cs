@@ -21,7 +21,7 @@ namespace MotionFramework.Network
 		private readonly Queue<System.Object> _receiveQueue = new Queue<System.Object>(10000);
 		private readonly List<System.Object> _decodeTempList = new List<object>(100);
 
-		private NetMessagePacker _packageParser = null;
+		private NetPackageCoder _packageCoder = null;
 
 		private bool _isSending = false;
 		private bool _isReceiving = false;
@@ -47,20 +47,20 @@ namespace MotionFramework.Network
 		/// <summary>
 		/// 初始化频道
 		/// </summary>
-		public void InitChannel(Socket socket, Type packageParseType)
+		public void InitChannel(Socket socket, Type packageCoderType)
 		{
 			IOSocket = socket;
 			IOSocket.NoDelay = true;
 
 			// 创建解析器
-			_packageParser = (NetMessagePacker)Activator.CreateInstance(packageParseType);
-			_packageParser.InitChannel(this);
+			_packageCoder = (NetPackageCoder)Activator.CreateInstance(packageCoderType);
+			_packageCoder.InitChannel(this);
 
 			_receiveArgs.Completed += new EventHandler<SocketAsyncEventArgs>(IO_Completed);
-			_receiveArgs.SetBuffer(_packageParser.GetReceiveBuffer(), 0, _packageParser.GetReceiveBufferCapacity());
+			_receiveArgs.SetBuffer(_packageCoder.GetReceiveBuffer(), 0, _packageCoder.GetReceiveBufferCapacity());
 
 			_sendArgs.Completed += new EventHandler<SocketAsyncEventArgs>(IO_Completed);
-			_sendArgs.SetBuffer(_packageParser.GetSendBuffer(), 0, _packageParser.GetSendBufferCapacity());
+			_sendArgs.SetBuffer(_packageCoder.GetSendBuffer(), 0, _packageCoder.GetSendBufferCapacity());
 		}
 
 		/// <summary>
@@ -90,8 +90,8 @@ namespace MotionFramework.Network
 				_receiveQueue.Clear();
 				_decodeTempList.Clear();
 
-				if (_packageParser != null)
-					_packageParser.Dispose();
+				if (_packageCoder != null)
+					_packageCoder.Dispose();
 
 				_isSending = false;
 				_isReceiving = false;
@@ -124,10 +124,10 @@ namespace MotionFramework.Network
 				_isReceiving = true;
 
 				// 清空缓存
-				_packageParser.ClearReceiveBuffer();
+				_packageCoder.ClearReceiveBuffer();
 
 				// 请求操作
-				_receiveArgs.SetBuffer(0, _packageParser.GetReceiveBufferCapacity());
+				_receiveArgs.SetBuffer(0, _packageCoder.GetReceiveBufferCapacity());
 				bool willRaiseEvent = IOSocket.ReceiveAsync(_receiveArgs);
 				if (!willRaiseEvent)
 				{
@@ -141,23 +141,23 @@ namespace MotionFramework.Network
 				_isSending = true;
 
 				// 清空缓存
-				_packageParser.ClearSendBuffer();
+				_packageCoder.ClearSendBuffer();
 
 				// 合并数据一起发送
 				while (_sendQueue.Count > 0)
 				{
 					// 数据压码
 					System.Object packet = _sendQueue.Dequeue();
-					_packageParser.Encode(packet);
+					_packageCoder.Encode(packet);
 
 					// 如果已经超过一个最大包体尺寸
 					// 注意：发送的数据理论最大值为俩个最大包体大小
-					if (_packageParser.GetSendBufferWriterIndex() >= NetworkDefine.PackageBodyMaxSize)
+					if (_packageCoder.GetSendBufferWriterIndex() >= NetworkDefine.PackageBodyMaxSize)
 						break;
 				}
 
 				// 请求操作
-				_sendArgs.SetBuffer(0, _packageParser.GetSendBufferReadableBytes());
+				_sendArgs.SetBuffer(0, _packageCoder.GetSendBufferReadableBytes());
 				bool willRaiseEvent = IOSocket.SendAsync(_sendArgs);
 				if (!willRaiseEvent)
 				{
@@ -219,10 +219,10 @@ namespace MotionFramework.Network
 			// check if the remote host closed the connection	
 			if (e.BytesTransferred > 0 && e.SocketError == SocketError.Success)
 			{
-				_packageParser.SetReceiveDataSize(e.BytesTransferred);
+				_packageCoder.SetReceiveDataSize(e.BytesTransferred);
 
 				// 如果数据写穿
-				if (_packageParser.GetReceiveBufferWriterIndex() > _packageParser.GetReceiveBufferCapacity())
+				if (_packageCoder.GetReceiveBufferWriterIndex() > _packageCoder.GetReceiveBufferCapacity())
 				{
 					HandleError(true, "The channel fatal error");
 					return;
@@ -230,7 +230,7 @@ namespace MotionFramework.Network
 
 				// 数据解码
 				_decodeTempList.Clear();
-				_packageParser.Decode(_decodeTempList);
+				_packageCoder.Decode(_decodeTempList);
 				lock (_receiveQueue)
 				{
 					for(int i=0; i< _decodeTempList.Count; i++)
@@ -240,7 +240,7 @@ namespace MotionFramework.Network
 				}
 
 				// 为接收下一段数据，投递接收请求
-				e.SetBuffer(_packageParser.GetReceiveBufferWriterIndex(), _packageParser.GetReceiveBufferWriteableBytes());
+				e.SetBuffer(_packageCoder.GetReceiveBufferWriterIndex(), _packageCoder.GetReceiveBufferWriteableBytes());
 				bool willRaiseEvent = IOSocket.ReceiveAsync(e);
 				if (!willRaiseEvent)
 				{
