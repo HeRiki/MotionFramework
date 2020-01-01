@@ -32,7 +32,7 @@ namespace MotionFramework.Network
 		public byte[] BodyBytes { set; get; }
 	}
 
-	public abstract class DefaultNetMessagePacker : NetMessagePacker
+	public abstract class DefaultPackageCoder : NetPackageCoder
 	{
 		/// <summary>
 		/// 包裹大小的字段类型
