@@ -11,6 +11,9 @@ using UnityEngine;
 
 namespace MotionFramework.Debug
 {
+	/// <summary>
+	/// 调试控制台
+	/// </summary>
 	public static class DebugConsole
 	{
 		private class NodeWrapper : IComparer<NodeWrapper>, IComparable<NodeWrapper>
@@ -41,11 +44,10 @@ namespace MotionFramework.Debug
 		private static Texture _bgTexture;
 		private static string[] _toolbarTitles;
 
-
 		/// <summary>
 		/// 初始化控制台
 		/// </summary>
-		public static void Init()
+		public static void Initialize()
 		{
 			// 加载背景纹理
 			_bgTexture = Resources.Load<Texture>("builtin_background");
