@@ -31,12 +31,12 @@ namespace MotionFramework.AI
 			/// <summary>
 			/// 初始运行的节点
 			/// </summary>
-			public int RunNode;
+			public string RunNode;
 		}
 
 		private readonly FsmSystem _system = new FsmSystem();
 		private FsmGraph _graph;
-		private int _runNode;
+		private string _runNode;
 
 
 		void IModule.OnCreate(System.Object param)
@@ -61,29 +61,29 @@ namespace MotionFramework.AI
 		}
 		void IModule.OnGUI()
 		{
-			DebugConsole.GUILable($"[{nameof(FsmManager)}] FSM : {_system.CurrentNodeType}");
+			DebugConsole.GUILable($"[{nameof(FsmManager)}] FSM : {_system.CurrentNodeName}");
 		}
 
 		/// <summary>
 		/// 当前运行的节点类型
 		/// </summary>
-		public int CurrentNodeType
+		public string CurrentNodeName
 		{
-			get { return _system.CurrentNodeType; }
+			get { return _system.CurrentNodeName; }
 		}
 
 		/// <summary>
 		/// 之前运行的节点类型
 		/// </summary>
-		public int PreviousNodeType
+		public string PreviousNodeName
 		{
-			get { return _system.PreviousNodeType; }
+			get { return _system.PreviousNodeName; }
 		}
 
 		/// <summary>
 		/// 加入一个节点
 		/// </summary>
-		public void AddState(FsmNode node)
+		public void AddNode(IFsmNode node)
 		{
 			_system.AddNode(node);
 		}
@@ -91,9 +91,9 @@ namespace MotionFramework.AI
 		/// <summary>
 		/// 转换节点
 		/// </summary>
-		public void Transition(int nodeType)
+		public void Transition(string nodeName)
 		{
-			_system.Transition(nodeType);
+			_system.Transition(nodeName);
 		}
 
 		/// <summary>
