@@ -12,21 +12,18 @@ namespace MotionFramework.AI
 	/// </summary>
 	public class ProcedureSystem
 	{
-		/// <summary>
-		/// 类型列表
-		/// </summary>
-		private List<int> _types = new List<int>();
+		private readonly List<int> _nodeTypes = new List<int>();
+		private readonly FsmSystem _system = new FsmSystem();
 
 		/// <summary>
-		/// 状态机系统
+		/// 添加一个节点
+		/// 注意：节点会按照添加的先后顺序执行
 		/// </summary>
-		private FsmSystem _system = new FsmSystem();
-
-
-		public ProcedureSystem()
+		public void AddNode(FsmNode node)
 		{
-			// 流程系统不用检测转换关系
-			_system.IsCheckRelation = false;
+			_system.AddNode(node);
+			if (_nodeTypes.Contains(node.Type) == false)
+				_nodeTypes.Add(node.Type);
 		}
 
 		/// <summary>
@@ -34,10 +31,10 @@ namespace MotionFramework.AI
 		/// </summary>
 		public void Run()
 		{
-			if (_types.Count > 0)
-				_system.Run(_types[0]);
+			if (_nodeTypes.Count > 0)
+				_system.Run(_nodeTypes[0], null);
 			else
-				LogSystem.Log(ELogType.Warning, "Procedure system dont has any procedure.");
+				Logger.Log(ELogType.Warning, "Procedure system dont has any node.");
 		}
 
 		/// <summary>
@@ -49,61 +46,50 @@ namespace MotionFramework.AI
 		}
 
 		/// <summary>
-		/// 创建并自动添加一个流程
-		/// 注意添加的先后顺序
-		/// </summary>
-		public void AddProcedure(FsmState procedure)
-		{
-			_system.AddState(procedure);
-			if (_types.Contains(procedure.Type) == false)
-				_types.Add(procedure.Type);
-		}
-
-		/// <summary>
-		/// 当前流程类型
+		/// 当前运行的节点类型
 		/// </summary>
 		public int Current()
 		{
-			return _system.RunStateType;
+			return _system.CurrentNodeType;
 		}
 
 		/// <summary>
-		/// 切换流程
+		/// 切换流程节点
 		/// </summary>
-		public void Switch(int procedure)
+		public void Switch(int nodeType)
 		{
-			_system.ChangeState(procedure);
+			_system.Transition(nodeType);
 		}
 
 		/// <summary>
-		/// 切换至下一流程
+		/// 切换至下个流程节点
 		/// </summary>
 		public void SwitchNext()
 		{
-			int index = _types.IndexOf(_system.RunStateType);
-			if (index >= _types.Count - 1)
+			int index = _nodeTypes.IndexOf(_system.CurrentNodeType);
+			if (index >= _nodeTypes.Count - 1)
 			{
-				LogSystem.Log(ELogType.Warning, $"Current procedure {_system.RunStateType} is the final procedure.");
+				Logger.Log(ELogType.Warning, $"Current node {_system.CurrentNodeType} is end node.");
 			}
 			else
 			{
-				Switch(_types[index + 1]);
+				Switch(_nodeTypes[index + 1]);
 			}
 		}
 
 		/// <summary>
-		/// 切换至上一流程
+		/// 切换至上个流程节点
 		/// </summary>
 		public void SwitchLast()
 		{
-			int index = _types.IndexOf(_system.RunStateType);
+			int index = _nodeTypes.IndexOf(_system.CurrentNodeType);
 			if (index <= 0)
 			{
-				LogSystem.Log(ELogType.Warning, $"Current procedure {_system.RunStateType} is the first procedure.");
+				Logger.Log(ELogType.Warning, $"Current node {_system.CurrentNodeType} is begin node.");
 			}
 			else
 			{
-				Switch(_types[index - 1]);
+				Switch(_nodeTypes[index - 1]);
 			}
 		}
 	}

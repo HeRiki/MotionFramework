@@ -9,59 +9,65 @@ using System.Collections.Generic;
 
 namespace MotionFramework.AI
 {
+	/// <summary>
+	/// 有限状态机
+	/// </summary>
 	public class FsmSystem
 	{
-		/// <summary>
-		/// 状态集合
-		/// </summary>
-		private readonly List<FsmState> _states = new List<FsmState>();
+		private readonly List<FsmNode> _nodes = new List<FsmNode>();
+		private FsmNode _curNode;
+		private FsmNode _preNode;
+		private FsmGraph _graph;
 
 		/// <summary>
-		/// 当前运行状态
+		/// 当前运行的节点类型
 		/// </summary>
-		private FsmState _runState;
-
-		/// <summary>
-		/// 之前运行状态
-		/// </summary>
-		private FsmState _preState;
-
-
-		/// <summary>
-		/// 是否检测转换关系
-		/// </summary>
-		public bool IsCheckRelation { set; get; } = true;
-
-		/// <summary>
-		/// 当前运行的状态类型
-		/// </summary>
-		public int RunStateType
+		public int CurrentNodeType
 		{
-			get { return _runState != null ? _runState.Type : 0; }
+			get { return _curNode != null ? _curNode.Type : -1; }
 		}
 
 		/// <summary>
-		/// 之前运行的状态类型
+		/// 之前运行的节点类型
 		/// </summary>
-		public int PreStateType
+		public int PreviousNodeType
 		{
-			get { return _preState != null ? _preState.Type : 0; }
+			get { return _preNode != null ? _preNode.Type : -1; }
 		}
 
+		/// <summary>
+		/// 加入一个节点
+		/// </summary>
+		public void AddNode(FsmNode node)
+		{
+			if (node == null)
+				throw new ArgumentNullException();
+
+			if (_nodes.Contains(node) == false)
+			{
+				_nodes.Add(node);
+			}
+			else
+			{
+				Logger.Log(ELogType.Warning, $"Node {node.Type} already existed");
+			}
+		}
 
 		/// <summary>
 		/// 启动状态机
 		/// </summary>
-		/// <param name="runStateType">初始状态类型</param>
-		public void Run(int runStateType)
+		/// <param name="runNodeType">初始运行的节点类型</param>
+		/// <param name="graph">节点转换关系图，如果为NULL则不检测转换关系</param>
+		public void Run(int runNodeType, FsmGraph graph)
 		{
-			_runState = GetState(runStateType);
-			_preState = GetState(runStateType);
+			_graph = graph;
+			_curNode = GetNode(runNodeType);
+			_preNode = GetNode(runNodeType);
 
-			if (_runState != null)
-				_runState.Enter();
+			if (_curNode != null)
+				_curNode.OnEnter();
 			else
-				LogSystem.Log(ELogType.Error, $"Not found run state : {runStateType}");
+				Logger.Log(ELogType.Error, $"Not found run node : {runNodeType}");
 		}
 
 		/// <summary>
@@ -69,102 +75,71 @@ namespace MotionFramework.AI
 		/// </summary>
 		public void Update()
 		{
-			if (_runState != null)
-				_runState.Execute();
+			if (_curNode != null)
+				_curNode.OnUpdate();
 		}
 
+		/// <summary>
+		/// 转换节点
+		/// </summary>
+		public void Transition(int nodeType)
+		{
+			FsmNode node = GetNode(nodeType);
+			if (node == null)
+			{
+				Logger.Log(ELogType.Error, $"Can not found node {nodeType}");
+				return;
+			}
+
+			// 检测转换关系
+			if (_graph != null)
+			{
+				if (_graph.CanTransition(_curNode.Type, node.Type) == false)
+				{
+					Logger.Log(ELogType.Error, $"Can not transition {_curNode} to {node}");
+					return;
+				}
+			}
+
+			Logger.Log(ELogType.Log, $"Transition {_curNode} to {node}");
+			_preNode = _curNode;
+			_curNode.OnExit();
+			_curNode = node;
+			_curNode.OnEnter();
+		}
+
+		/// <summary>
+		/// 返回到之前的节点
+		/// </summary>
+		public void RevertToPreviousNode()
+		{
+			Transition(PreviousNodeType);
+		}
+		
 		/// <summary>
 		/// 接收消息
 		/// </summary>
 		public void HandleMessage(object msg)
 		{
-			if (_runState != null)
-				_runState.OnMessage(msg);
+			if (_curNode != null)
+				_curNode.OnHandleMessage(msg);
 		}
 
-		/// <summary>
-		/// 添加一个状态节点
-		/// </summary>
-		public void AddState(FsmState state)
+		private bool IsContains(int nodeType)
 		{
-			if (state == null)
-				throw new ArgumentNullException();
-
-			if (_states.Contains(state) == false)
+			for (int i = 0; i < _nodes.Count; i++)
 			{
-				_states.Add(state);
-			}
-			else
-			{
-				LogSystem.Log(ELogType.Warning, $"State {state.Type} already existed");
-			}
-		}
-
-		/// <summary>
-		/// 改变状态
-		/// </summary>
-		public void ChangeState(int stateType)
-		{
-			FsmState state = GetState(stateType);
-			if (state == null)
-			{
-				LogSystem.Log(ELogType.Error, $"Can not found state {stateType}");
-				return;
-			}
-
-			// 检测转换关系
-			if (IsCheckRelation)
-			{
-				// 全局状态不需要检测转换关系
-				if (_runState.IsGlobalState == false && state.IsGlobalState == false)
-				{
-					if (_runState.CanChangeTo(stateType) == false)
-					{
-						LogSystem.Log(ELogType.Error, $"Can not change state {_runState} to {state}");
-						return;
-					}
-				}
-			}
-
-			LogSystem.Log(ELogType.Log, $"Change state {_runState} to {state}");
-			_preState = _runState;
-			_runState.Exit();
-			_runState = state;
-			_runState.Enter();
-		}
-
-		/// <summary>
-		/// 返回之前状态
-		/// </summary>
-		public void RevertToPreState()
-		{
-			int stateType = _preState != null ? _preState.Type : 0;
-			ChangeState(stateType);
-		}
-
-
-		/// <summary>
-		/// 查询是否包含状态类型
-		/// </summary>
-		private bool IsContains(int stateType)
-		{
-			for (int i = 0; i < _states.Count; i++)
-			{
-				if (_states[i].Type == stateType)
+				if (_nodes[i].Type == nodeType)
 					return true;
 			}
 			return false;
 		}
-
-		/// <summary>
-		/// 获取状态类
-		/// </summary>
-		private FsmState GetState(int stateType)
+		private FsmNode GetNode(int nodeType)
 		{
-			for (int i = 0; i < _states.Count; i++)
+			for (int i = 0; i < _nodes.Count; i++)
 			{
-				if (_states[i].Type == stateType)
-					return _states[i];
+				if (_nodes[i].Type == nodeType)
+					return _nodes[i];
 			}
 			return null;
 		}
