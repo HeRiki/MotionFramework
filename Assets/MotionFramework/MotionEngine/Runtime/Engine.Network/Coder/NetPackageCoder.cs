@@ -9,16 +9,15 @@ using MotionFramework.IO;
 
 namespace MotionFramework.Network
 {
-	public abstract class NetMessagePacker
+	/// <summary>
+	/// 网络包编码解码器
+	/// </summary>
+	public abstract class NetPackageCoder
 	{
 		protected readonly ByteBuffer _sendBuffer = new ByteBuffer(NetworkDefine.ByteBufferSize);
 		protected readonly ByteBuffer _receiveBuffer = new ByteBuffer(NetworkDefine.ByteBufferSize);
 		public TChannel Channel { private set; get; }
 
-
-		public NetMessagePacker()
-		{	
-		}
 
 		/// <summary>
 		/// 初始化频道
@@ -29,7 +28,7 @@ namespace MotionFramework.Network
 		}
 
 		/// <summary>
-		/// 释放解析器
+		/// 释放
 		/// </summary>
 		public virtual void Dispose()
 		{
@@ -38,13 +37,13 @@ namespace MotionFramework.Network
 		}
 
 		/// <summary>
-		/// 消息编码
+		/// 编码
 		/// </summary>
 		/// <param name="packageObj">需要编码的包裹对象</param>
 		public abstract void Encode(System.Object packageObj);
 
 		/// <summary>
-		/// 消息解码
+		/// 解码
 		/// </summary>
 		/// <param name="packageObjList">解码成功后的包裹对象列表</param>
 		public abstract void Decode(List<System.Object> packageObjList);
