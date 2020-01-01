@@ -18,7 +18,7 @@ using System.Diagnostics;
 namespace MotionFramework.IO
 {
 	/// <summary>
-	/// 通用的字节缓冲类
+	/// 字节缓冲区
 	/// </summary>
 	public class ByteBuffer
 	{
