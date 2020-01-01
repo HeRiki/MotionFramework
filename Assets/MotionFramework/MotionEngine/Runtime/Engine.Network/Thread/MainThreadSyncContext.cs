@@ -13,9 +13,9 @@ namespace MotionFramework.Network
 	/// <summary>
 	/// 注意：Unity3D中需要设置Scripting Runtime Version为.NET4.6
 	/// </summary>
-	public sealed class MainThreadSyncContext : SynchronizationContext
+	internal sealed class MainThreadSyncContext : SynchronizationContext
 	{
-		public static MainThreadSyncContext Instance = new MainThreadSyncContext();
+		public readonly static MainThreadSyncContext Instance = new MainThreadSyncContext();
 
 		/// <summary>
 		/// 线程同步队列

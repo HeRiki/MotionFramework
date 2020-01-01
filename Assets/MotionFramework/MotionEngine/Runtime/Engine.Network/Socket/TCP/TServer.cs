@@ -248,7 +248,7 @@ namespace MotionFramework.Network
 			}
 			else
 			{
-				LogSystem.Log(ELogType.Error, $"ProcessAccept error : {e.SocketError}");
+				Logger.Log(ELogType.Error, $"ProcessAccept error : {e.SocketError}");
 			}
 
 			// 投递下一个接收请求
@@ -312,7 +312,7 @@ namespace MotionFramework.Network
 			}
 			else
 			{
-				LogSystem.Log(ELogType.Error, $"ProcessConnected error : {e.SocketError}");
+				Logger.Log(ELogType.Error, $"ProcessConnected error : {e.SocketError}");
 			}
 
 			// 回调函数		

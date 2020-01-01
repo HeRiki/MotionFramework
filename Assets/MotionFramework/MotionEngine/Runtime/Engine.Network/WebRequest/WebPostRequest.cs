@@ -46,7 +46,7 @@ namespace MotionFramework.Network
 			// Check error
 			if (CacheRequest.isNetworkError || CacheRequest.isHttpError)
 			{
-				LogSystem.Log(ELogType.Warning, $"Failed to request web post : {URL} Error : {CacheRequest.error}");
+				Logger.Log(ELogType.Warning, $"Failed to request web post : {URL} Error : {CacheRequest.error}");
 				States = EWebRequestStates.Failed;
 			}
 			else
