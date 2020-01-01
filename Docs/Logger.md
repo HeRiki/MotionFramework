@@ -9,8 +9,8 @@ public class Test
 {
 	public void Start()
 	{
-		// 注册日志回调
-		LogSystem.RegisterCallback(LogCallback);
+		// 监听日志
+		Logger.RegisterCallback(LogCallback);
 	}
 
 	private void LogCallback(ELogType logType, string log)

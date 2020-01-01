@@ -1,51 +1,58 @@
 ### 状态机管理器 (FsmManager)
 
-定义状态类
+定义节点
 ```C#
 using MotionFramework.AI;
 
-public enum EFsmStateType
+public class FsmStart : IFsmNode
 {
-	Start,
-	Running,
-}
+	public string Name { private set; get; }
 
-public class FsmStart : FsmState
-{
-	public FsmStart() : base((int)EFsmStateType.Start)
+	public FsmStart()
+	{
+		Name = "Start";
+	}
+
+	void IFsmNode.OnEnter()
 	{
 	}
-	public override void Enter()
-	{
-	}
-	public override void Execute()
+	void IFsmNode.OnUpdate()
 	{
 		// 转换状态
-		FsmManager.Instance.ChangeState((int)EFsmStateType.Running);
+		FsmManager.Instance.Transition("Running");
 	}
-	public override void Exit()
+	void IFsmNode.OnExit()
+	{
+	}
+	void IFsmNode.OnHandleMessage(object msg)
 	{
 	}
 }
 
-public class FsmRunning : FsmState
+public class FsmRunning : IFsmNode
 {
-	public FsmRunning() : base((int)EFsmStateType.Running)
+	public string Name { private set; get; }
+
+	public FsmRunning()
+	{
+		Name = "Running";
+	}
+
+	void IFsmNode.OnEnter()
 	{
 	}
-	public override void Enter()
+	void IFsmNode.OnUpdate()
 	{
 	}
-	public override void Execute()
+	void IFsmNode.OnExit()
 	{
 	}
-	public override void Exit()
+	void IFsmNode.OnHandleMessage(object msg)
 	{
 	}
 }
 ```
 
-创建状态类并设置状态机
 ```C#
 using MotionFramework.AI;
 
@@ -53,20 +60,18 @@ public class Test
 {
 	public void Start()
 	{
-		// 创建状态类
-	 	FsmStart start = new FsmStart();
-	 	FsmRunning running = new FsmRunning();
+		// 创建模块
+		FsmManager.CreateParameters param = new FsmManager.CreateParameters();
+		param.Graph = null;
+		param.RunNode = "Start";
+		AppEngine.Instance.CreateModule<FsmManager>(param);
 
-	 	// 设置转换关系
-	 	start.AddChangeToState((int)EFsmStateType.Running);
-
-	 	// 注册状态
-	 	FsmManager.Instance.AddState(start)
-	 	FsmManager.Instance.AddState(running);
-	 	FsmManager.Instance.SetDefaultRunState((int)EFsmStateType.Start);
+		// 添加节点
+	 	FsmManager.Instance.AddNode(new FsmStart())
+	 	FsmManager.Instance.AddNode(new FsmRunning());
 	}
 }
 ```
 
 更详细的教程请参考示例代码
-1. [MotionGame/Runtime/Game.AI/FsmManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionGame/Runtime/Game.AI/FsmManager.cs)
+1. [MotionModule/Runtime/Module.AI/FsmManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionModule/Runtime/Module.AI/FsmManager.cs)

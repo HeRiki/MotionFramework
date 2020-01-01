@@ -7,8 +7,8 @@ public class Test
 {
 	public void Start()
 	{
-		// 注意：ProtoPackageParser是我们自定义的网络包解析器
-		NetworkManager.Instance.ConnectServer("127.0.0.1", 10002, typeof(ProtoPackageParser));
+		// 注意：ProtoMessagePacker是我们自定义的网络包解析器
+		NetworkManager.Instance.ConnectServer("127.0.0.1", 10002, typeof(ProtoPackageCoder));
 		NetworkManager.Instance.MonoPackageCallback += OnHandleMonoPackage;
 	}
 
@@ -38,4 +38,4 @@ public class Test
 ```
 
 更详细的教程请参考示例代码
-1. [MotionGame/Runtime/Game.Network/NetworkManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionGame/Runtime/Game.Network/NetworkManager.cs)
+1. [MotionModule/Runtime/Module.Network/NetworkManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionModule/Runtime/Module.Network/NetworkManager.cs)

@@ -25,3 +25,6 @@ public class Test
 	}
 }
 ```
+
+更详细的教程请参考示例代码
+1. [MotionModule/Runtime/Module.Scene/SceneManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionModule/Runtime/Module.Scene/SceneManager.cs)

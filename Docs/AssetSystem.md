@@ -6,32 +6,16 @@
 2. EAssetSystemMode.ResourcesMode : 使用UnityEngine.Resources加载资源。
 3. EAssetSystemMode.BundleMode : 使用UnityEngine.AssetBundle加载资源。
 
-```C#
-using MotionFramework.Resource;
-
-public class Test
-{
-	public void Start()
-	{
-		// 设置资源系统模式
-		AssetSystem.SystemMode = EAssetSystemMode.EditorMode;
-	}
-}
-```
-
 **资源系统根路径**  
 所有通过代码加载的资源文件都需要放在资源系统根路径下，在加载这些资源的时候只需要提供相对路径即可。资源系统统一约定该相对路径名称为：**location**   
 
 ```C#
-using MotionFramework.Resource;
-
-public class Test
+public void Start()
 {
-	public void Start()
-	{
-		// 设置资源系统根路径
-		AssetSystem.AssetRootPath = "Assets/Works/Resource";
-	}
+	// 初始化资源系统
+	string assetRootPath = "Assets/Works/Resource";
+	EAssetSystemMode assetSystemMode = EAssetSystemMode.EditorMode；
+	AssetSystem.Instance.Initialize(assetRootPath, assetSystemMode);
 }
 ```
 
@@ -176,7 +160,7 @@ public class Test
 	{
 		MyBundleServices services = new MyBundleServices();
 		services.LoadManifestFile();
-		AssetSystem.BundleServices = services;
+		AssetSystem.Instance.BundleServices = services;
 	}
 }
 ```

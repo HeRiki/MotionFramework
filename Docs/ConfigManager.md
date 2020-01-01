@@ -47,4 +47,4 @@ public class Test
 }
 ```
 
-1. [MotionGame/Runtime/Game.Config/ConfigManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionGame/Runtime/Game.Config/ConfigManager.cs)
+1. [MotionModule/Runtime/Module.Config/ConfigManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionModule/Runtime/Module.Config/ConfigManager.cs)

@@ -54,4 +54,4 @@ public class Test
 }
 ```
 
-1. [MotionGame/Runtime/Game.Pool/PoolManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionGame/Runtime/Game.Pool/PoolManager.cs)
+1. [MotionModule/Runtime/Module.Pool/PoolManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionModule/Runtime/Module.Pool/PoolManager.cs)

@@ -1,6 +1,6 @@
 ### 网络系统 (Network)
 
-定义网络包解析器
+定义网络包编码解码器
 ```C#
 using System;
 using System.Collections;
@@ -8,11 +8,11 @@ using System.Collections.Generic;
 using MotionFramework.Network;
 
 /// <summary>
-/// Protobuf网络消息解析器
+/// Protobuf网络包编码解码器
 /// </summary>
-public class ProtoPackageParser : DefaultPackageParser
+public class ProtoPackageCoder : DefaultPackageCoder
 {
-	public ProtoPackageParser()
+	public ProtoPackageCoder()
 	{
 		// 设置字段类型
 		PackageSizeFieldType = EPackageSizeFieldType.UShort;
@@ -32,4 +32,4 @@ public class ProtoPackageParser : DefaultPackageParser
 ```
 
 更详细的教程请参考示例代码
-1. [MotionGame/Runtime/Game.Network/PackageParser/DefaultPackageParser.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionGame/Runtime/Game.Network/PackageParser/DefaultPackageParser.cs)
+1. [MotionModule/Runtime/Module.Network/Coder/DefaultPackageCoder.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionModule/Runtime/Module.Network/Coder/DefaultPackageCoder.cs)

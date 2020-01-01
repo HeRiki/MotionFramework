@@ -46,9 +46,9 @@ public class Test
     {
       Value = $"hello world",
     };
-    EventManager.Instance.Send("customEventTag", msg);
+    EventManager.Instance.SendMessage("customEventTag", msg);
   }
 }
 ```
 
-1. [MotionGame/Runtime/Game.Event/EventManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionGame/Runtime/Game.Event/EventManager.cs)
+1. [MotionModule/Runtime/Module.Event/EventManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionModule/Runtime/Module.Event/EventManager.cs)

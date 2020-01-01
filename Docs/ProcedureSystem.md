@@ -12,63 +12,72 @@ public enum EProcedureType
 }
 
 // 流程1
-public class CheckResourceVersion : FsmState
+public class CheckResourceVersion : IFsmNode
 {
 	private ProcedureSystem _system;
-	public CheckResourceVersion(ProcedureSystem system, int type) : base(type)
+	public string Name { private set; get; }
+
+	public CheckResourceVersion(ProcedureSystem system)
 	{
 		_system = system;
+		Name = EProcedureType.Procedure1.ToString();
 	}
-	public override void Enter()
+	public override void OnEnter()
 	{
 	}
-	public override void Execute()
+	public override void OnUpdate()
 	{
-		// 切换到下一个流程
-		_system.SwitchNextProcedure();
+		// 切换到下一个节点
+		_system.SwitchNext();
 	}
-	public override void Exit()
+	public override void OnExit()
 	{
 	}
 }
 
 // 流程2
-public class DownloadVersionFile : FsmState
+public class DownloadVersionFile : IFsmNode
 {
 	private ProcedureSystem _system;
-	public DownloadVersionFile(ProcedureSystem system, int type) : base(type)
+	public string Name { private set; get; }
+
+	public DownloadVersionFile(ProcedureSystem system)
 	{
 		_system = system;
+		Name = EProcedureType.Procedure2.ToString();
 	}
-	public override void Enter()
+	public override void OnEnter()
 	{
 	}
-	public override void Execute()
+	public override void OnUpdate()
 	{
-		// 切换到下一个流程
-		_system.SwitchNextProcedure();
+		// 切换到下一个节点
+		_system.SwitchNext();
 	}
-	public override void Exit()
+	public override void OnExit()
 	{
 	}
 }
 
 // 流程3
-public class DownloadPatchFiles : FsmState
+public class DownloadPatchFiles : IFsmNode
 {
 	private ProcedureSystem _system;
-	public DownloadPatchFiles(ProcedureSystem system, int type) : base(type)
+	public string Name { private set; get; }
+
+	public DownloadPatchFiles(ProcedureSystem system)
 	{
 		_system = system;
+		Name = EProcedureType.Procedure3.ToString();
 	}
-	public override void Enter()
+	public override void OnEnter()
 	{
 	}
-	public override void Execute()
+	public override void OnUpdate()
 	{
-		// 已经是最后一个流程
+		// 已经是最后一个节点
 	}
-	public override void Exit()
+	public override void OnExit()
 	{
 	}
 }
@@ -85,14 +94,14 @@ public class Test
 	public void Start()
 	{
 		// 创建流程
-	 	CheckResourceVersion node1 = new CheckResourceVersion(_system, (int)EProcedureType.Procedure1);
-	 	DownloadVersionFile node2 = new DownloadVersionFile(_system, (int)EProcedureType.Procedure2);
-	 	DownloadPatchFiles node3 = new DownloadPatchFiles(_system, (int)EProcedureType.Procedure3);
+	 	CheckResourceVersion node1 = new CheckResourceVersion(_system);
+	 	DownloadVersionFile node2 = new DownloadVersionFile(_system);
+	 	DownloadPatchFiles node3 = new DownloadPatchFiles(_system);
 
 	 	// 按顺序添加流程
-	 	_system.AddProcedure(node1);
-	 	_system.AddProcedure(node2);
-	 	_system.AddProcedure(node3);
+	 	_system.AddNode(node1);
+	 	_system.AddNode(node2);
+	 	_system.AddNode(node3);
 
 	 	// 运行流程系统
 	 	_system.Run();
@@ -105,6 +114,3 @@ public class Test
 	}
 }
 ```
-
-更详细的教程请参考示例代码
-1. [MotionEngine/Runtime/Engine.AI/Procedure](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionEngine/Runtime/Engine.AI/Procedure)

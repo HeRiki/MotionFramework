@@ -61,7 +61,7 @@ public static class AssetEncrypter
 ![image](https://github.com/gmhevinci/MotionFramework/raw/master/Docs/Image/img101_1.png)
 
 **补丁文件**  
-每次打包都会生成一个名为package.bytes的补丁文件，补丁文件内包含了所有资源的信息，例如：名称，版本，大小，MD5
+每次打包都会生成一个名为patch.bytes的补丁文件，补丁文件内包含了所有资源的信息，例如：名称，版本，大小，MD5
 ```C#
 //读取package.bytes文件
 using System;
@@ -76,28 +76,26 @@ public class Test
 
 	public void Start()
 	{
-		AppEngine.Instance.StartCoroutine(HotfixParseAppPackageFile());
+		AppEngine.Instance.StartCoroutine(DownLoad());
 	}
 
-	public IEnumerator HotfixParseAppPackageFile()
+	public IEnumerator DownLoad()
 	{
 		// 从流文件夹内读取补丁文件
-		string filePath = AssetPathHelper.MakeStreamingLoadPath("package.bytes");
+		string filePath = AssetPathHelper.MakeStreamingLoadPath(PatchDefine.StrPatchFileName);
+		string url = AssetPathHelper.ConvertToWWWPath(filePath);
 
 		// Download file
-		WebDataDownload download = new WebDataDownload();
-		download.URL = AssetPathHelper.ConvertToWWWPath(filePath);
-		download.LoadCallback = null;
+		WebDataRequest download = new WebDataRequest(url);
 		yield return download.DownLoad();
 
 		// Check result
-		if (download.LoadState != EWebLoadState.LoadSucceed)
-			throw new Exception($"Failed download file : {filePath}");
-
-		// 解析补丁文件
-		_patchFile = new PatchFile();
-		_patchFile.Parse(download.GetText());
-
+		if (download.LoadState == EWebRequestStates.Succeed)
+		{
+			// 解析补丁文件
+			_patchFile = new PatchFile();
+			_patchFile.Parse(download.GetText());	
+		}
 		download.Dispose();
 	}
 }
@@ -112,6 +110,3 @@ public class Test
 "forceBuild=false"
 "buildVersion=100"
 ```
-
-更详细的教程请参考示例代码
-1. [MotionGame/Editor/Builder/BuildPatch.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionGame/Editor/Builder/BuildPatch.cs)

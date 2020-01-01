@@ -4,33 +4,35 @@
 ```C#
 using MotionFramework;
 
-public class CustomModule : IModule
+public class CustomManager : IModule
 {
-  public static readonly CustomModule Instance = new CustomModule();
-  
-  private CustomModule()
+  /// <summary>
+  /// 游戏模块全局实例
+  /// </summary>
+  public static CustomManager Instance { private set; get; }
+
+  void IModule.OnCreate(System.Object param)
   {
+    //当模块被创建的时候
+    Instance = this;
   }
-  public void Awake()
+  void IModule.OnStart()
   {
-    //当模块被注册的时候被调用，仅被执行一次
+    //在首次Update之前被调用，仅被执行一次
   }
-  public void Start()
+  void IModule.OnUpdate()
   {
-    //当第一次Update之前被调用，仅被执行一次
+    //轮询模块
   }
-  public void Update()
-  {
-    //Update方法
-  }
-  public void LateUpdate()
-  {
-    //在所有Update执行完毕后被调用
-  }
-  public void OnGUI()
+  void IModule.OnGUI()
   {
     //GUI绘制
-    //可以在这里写一些Unity GUI相关的代码
+    //可以显示模块的一些关键信息
+  }
+
+  public void Print()
+  {
+    Debug.Log("Hello world");
   }
 }
 ```
@@ -43,13 +45,20 @@ public class Test
 {
   public void Start()
   {
-    // 注册模块
-    AppEngine.Instance.RegisterModule(CustomModule.Instance);
+    // 创建模块
+    AppEngine.Instance.CreateModule<CustomManager>();
 
-    // 带优先级的注册方式
-    // 说明：运行时的优先级，优先级越大越早执行。如果没有设置优先级，那么会按照添加顺序执行
+    // 带优先级的创建方式
+    // 说明：运行时的优先级，优先级越大越早轮询。如果没有设置优先级，那么会按照添加顺序执行
     int priority = 1000;
-    AppEngine.Instance.RegisterModule(CustomModule.Instance, priority);
+    AppEngine.Instance.CreateModule<CustomManager>(priority);
+
+    // 获取模块
+    CustomManager mgr = AppEngine.Instance.GetModule<CustomManager>();
+    mgr.Print();
+
+    // 模块的全局实例
+    CustomManager.Instance.Print();
   }
 }
 ```
