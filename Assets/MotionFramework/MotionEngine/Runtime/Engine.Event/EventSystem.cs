@@ -9,24 +9,23 @@ using System.Collections.Generic;
 
 namespace MotionFramework.Event
 {
+	/// <summary>
+	/// 事件系统
+	/// </summary>
 	public class EventSystem
 	{
-		/// <summary>
-		/// 监听集合
-		/// </summary>
-		private readonly Dictionary<string, List<Action<IEventMessage>>> _handlers = new Dictionary<string, List<Action<IEventMessage>>>();
-
+		private readonly Dictionary<string, List<Action<IEventMessage>>> _listeners = new Dictionary<string, List<Action<IEventMessage>>>();
 
 		/// <summary>
 		/// 清空所有监听
 		/// </summary>
 		public void ClearListeners()
 		{
-			foreach (string type in _handlers.Keys)
+			foreach (string type in _listeners.Keys)
 			{
-				_handlers[type].Clear();
+				_listeners[type].Clear();
 			}
-			_handlers.Clear();
+			_listeners.Clear();
 		}
 
 		/// <summary>
@@ -34,11 +33,11 @@ namespace MotionFramework.Event
 		/// </summary>
 		public void AddListener(string eventTag, Action<IEventMessage> listener)
 		{
-			if (_handlers.ContainsKey(eventTag) == false)
-				_handlers.Add(eventTag, new List<Action<IEventMessage>>());
+			if (_listeners.ContainsKey(eventTag) == false)
+				_listeners.Add(eventTag, new List<Action<IEventMessage>>());
 
-			if (_handlers[eventTag].Contains(listener) == false)
-				_handlers[eventTag].Add(listener);
+			if (_listeners[eventTag].Contains(listener) == false)
+				_listeners[eventTag].Add(listener);
 		}
 
 		/// <summary>
@@ -46,10 +45,10 @@ namespace MotionFramework.Event
 		/// </summary>
 		public void RemoveListener(string eventTag, Action<IEventMessage> listener)
 		{
-			if (_handlers.ContainsKey(eventTag))
+			if (_listeners.ContainsKey(eventTag))
 			{
-				if (_handlers[eventTag].Contains(listener))
-					_handlers[eventTag].Remove(listener);
+				if (_listeners[eventTag].Contains(listener))
+					_listeners[eventTag].Remove(listener);
 			}
 		}
 
@@ -60,13 +59,13 @@ namespace MotionFramework.Event
 		/// <param name="msg">消息类</param>
 		public void Broadcast(string eventTag, IEventMessage msg)
 		{
-			if (_handlers.ContainsKey(eventTag) == false)
+			if (_listeners.ContainsKey(eventTag) == false)
 			{
-				LogSystem.Log(ELogType.Warning, $"Not found message eventTag : {eventTag}");
+				Logger.Log(ELogType.Warning, $"Not found listener eventTag : {eventTag}");
 				return;
 			}
 
-			List<Action<IEventMessage>> listeners = _handlers[eventTag];
+			List<Action<IEventMessage>> listeners = _listeners[eventTag];
 			for(int i=0; i< listeners.Count; i++)
 			{
 				listeners[i].Invoke(msg);
@@ -79,7 +78,7 @@ namespace MotionFramework.Event
 		public int GetAllListenerCount()
 		{
 			int count = 0;
-			foreach(var list in _handlers)
+			foreach(var list in _listeners)
 			{
 				count += list.Value.Count;
 			}
