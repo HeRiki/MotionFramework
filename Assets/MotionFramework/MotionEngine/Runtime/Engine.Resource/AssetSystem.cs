@@ -16,8 +16,13 @@ namespace MotionFramework.Resource
 	/// </summary>
 	public class AssetSystem
 	{
+		#region 全局实例
 		private readonly static AssetSystem _instance = new AssetSystem();
 		private static bool _isInitialize = false;
+
+		/// <summary>
+		/// 资源系统全局实例
+		/// </summary>
 		public static AssetSystem Instance
 		{
 			get
@@ -27,6 +32,16 @@ namespace MotionFramework.Resource
 				return _instance;
 			}
 		}
+
+		/// <summary>
+		/// 初始化资源系统
+		/// 注意：在使用AssetSystem系统之前需要初始化
+		/// </summary>
+		public static void Initialize(string assetRootPath, EAssetSystemMode assetSystemMode)
+		{
+			_instance.InitializeInternal(assetRootPath, assetSystemMode);
+		}
+		#endregion
 
 		private readonly List<AssetFileLoader> _fileLoaders = new List<AssetFileLoader>(1000);
 		private readonly List<string> _removeKeys = new List<string>(100);
@@ -55,16 +70,20 @@ namespace MotionFramework.Resource
 		/// <summary>
 		/// 初始化资源系统
 		/// </summary>
-		public void Initialize(string assetRootPath, EAssetSystemMode assetSystemMode)
+		public void InitializeInternal(string assetRootPath, EAssetSystemMode assetSystemMode)
 		{
-			if(_isInitialize == false)
+			if (_isInitialize == false)
 			{
 				_isInitialize = true;
 				AssetRootPath = assetRootPath;
 				AssetSystemMode = assetSystemMode;
 			}
+			else
+			{
+				LogHelper.Log(ELogType.Error, $"{nameof(AssetSystem)} is initialized");
+			}
 		}
-		
+
 		/// <summary>
 		/// 轮询更新
 		/// </summary>
