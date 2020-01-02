@@ -10,7 +10,7 @@ public class Test
 	public void Start()
 	{
 		// 监听日志
-		Logger.RegisterCallback(LogCallback);
+		LogHelper.RegisterCallback(LogCallback);
 	}
 
 	private void LogCallback(ELogType logType, string log)

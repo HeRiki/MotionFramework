@@ -1,7 +1,7 @@
 ### 资源系统 (AssetSystem)
 
 **资源系统加载模式**  
-资源系统提供三种加载模式
+资源系统提供三种加载模式，三种模式可以自由切换。
 1. EAssetSystemMode.EditorMode : 使用UnityEditor.AssetDatabase加载资源，该模式仅支持编辑器下。
 2. EAssetSystemMode.ResourcesMode : 使用UnityEngine.Resources加载资源。
 3. EAssetSystemMode.BundleMode : 使用UnityEngine.AssetBundle加载资源。
@@ -15,7 +15,7 @@ public void Start()
 	// 初始化资源系统
 	string assetRootPath = "Assets/Works/Resource";
 	EAssetSystemMode assetSystemMode = EAssetSystemMode.EditorMode；
-	AssetSystem.Instance.Initialize(assetRootPath, assetSystemMode);
+	AssetSystem.Initialize(assetRootPath, assetSystemMode);
 }
 ```
 

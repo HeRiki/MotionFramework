@@ -65,13 +65,10 @@ public class Test
 		FsmManager.CreateParameters param = new FsmManager.CreateParameters();
 		param.Graph = null;
 		param.RunNode = "Start";
+		param.Nodes = new List<IFsmNode>() { new FsmStart(), new FsmRunning() };
 
 		// 创建模块
 		AppEngine.Instance.CreateModule<FsmManager>(param);
-
-		// 添加节点
-	 	FsmManager.Instance.AddNode(new FsmStart())
-	 	FsmManager.Instance.AddNode(new FsmRunning());
 	}
 }
 ```
