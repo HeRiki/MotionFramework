@@ -66,7 +66,7 @@ namespace MotionFramework.Config
 				}
 				catch (Exception ex)
 				{
-					Logger.Log(ELogType.Error, $"Failed to parse xml {Location}. Exception : {ex.ToString()}");
+					LogHelper.Log(ELogType.Error, $"Failed to parse xml {Location}. Exception : {ex.ToString()}");
 				}
 			}
 
