@@ -19,9 +19,6 @@ namespace MotionFramework
 			}
 		}
 
-		/// <summary>
-		/// 构造函数
-		/// </summary>
 		protected ModuleSingleton()
 		{
 			if (_instance != null)
