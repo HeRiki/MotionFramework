@@ -75,7 +75,7 @@ namespace MotionFramework
 				priority = --minPriority;
 			}
 
-			Logger.Log(ELogType.Log, $"Create game module : {typeof(T)}");
+			LogHelper.Log(ELogType.Log, $"Create game module : {typeof(T)}");
 			T module = Activator.CreateInstance<T>();
 			ModuleWrapper wrapper = new ModuleWrapper(module, priority);
 			wrapper.Module.OnCreate(createParam);			
@@ -97,7 +97,7 @@ namespace MotionFramework
 					return _coms[i].Module as T;
 			}
 
-			Logger.Log(ELogType.Warning, $"Not found game module {type}");
+			LogHelper.Log(ELogType.Warning, $"Not found game module {type}");
 			return null;
 		}
 
@@ -136,7 +136,7 @@ namespace MotionFramework
 				ModuleWrapper wrapper = _coms[i];
 				if (wrapper.IsStart == false)
 				{
-					Logger.Log(ELogType.Log, $"{wrapper.Module.GetType()} is start.");
+					LogHelper.Log(ELogType.Log, $"{wrapper.Module.GetType()} is start.");
 					wrapper.IsStart = true;
 					wrapper.Module.OnStart();
 				}

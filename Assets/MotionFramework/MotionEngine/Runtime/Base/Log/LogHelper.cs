@@ -6,7 +6,7 @@
 
 namespace MotionFramework
 {
-	public static class Logger
+	public static class LogHelper
 	{
 		private static System.Action<ELogType, string> _callback;
 
