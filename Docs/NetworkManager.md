@@ -20,7 +20,7 @@ public class Test
 			C2R_Login msg = new C2R_Login();
 			msg.Account = "test";
 			msg.Password = "1234567";
-			NetworkManager.Instance.SendMsg(msg);
+			NetworkManager.Instance.SendMessage(msg);
 		}
 	}
 
