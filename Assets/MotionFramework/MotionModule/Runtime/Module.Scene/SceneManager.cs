@@ -13,21 +13,14 @@ namespace MotionFramework.Scene
 	/// <summary>
 	/// 场景管理器
 	/// </summary>
-	public sealed class SceneManager : IModule
+	public sealed class SceneManager : ModuleSingleton<SceneManager>, IModule
 	{
-		/// <summary>
-		/// 游戏模块全局实例
-		/// </summary>
-		public static SceneManager Instance { private set; get; }
-
 		private AssetScene _mainScene;
 		private readonly List<AssetScene> _additionScenes = new List<AssetScene>();
 
 
 		void IModule.OnCreate(System.Object param)
 		{
-			// 全局实例赋值
-			Instance = this;
 		}
 		void IModule.OnStart()
 		{
@@ -72,7 +65,7 @@ namespace MotionFramework.Scene
 			AssetScene scene = TryGetAdditionScene(location);
 			if (scene != null)
 			{
-				Logger.Log(ELogType.Warning, $"The addition scene {location} is already load.");
+				LogHelper.Log(ELogType.Warning, $"The addition scene {location} is already load.");
 				return;
 			}
 
@@ -96,7 +89,7 @@ namespace MotionFramework.Scene
 			if (scene != null)
 				return scene.Progress;
 
-			Logger.Log(ELogType.Warning, $"Not found scene {location}");
+			LogHelper.Log(ELogType.Warning, $"Not found scene {location}");
 			return 0;
 		}
 
@@ -115,7 +108,7 @@ namespace MotionFramework.Scene
 			if (scene != null)
 				return scene.IsDone;
 
-			Logger.Log(ELogType.Warning, $"Not found scene {location}");
+			LogHelper.Log(ELogType.Warning, $"Not found scene {location}");
 			return false;
 		}
 

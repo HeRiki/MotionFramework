@@ -12,13 +12,8 @@ namespace MotionFramework.Resource
 	/// <summary>
 	/// 资源管理器
 	/// </summary>
-	public sealed class ResourceManager : IModule
+	public sealed class ResourceManager : ModuleSingleton<ResourceManager>, IModule
 	{
-		/// <summary>
-		/// 游戏模块全局实例
-		/// </summary>
-		public static ResourceManager Instance { private set; get; }
-
 		/// <summary>
 		/// 游戏模块创建参数
 		/// </summary>
@@ -42,10 +37,7 @@ namespace MotionFramework.Resource
 			if (createParam == null)
 				throw new Exception($"{nameof(ResourceManager)} create param is invalid.");
 
-			AssetSystem.Instance.Initialize(createParam.AssetRootPath, createParam.AssetSystemMode);
-
-			// 全局实例赋值
-			Instance = this;
+			AssetSystem.Initialize(createParam.AssetRootPath, createParam.AssetSystemMode);
 		}
 		void IModule.OnStart()
 		{
@@ -77,7 +69,7 @@ namespace MotionFramework.Resource
 				string loadPath = AssetPathHelper.FindDatabaseAssetPath(location);
 				result = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(loadPath);
 				if (result == null)
-					Logger.Log(ELogType.Error, $"Failed to load {loadPath}");
+					LogHelper.Log(ELogType.Error, $"Failed to load {loadPath}");
 #else
 				throw new Exception("AssetDatabaseLoader only support unity editor.");
 #endif
@@ -86,7 +78,7 @@ namespace MotionFramework.Resource
 			{
 				result = Resources.Load<T>(location);
 				if (result == null)
-					Logger.Log(ELogType.Error, $"Failed to load {location}");
+					LogHelper.Log(ELogType.Error, $"Failed to load {location}");
 			}
 			else if (AssetSystem.Instance.AssetSystemMode == EAssetSystemMode.BundleMode)
 			{
@@ -100,7 +92,7 @@ namespace MotionFramework.Resource
 				if(bundle != null)
 					result = bundle.LoadAsset<T>(fileName);
 				if (result == null)
-					Logger.Log(ELogType.Error, $"Failed to load {loadPath}");
+					LogHelper.Log(ELogType.Error, $"Failed to load {loadPath}");
 				if(bundle != null)
 					bundle.Unload(false);
 			}

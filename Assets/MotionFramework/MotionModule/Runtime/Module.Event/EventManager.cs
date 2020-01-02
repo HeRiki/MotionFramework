@@ -10,20 +10,13 @@ namespace MotionFramework.Event
 	/// <summary>
 	/// 事件管理器
 	/// </summary>
-	public sealed class EventManager : IModule
+	public sealed class EventManager : ModuleSingleton<EventManager>, IModule
 	{
-		/// <summary>
-		/// 游戏模块全局实例
-		/// </summary>
-		public static EventManager Instance { private set; get; }
-
 		private readonly EventSystem _system = new EventSystem();
 
 
 		void IModule.OnCreate(System.Object param)
 		{
-			// 全局实例赋值
-			Instance = this;
 		}
 		void IModule.OnStart()
 		{

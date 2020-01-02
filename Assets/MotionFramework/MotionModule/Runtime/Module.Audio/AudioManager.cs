@@ -15,13 +15,8 @@ namespace MotionFramework.Audio
 	/// <summary>
 	/// 音频管理器
 	/// </summary>
-	public sealed class AudioManager : IModule
+	public sealed class AudioManager : ModuleSingleton<AudioManager>, IModule
 	{
-		/// <summary>
-		/// 游戏模块全局实例
-		/// </summary>
-		public static AudioManager Instance { private set; get; }
-
 		/// <summary>
 		/// 音频源封装类
 		/// </summary>
@@ -58,9 +53,6 @@ namespace MotionFramework.Audio
 				EAudioLayer layer = (EAudioLayer)value;
 				_audioSourceWrappers.Add(layer, new AudioSourceWrapper(layer.ToString(), _root.transform));
 			}
-
-			// 全局实例赋值
-			Instance = this;
 		}
 		void IModule.OnStart()
 		{

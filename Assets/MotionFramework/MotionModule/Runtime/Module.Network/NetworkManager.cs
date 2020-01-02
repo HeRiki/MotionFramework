@@ -25,13 +25,8 @@ namespace MotionFramework.Network
 	/// <summary>
 	/// 网络管理器
 	/// </summary>
-	public sealed class NetworkManager : IModule
+	public sealed class NetworkManager : ModuleSingleton<NetworkManager>, IModule
 	{
-		/// <summary>
-		/// 游戏模块全局实例
-		/// </summary>
-		public static NetworkManager Instance { private set; get; }
-
 		private TServer _server;
 		private TChannel _channel;
 
@@ -58,8 +53,6 @@ namespace MotionFramework.Network
 
 		void IModule.OnCreate(System.Object param)
 		{
-			// 全局实例赋值
-			Instance = this;
 		}
 		void IModule.OnStart()
 		{
@@ -103,7 +96,7 @@ namespace MotionFramework.Network
 				if (_channel != null && _channel.IsConnected() == false)
 				{
 					State = ENetworkState.Disconnect;
-					Logger.Log(ELogType.Warning, "Server disconnect.");
+					LogHelper.Log(ELogType.Warning, "Server disconnect.");
 				}
 			}
 		}
@@ -127,7 +120,7 @@ namespace MotionFramework.Network
 		}
 		private void OnConnectServer(TChannel channel, SocketError error)
 		{
-			Logger.Log(ELogType.Log, $"Server connect result : {error}");
+			LogHelper.Log(ELogType.Log, $"Server connect result : {error}");
 			if (error == SocketError.Success)
 			{
 				_channel = channel;
@@ -159,7 +152,7 @@ namespace MotionFramework.Network
 		{
 			if (State != ENetworkState.Connected)
 			{
-				Logger.Log(ELogType.Warning, "Network is not connected.");
+				LogHelper.Log(ELogType.Warning, "Network is not connected.");
 				return;
 			}
 

@@ -13,13 +13,8 @@ namespace MotionFramework.Config
 	/// <summary>
 	/// 配表管理器
 	/// </summary>
-	public sealed class ConfigManager : IModule
+	public sealed class ConfigManager : ModuleSingleton<ConfigManager>, IModule
 	{
-		/// <summary>
-		/// 游戏模块全局实例
-		/// </summary>
-		public static ConfigManager Instance { private set; get; }
-
 		/// <summary>
 		/// 游戏模块创建参数
 		/// </summary>
@@ -43,9 +38,6 @@ namespace MotionFramework.Config
 				throw new Exception($"{nameof(ConfigManager)} create param is invalid.");
 
 			_baseFolderPath = createParam.BaseFolderPath;
-
-			// 全局实例赋值
-			Instance = this;
 		}
 		void IModule.OnStart()
 		{
@@ -66,7 +58,7 @@ namespace MotionFramework.Config
 			// 防止重复加载
 			if (_configs.ContainsKey(cfgName))
 			{
-				Logger.Log(ELogType.Error, $"Config {cfgName} is already existed.");
+				LogHelper.Log(ELogType.Error, $"Config {cfgName} is already existed.");
 				return;
 			}
 
@@ -80,7 +72,7 @@ namespace MotionFramework.Config
 			}
 			else
 			{
-				Logger.Log(ELogType.Error, $"Config type {cfgName} is invalid.");
+				LogHelper.Log(ELogType.Error, $"Config type {cfgName} is invalid.");
 			}
 		}
 
@@ -95,7 +87,7 @@ namespace MotionFramework.Config
 				return _configs[cfgName];
 			}
 
-			Logger.Log(ELogType.Error, $"Not found config {cfgName}");
+			LogHelper.Log(ELogType.Error, $"Not found config {cfgName}");
 			return null;
 		}
 
@@ -111,7 +103,7 @@ namespace MotionFramework.Config
 					return pair.Value as T;
 			}
 
-			Logger.Log(ELogType.Error, $"Not found config {type}");
+			LogHelper.Log(ELogType.Error, $"Not found config {type}");
 			return null;
 		}
 	}

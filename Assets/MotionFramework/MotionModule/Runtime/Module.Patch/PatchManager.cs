@@ -15,13 +15,8 @@ using MotionFramework.Event;
 
 namespace MotionFramework.Patch
 {
-	public class PatchManager : IModule, IBundleServices
+	public sealed class PatchManager : ModuleSingleton<PatchManager>, IModule, IBundleServices
 	{
-		/// <summary>
-		/// 游戏模块全局实例
-		/// </summary>
-		public static PatchManager Instance { private set; get; }
-
 		/// <summary>
 		/// 游戏模块创建参数
 		/// </summary>
@@ -86,9 +81,6 @@ namespace MotionFramework.Patch
 
 			string appVersion = GetAPPVersion();
 			AppVersion = new Version(appVersion);
-
-			// 全局实例赋值
-			Instance = this;
 		}
 		void IModule.OnStart()
 		{
@@ -302,7 +294,7 @@ namespace MotionFramework.Patch
 		/// </summary>
 		public static void Log(ELogType logType, string log)
 		{
-			Logger.Log(logType, log);
+			LogHelper.Log(logType, log);
 		}
 
 		/// <summary>

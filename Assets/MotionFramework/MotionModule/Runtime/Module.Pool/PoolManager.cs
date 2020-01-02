@@ -13,13 +13,8 @@ namespace MotionFramework.Pool
 	/// <summary>
 	/// 游戏对象池管理器
 	/// </summary>
-	public sealed class PoolManager : IModule
+	public sealed class PoolManager : ModuleSingleton<PoolManager>, IModule
 	{
-		/// <summary>
-		/// 游戏模块全局实例
-		/// </summary>
-		public static PoolManager Instance { private set; get; }
-
 		/// <summary>
 		/// 对象池管理器的ROOT
 		/// </summary>
@@ -37,9 +32,6 @@ namespace MotionFramework.Pool
 			_root.transform.position = Vector3.zero;
 			_root.transform.eulerAngles = Vector3.zero;
 			UnityEngine.Object.DontDestroyOnLoad(_root);
-
-			// 全局实例赋值
-			Instance = this;
 		}
 		void IModule.OnStart()
 		{
@@ -137,7 +129,7 @@ namespace MotionFramework.Pool
 			}
 			else
 			{
-				Logger.Log(ELogType.Error, $"GameObjectPool does not exist : {location}");
+				LogHelper.Log(ELogType.Error, $"GameObjectPool does not exist : {location}");
 			}
 		}
 

@@ -11,13 +11,8 @@ namespace MotionFramework.AI
 	/// <summary>
 	/// 状态机管理器
 	/// </summary>
-	public sealed class FsmManager : IModule
+	public sealed class FsmManager : ModuleSingleton<FsmManager>, IModule
 	{
-		/// <summary>
-		/// 游戏模块全局实例
-		/// </summary>
-		public static FsmManager Instance { private set; get; }
-
 		/// <summary>
 		/// 游戏模块创建参数
 		/// </summary>
@@ -47,9 +42,6 @@ namespace MotionFramework.AI
 
 			_graph = createParam.Graph;
 			_runNode = createParam.RunNode;
-
-			// 全局实例赋值
-			Instance = this;
 		}
 		void IModule.OnStart()
 		{
