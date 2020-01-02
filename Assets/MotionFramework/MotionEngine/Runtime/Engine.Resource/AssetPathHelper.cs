@@ -95,7 +95,7 @@ namespace MotionFramework.Resource
 				return path;
 			return assetPath;
 #else
-			throw new Exception($"AssetSystem.FindDatabaseAssetPath method only support unity editor.");
+			return string.Empty;
 #endif
 		}
 
