@@ -70,7 +70,7 @@ namespace MotionFramework.Resource
 				// 注意：Unity2017.4编辑器模式下，如果AssetBundle文件不存在会导致编辑器崩溃，这里做了预判。
 				if (System.IO.File.Exists(LoadPath) == false)
 				{
-					Logger.Log(ELogType.Warning, $"Not found assetBundle file : {LoadPath}");
+					LogHelper.Log(ELogType.Warning, $"Not found assetBundle file : {LoadPath}");
 					States = EAssetFileLoaderStates.LoadAssetFileFailed;
 					return;
 				}
@@ -91,7 +91,7 @@ namespace MotionFramework.Resource
 				// Check error
 				if (CacheBundle == null)
 				{
-					Logger.Log(ELogType.Warning, $"Failed to load assetBundle file : {LoadPath}");
+					LogHelper.Log(ELogType.Warning, $"Failed to load assetBundle file : {LoadPath}");
 					States = EAssetFileLoaderStates.LoadAssetFileFailed;
 				}
 				else
