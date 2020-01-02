@@ -4,6 +4,7 @@
 // Licensed under the MIT license
 //--------------------------------------------------
 using System;
+using System.Collections.Generic;
 using MotionFramework.Debug;
 
 namespace MotionFramework.AI
@@ -27,6 +28,11 @@ namespace MotionFramework.AI
 			/// 初始运行的节点
 			/// </summary>
 			public string RunNode;
+
+			/// <summary>
+			/// 节点列表
+			/// </summary>
+			public List<IFsmNode> Nodes;
 		}
 
 		private readonly FsmSystem _system = new FsmSystem();
@@ -40,8 +46,15 @@ namespace MotionFramework.AI
 			if (createParam == null)
 				throw new Exception($"{nameof(FsmManager)} create param is invalid.");
 
+			if (createParam.Nodes == null || createParam.Nodes.Count == 0)
+				LogHelper.Log(ELogType.Error, "Fsm nodes is null or empty");
+
 			_graph = createParam.Graph;
 			_runNode = createParam.RunNode;
+			for(int i=0; i< createParam.Nodes .Count; i++)
+			{
+				_system.AddNode(createParam.Nodes[i]);
+			}
 		}
 		void IModule.OnStart()
 		{
@@ -70,14 +83,6 @@ namespace MotionFramework.AI
 		public string PreviousNodeName
 		{
 			get { return _system.PreviousNodeName; }
-		}
-
-		/// <summary>
-		/// 加入一个节点
-		/// </summary>
-		public void AddNode(IFsmNode node)
-		{
-			_system.AddNode(node);
 		}
 
 		/// <summary>
