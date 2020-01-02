@@ -71,7 +71,7 @@ namespace MotionFramework.Resource
 				if (result == null)
 					LogHelper.Log(ELogType.Error, $"Failed to load {loadPath}");
 #else
-				throw new Exception("AssetDatabaseLoader only support unity editor.");
+				throw new Exception("EAssetSystemMode.EditorMode only support unity editor.");
 #endif
 			}
 			else if (AssetSystem.Instance.AssetSystemMode == EAssetSystemMode.ResourcesMode)
