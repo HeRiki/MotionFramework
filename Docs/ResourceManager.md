@@ -1,5 +1,19 @@
 ### 资源管理器 (ResourceManager)
 
+创建资源管理器
+```C#
+public void Start()
+{
+    // 设置参数
+    var createParam = new ResourceManager.CreateParameters();
+    createParam.AssetRootPath = "Assets/Works/Resource";
+    createParam.AssetSystemMode = AssetSystemMode;
+
+    // 创建模块
+    AppEngine.Instance.CreateModule<ResourceManager>(createParam);
+}
+```
+
 资源使用范例
 ```C#
 using MotionFramework.Resource;

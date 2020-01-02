@@ -15,6 +15,19 @@ public partial class CfgHero
 }
 ```
 
+创建配表管理器
+```C#
+public void Start()
+{
+	// 设置参数
+	var ceateParam = new ConfigManager.CreateParameters();
+	createParam.BaseFolderPath = "Config";
+
+	// 创建模块
+	AppEngine.Instance.CreateModule<ConfigManager>(ceateParam);
+}
+```
+
 加载表格
 ```C#
 using MotionFramework.Config;

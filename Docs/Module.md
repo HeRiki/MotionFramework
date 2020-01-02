@@ -1,20 +1,16 @@
 ### 游戏模块 (IModule)  
 
-创建自定义模块代码示例
+AppEngine是MotionFramework框架的核心，所有的游戏模块都是通过AppEngine创建和管理。  
+
+自定义模块代码示例
 ```C#
 using MotionFramework;
 
-public class CustomManager : IModule
+public class CustomManager : ModuleSingleton<CustomManager>, IModule
 {
-  /// <summary>
-  /// 游戏模块全局实例
-  /// </summary>
-  public static CustomManager Instance { private set; get; }
-
   void IModule.OnCreate(System.Object param)
   {
     //当模块被创建的时候
-    Instance = this;
   }
   void IModule.OnStart()
   {
@@ -37,7 +33,7 @@ public class CustomManager : IModule
 }
 ```
 
-在合适的地方注册我们的模块
+游戏内创建模块
 ```C#
 using MotionFramework;
 
@@ -53,11 +49,10 @@ public class Test
     int priority = 1000;
     AppEngine.Instance.CreateModule<CustomManager>(priority);
 
-    // 获取模块
-    CustomManager mgr = AppEngine.Instance.GetModule<CustomManager>();
-    mgr.Print();
+    // 通过AppEngine调用模块方法
+    AppEngine.Instance.GetModule<CustomManager>().Print();
 
-    // 模块的全局实例
+    // 通过全局实例调用模块方法
     CustomManager.Instance.Print();
   }
 }

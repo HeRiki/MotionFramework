@@ -53,6 +53,7 @@ public class FsmRunning : IFsmNode
 }
 ```
 
+创建有限状态机管理器
 ```C#
 using MotionFramework.AI;
 
@@ -60,10 +61,12 @@ public class Test
 {
 	public void Start()
 	{
-		// 创建模块
+		// 设置参数
 		FsmManager.CreateParameters param = new FsmManager.CreateParameters();
 		param.Graph = null;
 		param.RunNode = "Start";
+
+		// 创建模块
 		AppEngine.Instance.CreateModule<FsmManager>(param);
 
 		// 添加节点

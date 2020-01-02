@@ -11,9 +11,9 @@ C# && .Net4.x
 
 ## 核心系统
 
-1. [游戏模块](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/Module.md) **(IModule)** - 游戏模块通过注册机制来统一被管理。基于框架的核心系统，内置了游戏开发过程中常用的管理器，例如：事件管理器，网络管理器，资源管理器，音频管理器，配表管理器，场景管理器，状态机管理器，对象池管理器等。
+1. [游戏模块](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/Module.md) **(IModule)** - 基于框架的核心系统，内置了游戏开发过程中常用的管理器，例如：事件管理器，网络管理器，资源管理器，音频管理器，配表管理器，场景管理器，状态机管理器，对象池管理器等。
 
-2. [日志系统](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/Logger.md) **(Logger)** - 框架内部使用统一的日志系统，外部业务逻辑需要注册才可以接收到框架生成的日志信息。
+2. [日志系统](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/LogHelper.md) **(LogHelper)** - 框架内部使用统一的日志系统，外部业务逻辑需要注册才可以接收到框架生成的日志信息。
 
 3. [事件系统](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/EventSystem.md) **(EventSystem)** - 基于字符串为KEY的事件监听机制。例如：一些游戏逻辑相关的枚举值可以转换为字符串作为事件的KEY。
 
@@ -21,7 +21,7 @@ C# && .Net4.x
 
 5. [引用池系统](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/ReferenceSystem.md) **(ReferenceSystem)** - 用于C#引用类型的对象池，对于频繁创建的引用类型，使用引用池可以帮助减少GC。
 
-6. [资源系统](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/AssetSystem.md) **(AssetSystem)** - 资源系统提供了三种加载方式：AssetDatabase加载方式，Resources加载方式，AssetBundle加载方式，三种方式可以自由切换。业务逻辑支持协程，异步，委托多种方式。如果资源需要热更新，在AssetBundle模式下提供了灵活的可寻址接口。
+6. [资源系统](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/AssetSystem.md) **(AssetSystem)** - 资源系统提供了三种加载方式：AssetDatabase加载方式，Resources加载方式，AssetBundle加载方式，三种方式可以自由切换。业务逻辑支持协程，异步，委托多种方式。如果资源需要热更新，在AssetBundle模式下提供了灵活的补丁系统。
 
 7. [网络系统](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/Network.md) **(Network)** - 异步IOCP SOCKET长连接方案，支持TCP和UDP协议。还支持同时建立多个通信通道，例如连接逻辑服务器的同时还可以连接聊天服务器。不同的通信频道支持使用不同的网络包解析器。我们可以定义支持ProtoBuf的网络包解析器，当然也可以使用自己的序列化和反序列化方案。
 
