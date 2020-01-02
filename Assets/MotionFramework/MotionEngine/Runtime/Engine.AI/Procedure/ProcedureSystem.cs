@@ -34,7 +34,7 @@ namespace MotionFramework.AI
 			if (_nodeNames.Count > 0)
 				_system.Run(_nodeNames[0], null);
 			else
-				Logger.Log(ELogType.Warning, "Procedure system dont has any node.");
+				LogHelper.Log(ELogType.Warning, "Procedure system dont has any node.");
 		}
 
 		/// <summary>
@@ -69,7 +69,7 @@ namespace MotionFramework.AI
 			int index = _nodeNames.IndexOf(_system.CurrentNodeName);
 			if (index >= _nodeNames.Count - 1)
 			{
-				Logger.Log(ELogType.Warning, $"Current node {_system.CurrentNodeName} is end node.");
+				LogHelper.Log(ELogType.Warning, $"Current node {_system.CurrentNodeName} is end node.");
 			}
 			else
 			{
@@ -85,7 +85,7 @@ namespace MotionFramework.AI
 			int index = _nodeNames.IndexOf(_system.CurrentNodeName);
 			if (index <= 0)
 			{
-				Logger.Log(ELogType.Warning, $"Current node {_system.CurrentNodeName} is begin node.");
+				LogHelper.Log(ELogType.Warning, $"Current node {_system.CurrentNodeName} is begin node.");
 			}
 			else
 			{

@@ -61,7 +61,7 @@ namespace MotionFramework.Event
 		{
 			if (_listeners.ContainsKey(eventTag) == false)
 			{
-				Logger.Log(ELogType.Warning, $"Not found listener eventTag : {eventTag}");
+				LogHelper.Log(ELogType.Warning, $"Not found listener eventTag : {eventTag}");
 				return;
 			}
 

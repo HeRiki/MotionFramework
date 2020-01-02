@@ -49,7 +49,7 @@ namespace MotionFramework.AI
 			}
 			else
 			{
-				Logger.Log(ELogType.Warning, $"Node {node.Name} already existed");
+				LogHelper.Log(ELogType.Warning, $"Node {node.Name} already existed");
 			}
 		}
 
@@ -67,7 +67,7 @@ namespace MotionFramework.AI
 			if (_curNode != null)
 				_curNode.OnEnter();
 			else
-				Logger.Log(ELogType.Error, $"Not found run node : {runNode}");
+				LogHelper.Log(ELogType.Error, $"Not found run node : {runNode}");
 		}
 
 		/// <summary>
@@ -90,7 +90,7 @@ namespace MotionFramework.AI
 			IFsmNode node = GetNode(nodeName);
 			if (node == null)
 			{
-				Logger.Log(ELogType.Error, $"Can not found node {nodeName}");
+				LogHelper.Log(ELogType.Error, $"Can not found node {nodeName}");
 				return;
 			}
 
@@ -99,12 +99,12 @@ namespace MotionFramework.AI
 			{
 				if (_graph.CanTransition(_curNode.Name, node.Name) == false)
 				{
-					Logger.Log(ELogType.Error, $"Can not transition {_curNode} to {node}");
+					LogHelper.Log(ELogType.Error, $"Can not transition {_curNode} to {node}");
 					return;
 				}
 			}
 
-			Logger.Log(ELogType.Log, $"Transition {_curNode} to {node}");
+			LogHelper.Log(ELogType.Log, $"Transition {_curNode} to {node}");
 			_preNode = _curNode;
 			_curNode.OnExit();
 			_curNode = node;

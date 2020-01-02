@@ -38,7 +38,7 @@ namespace MotionFramework.AI
 
 			if (_graph.ContainsKey(nodeName))
 			{
-				Logger.Log(ELogType.Warning, $"Graph node {nodeName} already existed.");
+				LogHelper.Log(ELogType.Warning, $"Graph node {nodeName} already existed.");
 				return;
 			}
 
@@ -52,7 +52,7 @@ namespace MotionFramework.AI
 		{
 			if (_graph.ContainsKey(from) == false)
 			{
-				Logger.Log(ELogType.Warning, $"Not found graph node {from}");
+				LogHelper.Log(ELogType.Warning, $"Not found graph node {from}");
 				return false;
 			}
 

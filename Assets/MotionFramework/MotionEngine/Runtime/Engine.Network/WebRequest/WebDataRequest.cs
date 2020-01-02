@@ -34,7 +34,7 @@ namespace MotionFramework.Network
 			// Check error
 			if (CacheRequest.isNetworkError || CacheRequest.isHttpError)
 			{
-				Logger.Log(ELogType.Warning, $"Failed to download web data : {URL} Error : {CacheRequest.error}");
+				LogHelper.Log(ELogType.Warning, $"Failed to download web data : {URL} Error : {CacheRequest.error}");
 				States = EWebRequestStates.Failed;
 			}
 			else

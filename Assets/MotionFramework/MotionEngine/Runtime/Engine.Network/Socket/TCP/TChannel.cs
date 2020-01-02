@@ -274,7 +274,7 @@ namespace MotionFramework.Network
 		/// </summary>
 		public void HandleError(bool isDispose, string error)
 		{
-			Logger.Log(ELogType.Error, error);
+			LogHelper.Log(ELogType.Error, error);
 			if (isDispose) Dispose();
 		}
 	}
