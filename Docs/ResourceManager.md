@@ -14,7 +14,7 @@ public void Start()
 }
 ```
 
-资源管理器使用范例请参考[资源系统](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/AssetSystem.md)
+资源的加载教程请参考[资源系统](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/AssetSystem.md)
 
 更详细的教程请参考示例代码
 1. [MotionModule/Module.Resource/ResourceManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/Scripts/Runtime/MotionModule/Module.Resource/ResourceManager.cs)

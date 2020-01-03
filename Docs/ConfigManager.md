@@ -60,4 +60,4 @@ public class Test
 }
 ```
 
-1. [MotionModule/Runtime/Module.Config/ConfigManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionModule/Runtime/Module.Config/ConfigManager.cs)
+1. [MotionModule/Module.Config/ConfigManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/Scripts/Runtime/MotionModule/Module.Config/ConfigManager.cs)
