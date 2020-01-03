@@ -50,7 +50,7 @@ public class AssetBuilder
 	/// <param name="buildVersion">构建版本</param>
 	public AssetBuilder(BuildTarget buildTarget, int buildVersion)
 	{
-		_outputRoot = AssetHelper.MakeDefaultOutputRootPath();
+		_outputRoot = AssetBuilderHelper.MakeDefaultOutputRootPath();
 
 		// 构建平台
 		BuildTarget = buildTarget;

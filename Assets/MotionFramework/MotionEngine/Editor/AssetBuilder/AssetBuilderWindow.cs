@@ -209,8 +209,8 @@ public class AssetBuilderWindow : EditorWindow
 		string streamingPath = Application.dataPath + "/StreamingAssets";
 		EditorTools.ClearFolder(streamingPath);
 
-		string outputRoot = AssetHelper.MakeDefaultOutputRootPath();
-		AssetHelper.CopyPackageToStreamingFolder(_assetBuilder.BuildTarget, outputRoot);
+		string outputRoot = AssetBuilderHelper.MakeDefaultOutputRootPath();
+		AssetBuilderHelper.CopyPackageToStreamingFolder(_assetBuilder.BuildTarget, outputRoot);
 	}
 
 	/// <summary>
@@ -221,8 +221,8 @@ public class AssetBuilderWindow : EditorWindow
 		string outputPath = _assetBuilder.OutputPath;
 		EditorTools.ClearFolder(outputPath);
 
-		string outputRoot = AssetHelper.MakeDefaultOutputRootPath();
-		AssetHelper.CopyPackageToManifestFolder(_assetBuilder.BuildTarget, outputRoot);
+		string outputRoot = AssetBuilderHelper.MakeDefaultOutputRootPath();
+		AssetBuilderHelper.CopyPackageToManifestFolder(_assetBuilder.BuildTarget, outputRoot);
 	}
 
 	#region 设置相关

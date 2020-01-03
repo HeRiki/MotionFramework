@@ -10,7 +10,7 @@ using UnityEngine;
 using UnityEditor;
 using MotionFramework.Patch;
 
-public static class AssetHelper
+public static class AssetBuilderHelper
 {
 	/// <summary>
 	/// 获取默认导出路径
@@ -100,7 +100,7 @@ public static class AssetHelper
 	{
 		string parentPath = $"{outputRoot}/{buildTarget}";
 		string streamingPath = Application.dataPath + "/StreamingAssets";
-		
+
 		// 获取所有Package文件夹
 		List<int> versionList = GetPackageVersionList(buildTarget, outputRoot);
 
@@ -132,7 +132,7 @@ public static class AssetHelper
 		List<int> versionList = GetPackageVersionList(buildTarget, outputRoot);
 
 		// 拷贝资源
-		for(int i=0; i<versionList.Count; i++)
+		for (int i = 0; i < versionList.Count; i++)
 		{
 			if (targetPackageVersion >= 0 && versionList[i] > targetPackageVersion)
 				break;
