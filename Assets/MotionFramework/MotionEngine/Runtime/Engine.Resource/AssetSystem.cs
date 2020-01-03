@@ -35,17 +35,17 @@ namespace MotionFramework.Resource
 
 		/// <summary>
 		/// 初始化资源系统
-		/// 注意：在使用AssetSystem系统之前需要初始化
+		/// 注意：在使用AssetSystem之前需要初始化
 		/// </summary>
-		public static void Initialize(string assetRootPath, EAssetSystemMode assetSystemMode)
+		public static void Initialize(string assetRootPath, EAssetSystemMode assetSystemMode , IBundleServices bundleServices)
 		{
-			_instance.InitializeInternal(assetRootPath, assetSystemMode);
+			_instance.InitializeInternal(assetRootPath, assetSystemMode, bundleServices);
 		}
 		#endregion
 
 		private readonly List<AssetFileLoader> _fileLoaders = new List<AssetFileLoader>(1000);
 		private readonly List<string> _removeKeys = new List<string>(100);
-		
+
 
 		/// <summary>
 		/// 资源系统根路径
@@ -58,9 +58,9 @@ namespace MotionFramework.Resource
 		public EAssetSystemMode AssetSystemMode { private set; get; }
 
 		/// <summary>
-		/// AssetBundle服务接口（EAssetSystemMode.BundleMode模式下需要设置该接口）
+		/// AssetBundle服务接口
 		/// </summary>
-		public IBundleServices BundleServices { set; get; }
+		public IBundleServices BundleServices { private set; get; }
 
 
 		private AssetSystem()
@@ -70,13 +70,14 @@ namespace MotionFramework.Resource
 		/// <summary>
 		/// 初始化资源系统
 		/// </summary>
-		public void InitializeInternal(string assetRootPath, EAssetSystemMode assetSystemMode)
+		internal void InitializeInternal(string assetRootPath, EAssetSystemMode assetSystemMode, IBundleServices bundleServices)
 		{
 			if (_isInitialize == false)
 			{
 				_isInitialize = true;
 				AssetRootPath = assetRootPath;
 				AssetSystemMode = assetSystemMode;
+				BundleServices = bundleServices;
 			}
 			else
 			{
@@ -190,7 +191,9 @@ namespace MotionFramework.Resource
 			Resources.UnloadUnusedAssets();
 		}
 
-		// 从列表里获取加载器
+		/// <summary>
+		/// 从列表里获取加载器
+		/// </summary>
 		private AssetFileLoader TryGetFileLoader(string loadPath)
 		{
 			AssetFileLoader loader = null;
