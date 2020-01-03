@@ -98,4 +98,18 @@ private async Task AsyncLoad()
 	Texture bg = handle.AssetObject as Texture;
 	Debug.Log(bg.name);
 }
-```` 
+````
+
+**资源卸载**  
+````C#
+public void Start()
+{
+	AssetReference assetRef = new AssetReference("UITexture/bg1");
+	assetRef.LoadAssetAsync<Texture>();
+
+	...
+
+	// 卸载资源
+	assetRef.Release();
+}
+````
