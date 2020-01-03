@@ -27,7 +27,12 @@ namespace MotionFramework.Resource
 			/// <summary>
 			/// 资源系统模式
 			/// </summary>
-			public EAssetSystemMode AssetSystemMode;	
+			public EAssetSystemMode AssetSystemMode;
+
+			/// <summary>
+			/// AssetBundle服务接口
+			/// </summary>
+			public IBundleServices BundleServices;
 		}
 
 
@@ -37,7 +42,7 @@ namespace MotionFramework.Resource
 			if (createParam == null)
 				throw new Exception($"{nameof(ResourceManager)} create param is invalid.");
 
-			AssetSystem.Initialize(createParam.AssetRootPath, createParam.AssetSystemMode);
+			AssetSystem.Initialize(createParam.AssetRootPath, createParam.AssetSystemMode, createParam.BundleServices);
 		}
 		void IModule.OnStart()
 		{
