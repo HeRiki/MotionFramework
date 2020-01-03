@@ -4,9 +4,6 @@ obj/
 Library/
 Temp/
 
-Assets/MotionSetting
-Assets/MotionSetting.meta
-
 *.sln
 *.suo
 *.csproj
