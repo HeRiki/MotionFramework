@@ -15,7 +15,7 @@ namespace MotionFramework.Network
 	/// <summary>
 	/// 网络状态
 	/// </summary>
-	public enum ENetworkState
+	public enum ENetworkStates
 	{
 		Disconnect,
 		Connecting,
@@ -38,7 +38,7 @@ namespace MotionFramework.Network
 		/// <summary>
 		/// 当前的网络状态
 		/// </summary>
-		public ENetworkState State { private set; get; } = ENetworkState.Disconnect;
+		public ENetworkStates State { private set; get; } = ENetworkStates.Disconnect;
 
 		/// <summary>
 		/// Mono层网络消息接收回调
@@ -91,11 +91,11 @@ namespace MotionFramework.Network
 		}
 		private void UpdateNetworkState()
 		{
-			if (State == ENetworkState.Connected)
+			if (State == ENetworkStates.Connected)
 			{
 				if (_channel != null && _channel.IsConnected() == false)
 				{
-					State = ENetworkState.Disconnect;
+					State = ENetworkStates.Disconnect;
 					AppLog.Log(ELogType.Warning, "Server disconnect.");
 				}
 			}
@@ -106,9 +106,9 @@ namespace MotionFramework.Network
 		/// </summary>
 		public void ConnectServer(string host, int port, Type packageParseType)
 		{
-			if (State == ENetworkState.Disconnect)
+			if (State == ENetworkStates.Disconnect)
 			{
-				State = ENetworkState.Connecting;
+				State = ENetworkStates.Connecting;
 				IPEndPoint remote = new IPEndPoint(IPAddress.Parse(host), port);
 				_server.ConnectAsync(remote, OnConnectServer, packageParseType);
 
@@ -124,11 +124,11 @@ namespace MotionFramework.Network
 			if (error == SocketError.Success)
 			{
 				_channel = channel;
-				State = ENetworkState.Connected;
+				State = ENetworkStates.Connected;
 			}
 			else
 			{
-				State = ENetworkState.Disconnect;
+				State = ENetworkStates.Disconnect;
 			}
 		}
 
@@ -137,7 +137,7 @@ namespace MotionFramework.Network
 		/// </summary>
 		public void DisconnectServer()
 		{
-			State = ENetworkState.Disconnect;
+			State = ENetworkStates.Disconnect;
 			if (_channel != null)
 			{
 				_server.ReleaseChannel(_channel);
@@ -150,7 +150,7 @@ namespace MotionFramework.Network
 		/// </summary>
 		public void SendMessage(INetPackage package)
 		{
-			if (State != ENetworkState.Connected)
+			if (State != ENetworkStates.Connected)
 			{
 				AppLog.Log(ELogType.Warning, "Network is not connected.");
 				return;
