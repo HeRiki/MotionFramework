@@ -1,7 +1,6 @@
-### 日志系统 (LogSystem)
+### 日志 (AppLog)
 
-MotionFramework内部使用了一套统一的日志系统。开发者需要注册才会显示内部的日志。
-
+监听框架内部的日志系统
 ```C#
 using MotionFramework;
 
@@ -10,7 +9,7 @@ public class Test
 	public void Start()
 	{
 		// 监听日志
-		LogHelper.RegisterCallback(LogCallback);
+		AppLog.RegisterCallback(LogCallback);
 	}
 
 	private void LogCallback(ELogType logType, string log)

@@ -83,7 +83,7 @@ public class DownloadPatchFiles : IFsmNode
 }
 ```
 
-创建流程系统
+流程系统使用示例
 ```C#
 using MotionFramework.AI;
 
@@ -93,7 +93,7 @@ public class Test
 
 	public void Start()
 	{
-		// 创建流程
+		// 创建流程节点
 	 	CheckResourceVersion node1 = new CheckResourceVersion(_system);
 	 	DownloadVersionFile node2 = new DownloadVersionFile(_system);
 	 	DownloadPatchFiles node3 = new DownloadPatchFiles(_system);

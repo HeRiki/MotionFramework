@@ -19,11 +19,13 @@ public class ProtoPackageCoder : DefaultPackageCoder
 		MessageIDFieldType = EMessageIDFieldType.UShort;
 	}
 
+	// 编码
 	protected override byte[] EncodeInternal(object msgObj)
 	{
 		return ProtobufHelper.Encode(msgObj);
 	}
 
+	// 解码
 	protected override object DecodeInternal(Type classType, byte[] bodyBytes)
 	{
 		return ProtobufHelper.Decode(classType, bodyBytes);
@@ -32,4 +34,4 @@ public class ProtoPackageCoder : DefaultPackageCoder
 ```
 
 更详细的教程请参考示例代码
-1. [MotionModule/Runtime/Module.Network/Coder/DefaultPackageCoder.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionModule/Runtime/Module.Network/Coder/DefaultPackageCoder.cs)
+1. [MotionModule/Module.Network/Coder/DefaultPackageCoder.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/Scripts/Runtime/MotionModule/Module.Network/Coder/DefaultPackageCoder.cs)

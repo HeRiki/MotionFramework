@@ -15,7 +15,6 @@ Ignore Type Tree Chanages : 忽略TypeTree变化，建议勾选
 ```
 
 **打包规则设置界面**  
-
 ![image](https://github.com/gmhevinci/MotionFramework/raw/master/Docs/Image/img101_2.png)
 
 不同项目对资源的处理及打包规则都有所不同，我们可以通过以下几项设置来定制化自己的打包规则。  
@@ -27,7 +26,6 @@ Ignore Type Tree Chanages : 忽略TypeTree变化，建议勾选
 6. TagByFolderName : AssetBundle标签按照文件所在的文件夹名字设置  
 
 注意：TagByFolder会将文件夹内所有资源打在一个AssetBundle文件里。
-
 
 **加密方式**  
 要实现Bundle文件加密，只需要实现下面代码
@@ -62,44 +60,6 @@ public static class AssetEncrypter
 
 **补丁文件**  
 每次打包都会生成一个名为patch.bytes的补丁文件，补丁文件内包含了所有资源的信息，例如：名称，版本，大小，MD5
-```C#
-//读取package.bytes文件
-using System;
-using System.Collections;
-using MotionFramework;
-using MotionFramework.Resource;
-using MotionFramework.Patch;
-
-public class Test
-{
-	private PatchFile _patchFile;
-
-	public void Start()
-	{
-		AppEngine.Instance.StartCoroutine(DownLoad());
-	}
-
-	public IEnumerator DownLoad()
-	{
-		// 从流文件夹内读取补丁文件
-		string filePath = AssetPathHelper.MakeStreamingLoadPath(PatchDefine.StrPatchFileName);
-		string url = AssetPathHelper.ConvertToWWWPath(filePath);
-
-		// Download file
-		WebDataRequest download = new WebDataRequest(url);
-		yield return download.DownLoad();
-
-		// Check result
-		if (download.LoadState == EWebRequestStates.Succeed)
-		{
-			// 解析补丁文件
-			_patchFile = new PatchFile();
-			_patchFile.Parse(download.GetText());	
-		}
-		download.Dispose();
-	}
-}
-```
 
 **Jenkins支持**
 ```

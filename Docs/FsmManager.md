@@ -12,13 +12,12 @@ public class FsmStart : IFsmNode
 	{
 		Name = "Start";
 	}
-
 	void IFsmNode.OnEnter()
 	{
 	}
 	void IFsmNode.OnUpdate()
 	{
-		// 转换状态
+		// 转换节点
 		FsmManager.Instance.Transition("Running");
 	}
 	void IFsmNode.OnExit()
@@ -37,7 +36,6 @@ public class FsmRunning : IFsmNode
 	{
 		Name = "Running";
 	}
-
 	void IFsmNode.OnEnter()
 	{
 	}
@@ -68,10 +66,11 @@ public class Test
 		param.Nodes = new List<IFsmNode>() { new FsmStart(), new FsmRunning() };
 
 		// 创建模块
+		// 在模块被创建之后，会自动运行我们指定的"Start"节点
 		AppEngine.Instance.CreateModule<FsmManager>(param);
 	}
 }
 ```
 
 更详细的教程请参考示例代码
-1. [MotionModule/Runtime/Module.AI/FsmManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionModule/Runtime/Module.AI/FsmManager.cs)
+1. [MotionModule/Module.AI/FsmManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/Scripts/Runtime/MotionModule/Module.AI/FsmManager.cs)

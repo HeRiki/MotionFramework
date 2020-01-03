@@ -1,5 +1,14 @@
 ### 场景管理器 (SceneManager)
 
+创建场景管理器
+```C#
+public void Start()
+{
+	// 创建模块
+	AppEngine.Instance.CreateModule<SceneManager>();
+}
+```
+
 ```C#
 using MotionFramework.Scene;
 
@@ -27,4 +36,4 @@ public class Test
 ```
 
 更详细的教程请参考示例代码
-1. [MotionModule/Runtime/Module.Scene/SceneManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionModule/Runtime/Module.Scene/SceneManager.cs)
+1. [MotionModule/Module.Scene/SceneManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/Scripts/Runtime/MotionModule/Module.Scene/SceneManager.cs)

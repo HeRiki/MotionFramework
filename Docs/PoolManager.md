@@ -1,5 +1,14 @@
 ### 对象池管理器 (PoolManager)
 
+创建对象池管理器
+```C#
+public void Start()
+{
+	// 创建模块
+	AppEngine.Instance.CreateModule<PoolManager>();
+}
+```
+
 对象池使用异步使用范例
 ```C#
 using MotionFramework.Pool;
@@ -54,4 +63,5 @@ public class Test
 }
 ```
 
-1. [MotionModule/Runtime/Module.Pool/PoolManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionModule/Runtime/Module.Pool/PoolManager.cs)
+更详细的教程请参考示例代码
+1. [MotionModule/Module.Pool/PoolManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/Scripts/Runtime/MotionModule/Module.Pool/PoolManager.cs)

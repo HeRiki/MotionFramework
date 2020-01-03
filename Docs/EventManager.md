@@ -1,5 +1,14 @@
 ### 事件管理器 (EventManager)
 
+创建事件管理器
+```C#
+public void Start()
+{
+  // 创建模块
+  AppEngine.Instance.CreateModule<EventManager>();
+}
+```
+
 定义事件类
 ```C#
 using MotionFramework.Event;
@@ -51,4 +60,4 @@ public class Test
 }
 ```
 
-1. [MotionModule/Runtime/Module.Event/EventManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionModule/Runtime/Module.Event/EventManager.cs)
+1. [MotionModule/Module.Event/EventManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/Scripts/Runtime/MotionModule/Module.Event/EventManager.cs)

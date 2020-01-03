@@ -1,5 +1,14 @@
 ### 音频管理器 (AudioManager)
 
+创建音频管理器
+```C#
+public void Start()
+{
+	// 创建模块
+	AppEngine.Instance.CreateModule<AudioManager>();
+}
+```
+
 音频管理器使用范例
 ```C#
 using MotionFramework.Audio;
@@ -28,4 +37,4 @@ public class Test
 ```
 
 更详细的教程请参考示例代码
-1. [MotionModule/Runtime/Module.Audio/AudioManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/MotionModule/Runtime/Module.Audio/AudioManager.cs)
+1. [MotionModule/Module.Audio/AudioManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/Scripts/Runtime/MotionModule/Module.Audio/AudioManager.cs)
