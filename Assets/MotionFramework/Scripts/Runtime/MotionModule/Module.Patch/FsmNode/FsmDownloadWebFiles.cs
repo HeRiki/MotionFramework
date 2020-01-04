@@ -23,11 +23,10 @@ namespace MotionFramework.Patch
 			_system = system;
 			Name = EPatchStates.DownloadWebFiles.ToString();
 		}
-
 		void IFsmNode.OnEnter()
 		{
-			PatchEventDispatcher.SendPatchStatesChangeMsg(_system.Current());
-			AppEngine.Instance.StartCoroutine(Download(_system));
+			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.DownloadWebFiles);
+			AppEngine.Instance.StartCoroutine(Download());
 		}
 		void IFsmNode.OnUpdate()
 		{
@@ -39,7 +38,7 @@ namespace MotionFramework.Patch
 		{
 		}
 
-		private IEnumerator Download(ProcedureSystem system)
+		private IEnumerator Download()
 		{
 			// 检测磁盘空间不足
 			// TODO 检测磁盘空间不足
@@ -67,12 +66,11 @@ namespace MotionFramework.Patch
 				// 创建下载器
 				WebFileRequest download = new WebFileRequest(url, savePath);
 				yield return download.DownLoad(); //文件依次加载（在一个文件加载完毕后加载下一个）
-				PatchHelper.Log(ELogType.Log, $"Web file is done : {url}");
+				PatchHelper.Log(ELogType.Log, $"Web file is download : {savePath}");
 
 				// 检测是否下载失败
 				if (download.States != EWebRequestStates.Succeed)
 				{
-					_system.Switch(typeof(FsmPatchError).Name);
 					PatchEventDispatcher.SendWebFileDownloadFailedMsg(url);
 					yield break;
 				}
@@ -90,7 +88,6 @@ namespace MotionFramework.Patch
 				string md5 = HashUtility.FileMD5(element.SavePath);
 				if (md5 != element.MD5)
 				{
-					_system.Switch(EPatchStates.PatchError.ToString());
 					PatchHelper.Log(ELogType.Error, $"Web file md5 verification error : {element.Name}");
 					PatchEventDispatcher.SendWebFileMD5VerifyFailedMsg(element.Name);
 					yield break;

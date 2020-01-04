@@ -12,9 +12,9 @@ namespace MotionFramework.Patch
 	public enum EPatchStates
 	{
 		/// <summary>
-		/// 补丁更新准备
+		/// 准备阶段开始
 		/// </summary>
-		PatchPrepare,
+		PrepareBegin,
 
 		/// <summary>
 		/// 检测沙盒是否变脏
@@ -33,6 +33,12 @@ namespace MotionFramework.Patch
 		ParseSandboxPatchFile,
 
 		/// <summary>
+		/// 准备阶段结束
+		/// </summary>
+		PrepareEnd,
+
+
+		/// <summary>
 		/// 请求最新的游戏版本
 		/// </summary>
 		RequestGameVersion,
@@ -48,23 +54,30 @@ namespace MotionFramework.Patch
 		GetDonwloadList,
 
 		/// <summary>
-		/// 下载网络文件
+		/// 下载网络文件到沙盒
 		/// </summary>
 		DownloadWebFiles,
 
 		/// <summary>
-		/// 下载网络文件收尾
+		/// 下载网络补丁文件到沙盒
 		/// </summary>
-		DownloadWebFilesFinish,
+		DownloadWebPatchFile,
 
 		/// <summary>
 		/// 补丁更新结束
 		/// </summary>
 		PatchOver,
+	}
 
-		/// <summary>
-		/// 补丁更新流程发生错误后的中转节点
-		/// </summary>
-		PatchError,
+	/// <summary>
+	/// 操作类型
+	/// </summary>
+	public enum EOperationType
+	{
+		BeginingRequestGameVersion,
+		BeginingDownloadWebFiles,
+		TryRequestGameVersion,
+		TryDownloadPatchFile,
+		TryDownloadWebFile,
 	}
 }

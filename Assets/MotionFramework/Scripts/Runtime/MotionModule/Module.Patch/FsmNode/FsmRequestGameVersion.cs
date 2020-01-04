@@ -20,11 +20,10 @@ namespace MotionFramework.Patch
 			_system = system;
 			Name = EPatchStates.RequestGameVersion.ToString();
 		}
-
 		void IFsmNode.OnEnter()
 		{
-			PatchEventDispatcher.SendPatchStatesChangeMsg(_system.Current());
-			AppEngine.Instance.StartCoroutine(Download(_system));
+			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.RequestGameVersion);
+			AppEngine.Instance.StartCoroutine(Download());
 		}
 		void IFsmNode.OnUpdate()
 		{
@@ -36,16 +35,8 @@ namespace MotionFramework.Patch
 		{
 		}
 
-		public IEnumerator Download(ProcedureSystem system)
+		public IEnumerator Download()
 		{
-			// 如果跳过CDN服务器
-			if (PatchSystem.Instance.SkipCDN)
-			{
-				PatchHelper.Log(ELogType.Warning, $"Skip CDN server !");
-				system.Switch(EPatchStates.PatchOver.ToString());
-				yield break;
-			}
-
 			// 获取最新的游戏版本号
 			{
 				string url = $"{PatchSystem.Instance.WebServerIP}/GameVersion.php";
@@ -58,7 +49,7 @@ namespace MotionFramework.Patch
 				if (download.States != EWebRequestStates.Succeed)
 				{
 					download.Dispose();
-					system.Switch(EPatchStates.PatchError.ToString());
+					PatchEventDispatcher.SendGameVersionRequestFailedMsg();
 					yield break;
 				}
 
@@ -81,13 +72,13 @@ namespace MotionFramework.Patch
 			// 检测是否需要下载热更文件
 			if (newResourceVersion == oldResourceVersion)
 			{
-				PatchHelper.Log(ELogType.Log, $"Not found file to download.");
-				system.Switch(EPatchStates.PatchOver.ToString());
+				PatchHelper.Log(ELogType.Log, $"Resource version is not change.");
+				_system.Switch(EPatchStates.PatchOver.ToString());
 			}
 			else
 			{
-				PatchHelper.Log(ELogType.Log, $"Found new file to download : {newResourceVersion.ToString()}");
-				system.SwitchNext();
+				PatchHelper.Log(ELogType.Log, $"Resource version is change : {newResourceVersion.ToString()}");
+				_system.SwitchNext();
 			}
 		}
 	}

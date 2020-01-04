@@ -23,7 +23,7 @@ namespace MotionFramework.Patch
 		}
 		void IFsmNode.OnEnter()
 		{
-			PatchEventDispatcher.SendPatchStatesChangeMsg(_system.Current());
+			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.GetDonwloadList);
 			GetDownloadList();
 		}
 		void IFsmNode.OnUpdate()
@@ -94,10 +94,26 @@ namespace MotionFramework.Patch
 				}
 			}
 
-			// 最后添加到正式下载列表里
-			PatchSystem.Instance.DownloadList.AddRange(downloadList);
-			downloadList.Clear();
-			_system.SwitchNext();
+			// 如果下载列表为空
+			if(downloadList.Count == 0)
+			{
+				_system.SwitchNext();
+			}
+			else
+			{
+				// 最后添加到正式下载列表里
+				PatchSystem.Instance.DownloadList.AddRange(downloadList);
+				downloadList.Clear();
+
+				// 发送事件后流程不再继续
+				int totalDownloadCount = PatchSystem.Instance.DownloadList.Count;
+				long totalDownloadSizeKB = 0;
+				foreach (var element in PatchSystem.Instance.DownloadList)
+				{
+					totalDownloadSizeKB += element.SizeKB;
+				}
+				PatchEventDispatcher.SendFoundUpdateFiles(totalDownloadCount, totalDownloadSizeKB);
+			}
 		}
 	}
 }

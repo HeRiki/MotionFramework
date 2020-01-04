@@ -22,7 +22,7 @@ namespace MotionFramework.Patch
 		}
 		void IFsmNode.OnEnter()
 		{
-			PatchEventDispatcher.SendPatchStatesChangeMsg(_system.Current());
+			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.ParseSandboxPatchFile);
 
 			// 读取并解析沙盒内的补丁文件
 			if (PatchHelper.CheckSandboxPatchFileExist())

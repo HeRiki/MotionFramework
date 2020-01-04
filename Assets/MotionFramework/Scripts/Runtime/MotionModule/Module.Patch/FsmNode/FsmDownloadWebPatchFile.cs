@@ -11,20 +11,20 @@ using MotionFramework.Network;
 
 namespace MotionFramework.Patch
 {
-	internal class FsmDownloadWebFilesFinish : IFsmNode
+	internal class FsmDownloadWebPatchFile : IFsmNode
 	{
 		private ProcedureSystem _system;
 		public string Name { private set; get; }
 
-		public FsmDownloadWebFilesFinish(ProcedureSystem system)
+		public FsmDownloadWebPatchFile(ProcedureSystem system)
 		{
 			_system = system;
-			Name = EPatchStates.DownloadWebFilesFinish.ToString();
+			Name = EPatchStates.DownloadWebPatchFile.ToString();
 		}
 		void IFsmNode.OnEnter()
 		{
-			PatchEventDispatcher.SendPatchStatesChangeMsg(_system.Current());
-			AppEngine.Instance.StartCoroutine(Download(_system));
+			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.DownloadWebPatchFile);
+			AppEngine.Instance.StartCoroutine(Download());
 		}
 		void IFsmNode.OnUpdate()
 		{
@@ -36,9 +36,9 @@ namespace MotionFramework.Patch
 		{
 		}
 
-		private IEnumerator Download(ProcedureSystem system)
+		private IEnumerator Download()
 		{
-			// 注意：等所有文件下载完毕后，再替换版本文件
+			// 注意：等所有文件下载完毕后，再替换补丁文件
 			int newResourceVersion = PatchSystem.Instance.GameVersion.Revision;
 			string url = PatchSystem.Instance.GetWebDownloadURL(newResourceVersion.ToString(), PatchDefine.PatchFileName);
 			string savePath = AssetPathHelper.MakePersistentLoadPath(PatchDefine.PatchFileName);
@@ -48,14 +48,14 @@ namespace MotionFramework.Patch
 			if (download.States != EWebRequestStates.Succeed)
 			{
 				download.Dispose();
-				system.Switch(EPatchStates.PatchError.ToString());
+				PatchEventDispatcher.SendPatchFileDownloadFailedMsg();
 				yield break;
 			}
 			else
 			{
-				PatchHelper.Log(ELogType.Log, "Download web files is finish.");
+				PatchHelper.Log(ELogType.Log, "Web patch file is download.");
 				download.Dispose();
-				system.SwitchNext();
+				_system.SwitchNext();
 			}
 		}
 	}

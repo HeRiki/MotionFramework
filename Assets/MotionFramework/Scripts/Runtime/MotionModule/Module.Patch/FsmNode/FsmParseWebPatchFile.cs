@@ -22,8 +22,8 @@ namespace MotionFramework.Patch
 		}
 		void IFsmNode.OnEnter()
 		{
-			PatchEventDispatcher.SendPatchStatesChangeMsg(_system.Current());
-			AppEngine.Instance.StartCoroutine(Download(_system));
+			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.ParseWebPatchFile);
+			AppEngine.Instance.StartCoroutine(Download());
 		}
 		void IFsmNode.OnUpdate()
 		{
@@ -35,7 +35,7 @@ namespace MotionFramework.Patch
 		{
 		}
 
-		private IEnumerator Download(ProcedureSystem system)
+		private IEnumerator Download()
 		{
 			// 从网络上解析最新的补丁文件
 			int newResourceVersion = PatchSystem.Instance.GameVersion.Revision;
@@ -47,7 +47,7 @@ namespace MotionFramework.Patch
 			if (download.States != EWebRequestStates.Succeed)
 			{
 				download.Dispose();
-				system.Switch(EPatchStates.PatchError.ToString());
+				PatchEventDispatcher.SendPatchFileDownloadFailedMsg();
 				yield break;
 			}
 
@@ -55,7 +55,7 @@ namespace MotionFramework.Patch
 			PatchHelper.Log(ELogType.Log, $"Parse web patch file.");
 			PatchSystem.Instance.ParseWebPatchFile(download.GetText());
 			download.Dispose();
-			system.SwitchNext();
+			_system.SwitchNext();
 		}
 	}
 }

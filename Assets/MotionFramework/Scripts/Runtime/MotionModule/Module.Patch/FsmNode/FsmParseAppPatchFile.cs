@@ -23,8 +23,8 @@ namespace MotionFramework.Patch
 		}
 		void IFsmNode.OnEnter()
 		{
-			PatchEventDispatcher.SendPatchStatesChangeMsg(_system.Current());
-			AppEngine.Instance.StartCoroutine(DownLoad(_system));
+			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.ParseAppPatchFile);
+			AppEngine.Instance.StartCoroutine(DownLoad());
 		}
 		void IFsmNode.OnUpdate()
 		{
@@ -36,7 +36,7 @@ namespace MotionFramework.Patch
 		{
 		}
 
-		private IEnumerator DownLoad(ProcedureSystem system)
+		private IEnumerator DownLoad()
 		{
 			// 解析APP里的补丁文件
 			string filePath = AssetPathHelper.MakeStreamingLoadPath(PatchDefine.PatchFileName);
@@ -49,7 +49,7 @@ namespace MotionFramework.Patch
 				PatchHelper.Log(ELogType.Log, "Parse app patch file.");
 				PatchSystem.Instance.ParseAppPatchFile(downloader.GetText());
 				downloader.Dispose();
-				system.SwitchNext();
+				_system.SwitchNext();
 			}
 			else
 			{

@@ -21,8 +21,7 @@ namespace MotionFramework.Patch
 		}
 		void IFsmNode.OnEnter()
 		{
-			PatchEventDispatcher.SendPatchStatesChangeMsg(_system.Current());
-			PatchEventDispatcher.SendPatchOverMsg();
+			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.PatchOver);
 		}
 		void IFsmNode.OnUpdate()
 		{

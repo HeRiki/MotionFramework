@@ -6,11 +6,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using UnityEngine;
-using MotionFramework.Resource;
 using MotionFramework.AI;
+using MotionFramework.Event;
 
 namespace MotionFramework.Patch
 {
@@ -44,33 +42,27 @@ namespace MotionFramework.Patch
 		/// </summary>
 		public string WebServerIP { private set; get; }
 
-		/// <summary>
-		/// 是否跳过CDN服务器
-		/// </summary>
-		public bool SkipCDN { private set; get; }
 
-
-		public void Initialize(string cdnServerIP, string webServerIP, bool skipCDN)
+		public void Initialize(string cdnServerIP, string webServerIP)
 		{
 			CDNServerIP = cdnServerIP;
 			WebServerIP = webServerIP;
-			SkipCDN = skipCDN;
 			AppVersion = new Version(Application.version);
 		}
 		public void Start()
 		{
 			// 注意：按照先后顺序添加流程节点
-			_system.AddNode(new FsmPatchPrepare(_system));
+			_system.AddNode(new FsmPrepareBegin(_system));
 			_system.AddNode(new FsmCheckSandboxDirty(_system));
 			_system.AddNode(new FsmParseAppPatchFile(_system));
 			_system.AddNode(new FsmParseSandboxPatchFile(_system));
+			_system.AddNode(new FsmPrepareEnd(_system));
 			_system.AddNode(new FsmRequestGameVersion(_system));
 			_system.AddNode(new FsmParseWebPatchFile(_system));
 			_system.AddNode(new FsmGetDonwloadList(_system));
 			_system.AddNode(new FsmDownloadWebFiles(_system));
-			_system.AddNode(new FsmDownloadWebFilesFinish(_system));
+			_system.AddNode(new FsmDownloadWebPatchFile(_system));
 			_system.AddNode(new FsmPatchOver(_system));
-			_system.AddNode(new FsmPatchError(_system));
 			_system.Run();
 		}
 		public void Update()
@@ -115,6 +107,56 @@ namespace MotionFramework.Patch
 				return $"{CDNServerIP}/IPhone/{version}/{fileName}";
 			else
 				return $"{CDNServerIP}/Standalone/{version}/{fileName}";
+		}
+
+		/// <summary>
+		/// 接收事件
+		/// </summary>
+		public void HandleEventMessage(IEventMessage msg)
+		{
+			if (msg is PatchEventMessageDefine.OperationEvent)
+			{
+				var message = msg as PatchEventMessageDefine.OperationEvent;
+				if (message.operationType == EOperationType.BeginingRequestGameVersion)
+				{
+					if (_system.Current == EPatchStates.PrepareEnd.ToString())
+						_system.SwitchNext();
+					else
+						AppLog.Log(ELogType.Error, $"Patch system is not prepare : {_system.Current}");
+				}
+				else if (message.operationType == EOperationType.BeginingDownloadWebFiles)
+				{
+					if (_system.Current == EPatchStates.GetDonwloadList.ToString())
+						_system.SwitchNext();
+					else
+						AppLog.Log(ELogType.Error, $"Patch system is not prepare : {_system.Current}");
+				}
+				else if (message.operationType == EOperationType.TryRequestGameVersion)
+				{
+					if (_system.Current == EPatchStates.RequestGameVersion.ToString())
+						_system.Switch(_system.Current);
+					else
+						AppLog.Log(ELogType.Error, $"Patch states is incorrect : {_system.Current}");
+				}
+				else if (message.operationType == EOperationType.TryDownloadPatchFile)
+				{
+					if (_system.Current == EPatchStates.DownloadWebPatchFile.ToString() || _system.Current == EPatchStates.ParseWebPatchFile.ToString())
+						_system.Switch(_system.Current);
+					else
+						AppLog.Log(ELogType.Error, $"Patch states is incorrect : {_system.Current}");
+				}
+				else if (message.operationType == EOperationType.TryDownloadWebFile)
+				{
+					if (_system.Current == EPatchStates.DownloadWebFiles.ToString())
+						_system.Switch(EPatchStates.GetDonwloadList.ToString());
+					else
+						AppLog.Log(ELogType.Error, $"Patch states is incorrect : {_system.Current}");
+				}
+				else
+				{
+					throw new NotImplementedException($"{message.operationType}");
+				}
+			}
 		}
 
 		// 解析补丁文件相关接口

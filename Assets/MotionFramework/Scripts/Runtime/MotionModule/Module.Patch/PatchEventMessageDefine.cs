@@ -12,18 +12,29 @@ namespace MotionFramework.Patch
 	/// </summary>
 	public enum EPatchEventMessageTag
 	{
-		PatchManagerEvent,
-		PatchWindowEvent,
+		PatchWindowDispatchEvents,
+		PatchSystemDispatchEvents,
 	}
 
 	public class PatchEventMessageDefine
 	{
+		#region PatchWindowDispatchEvent
+		/// <summary>
+		/// 开始请求游戏版本号
+		/// </summary>
+		public class OperationEvent : IEventMessage
+		{
+			public EOperationType operationType;
+		}
+		#endregion
+
+		#region PatchSystemDispatchEvent
 		/// <summary>
 		/// 补丁更新状态改变
 		/// </summary>
 		public class PatchStatesChange : IEventMessage
 		{
-			public string CurrentStates;
+			public EPatchStates CurrentStates;
 		}
 
 		/// <summary>
@@ -32,6 +43,15 @@ namespace MotionFramework.Patch
 		public class FoundNewAPP : IEventMessage
 		{
 			public string NewVersion;
+		}
+
+		/// <summary>
+		/// 发现更新文件
+		/// </summary>
+		public class FoundUpdateFiles : IEventMessage
+		{
+			public int TotalCount;
+			public long TotalSizeKB;
 		}
 
 		/// <summary>
@@ -46,7 +66,21 @@ namespace MotionFramework.Patch
 		}
 
 		/// <summary>
-		/// 文件下载失败
+		/// 游戏版本号请求失败
+		/// </summary>
+		public class GameVersionRequestFailed : IEventMessage
+		{
+		}
+
+		/// <summary>
+		/// 补丁文件下载失败
+		/// </summary>
+		public class PatchFileDownloadFailed : IEventMessage
+		{
+		}
+
+		/// <summary>
+		/// 网络文件下载失败
 		/// </summary>
 		public class WebFileDownloadFailed : IEventMessage
 		{
@@ -60,12 +94,6 @@ namespace MotionFramework.Patch
 		{
 			public string FilePath;
 		}
-
-		/// <summary>
-		/// 补丁更新结束
-		/// </summary>
-		public class PatchOver : IEventMessage
-		{
-		}
+		#endregion
 	}
 }

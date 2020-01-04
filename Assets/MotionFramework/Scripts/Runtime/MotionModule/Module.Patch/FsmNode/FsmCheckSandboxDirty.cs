@@ -20,10 +20,9 @@ namespace MotionFramework.Patch
 			_system = system;
 			Name = EPatchStates.CheckSandboxDirty.ToString();
 		}
-
 		void IFsmNode.OnEnter()
 		{
-			PatchEventDispatcher.SendPatchStatesChangeMsg(_system.Current());
+			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.CheckSandboxDirty);
 
 			string appVersion = PatchManager.Instance.GetAPPVersion();
 			string filePath = PatchHelper.GetSandboxStaticFilePath();
@@ -40,17 +39,16 @@ namespace MotionFramework.Patch
 			// 每次启动时比对APP版本号是否一致		
 			string recordVersion = PatchHelper.ReadFile(filePath);
 
-			//如果记录的版本号不一致		
+			// 如果记录的版本号不一致		
 			if (recordVersion != appVersion)
 			{
-				PatchHelper.Log(ELogType.Log, $"Sandbox is dirty, Record version is {recordVersion}, APP version is {appVersion}");
-				PatchHelper.Log(ELogType.Log, "Clear all cached sandbox files.");
+				PatchHelper.Log(ELogType.Warning, $"Sandbox is dirty, Record version is {recordVersion}, APP version is {appVersion}");
+				PatchHelper.Log(ELogType.Warning, "Clear all sandbox files.");
 				PatchHelper.ClearSandbox();
 				_system.SwitchLast();
 			}
 			else
 			{
-				PatchHelper.Log(ELogType.Log, $"Sandbox is not dirty, Record version is {recordVersion}, APP version is {appVersion}");
 				_system.SwitchNext();
 			}
 		}

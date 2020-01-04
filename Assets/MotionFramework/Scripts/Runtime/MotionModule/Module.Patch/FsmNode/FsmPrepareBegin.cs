@@ -6,31 +6,26 @@
 using System.Collections;
 using System.Collections.Generic;
 using MotionFramework.AI;
-using MotionFramework.Resource;
 
 namespace MotionFramework.Patch
 {
-	internal class FsmPatchPrepare : IFsmNode
+	internal class FsmPrepareBegin : IFsmNode
 	{
 		private ProcedureSystem _system;
 		public string Name { private set; get; }
 
-		public FsmPatchPrepare(ProcedureSystem system)
+		public FsmPrepareBegin(ProcedureSystem system)
 		{
 			_system = system;
-			Name = EPatchStates.PatchPrepare.ToString();
+			Name = EPatchStates.PrepareBegin.ToString();
 		}
-
 		void IFsmNode.OnEnter()
 		{
-			PatchEventDispatcher.SendPatchStatesChangeMsg(_system.Current());
+			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.PrepareBegin);
 		}
 		void IFsmNode.OnUpdate()
 		{
-			if (AssetSystem.Instance.AssetSystemMode == EAssetSystemMode.BundleMode)
-				_system.SwitchNext();
-			else
-				_system.Switch(EPatchStates.PatchOver.ToString());
+			_system.SwitchNext();
 		}
 		void IFsmNode.OnExit()
 		{

@@ -9,23 +9,23 @@ using MotionFramework.AI;
 
 namespace MotionFramework.Patch
 {
-	internal class FsmPatchError : IFsmNode
+	internal class FsmPrepareEnd : IFsmNode
 	{
 		private ProcedureSystem _system;
 		public string Name { private set; get; }
 
-		public FsmPatchError(ProcedureSystem system)
+		public FsmPrepareEnd(ProcedureSystem system)
 		{
 			_system = system;
-			Name = EPatchStates.PatchError.ToString();
+			Name = EPatchStates.PrepareEnd.ToString();
 		}
-
 		void IFsmNode.OnEnter()
 		{
-			PatchEventDispatcher.SendPatchStatesChangeMsg(_system.Current());
+			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.PrepareEnd);
 		}
 		void IFsmNode.OnUpdate()
 		{
+			// 准备阶段结束之后，不再进行下面的流程
 		}
 		void IFsmNode.OnExit()
 		{

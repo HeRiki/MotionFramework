@@ -6,11 +6,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Text;
 using UnityEngine;
 using MotionFramework.Resource;
-using MotionFramework.AI;
 using MotionFramework.Event;
 
 namespace MotionFramework.Patch
@@ -31,11 +28,6 @@ namespace MotionFramework.Patch
 			/// Web服务器IP地址
 			/// </summary>
 			public string WebServerIP;
-
-			/// <summary>
-			/// 是否跳过CDN服务器
-			/// </summary>
-			public bool SkipCDN;
 		}
 
 
@@ -45,7 +37,7 @@ namespace MotionFramework.Patch
 			if (createParam == null)
 				throw new Exception($"{nameof(PatchManager)} create param is invalid.");
 
-			PatchSystem.Instance.Initialize(createParam.CDNServerIP, createParam.WebServerIP, createParam.SkipCDN);
+			PatchSystem.Instance.Initialize(createParam.CDNServerIP, createParam.WebServerIP);
 		}
 		void IMotionModule.OnStart()
 		{
@@ -85,6 +77,14 @@ namespace MotionFramework.Patch
 		public void FixClient()
 		{
 			PatchSystem.Instance.FixClient();
+		}
+
+		/// <summary>
+		/// 接收事件
+		/// </summary>
+		public void HandleEventMessage(IEventMessage msg)
+		{
+			PatchSystem.Instance.HandleEventMessage(msg);
 		}
 
 		#region IBundleServices接口
