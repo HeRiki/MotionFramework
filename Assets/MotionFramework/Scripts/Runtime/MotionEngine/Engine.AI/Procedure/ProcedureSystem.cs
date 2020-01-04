@@ -16,6 +16,28 @@ namespace MotionFramework.AI
 		private readonly FsmSystem _system = new FsmSystem();
 
 		/// <summary>
+		/// 当前运行的节点名称
+		/// </summary>
+		public string Current
+		{
+			get
+			{
+				return _system.CurrentNodeName;
+			}
+		}
+
+		/// <summary>
+		/// 之前运行的节点名称
+		/// </summary>
+		public string Previous
+		{
+			get
+			{
+				return _system.PreviousNodeName;
+			}
+		}
+
+		/// <summary>
 		/// 添加一个流程节点
 		/// 注意：流程节点会按照添加的先后顺序执行
 		/// </summary>
@@ -43,14 +65,6 @@ namespace MotionFramework.AI
 		public void Update()
 		{
 			_system.Update();
-		}
-
-		/// <summary>
-		/// 当前运行的节点名称
-		/// </summary>
-		public string Current()
-		{
-			return _system.CurrentNodeName;
 		}
 
 		/// <summary>
