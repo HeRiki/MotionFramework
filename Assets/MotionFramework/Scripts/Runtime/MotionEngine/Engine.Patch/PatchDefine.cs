@@ -14,13 +14,13 @@ namespace MotionFramework.Patch
 		public const string BundleSuffixName = ".unity3d";
 
 		/// <summary>
-		/// 构建输出的清单文件名称
+		/// 构建输出的Unity清单文件名称
 		/// </summary>
-		public const string ManifestFileName = "Manifest";
+		public const string UnityManifestFileName = "UnityManifest";
 
 		/// <summary>
-		/// 构建输出的补丁文件名称
+		/// 构建输出的补丁清单文件名称
 		/// </summary>
-		public const string PatchFileName = "patch.bytes";
+		public const string PatchManifestFileName = "PatchManifest.bytes";
 	}
 }

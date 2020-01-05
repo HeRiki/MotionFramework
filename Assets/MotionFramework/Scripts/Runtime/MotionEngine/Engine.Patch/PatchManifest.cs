@@ -11,19 +11,19 @@ using System.Collections.Generic;
 namespace MotionFramework.Patch
 {
 	/// <summary>
-	/// 补丁信息总览文件
+	/// 补丁清单文件
 	/// </summary>
-	public class PatchFile
+	public class PatchManifest
 	{
 		private bool _isParse = false;
 
 		/// <summary>
-		/// 版本号
+		/// 资源版本号
 		/// </summary>
 		public int Version { private set; get; }
 
 		/// <summary>
-		/// 所有打包文件信息集合
+		/// 所有打包文件列表
 		/// </summary>
 		public readonly Dictionary<string, PatchElement> Elements = new Dictionary<string, PatchElement>();
 
