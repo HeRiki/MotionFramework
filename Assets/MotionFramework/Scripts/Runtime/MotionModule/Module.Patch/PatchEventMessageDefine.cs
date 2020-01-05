@@ -73,9 +73,9 @@ namespace MotionFramework.Patch
 		}
 
 		/// <summary>
-		/// 补丁文件下载失败
+		/// 网络上补丁清单下载失败
 		/// </summary>
-		public class PatchFileDownloadFailed : IEventMessage
+		public class WebPatchManifestDownloadFailed : IEventMessage
 		{
 		}
 

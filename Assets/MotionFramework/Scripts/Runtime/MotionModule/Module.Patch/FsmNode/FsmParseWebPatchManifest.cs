@@ -10,19 +10,19 @@ using MotionFramework.Network;
 
 namespace MotionFramework.Patch
 {
-	internal class FsmParseWebPatchFile : IFsmNode
+	internal class FsmParseWebPatchManifest : IFsmNode
 	{
 		private ProcedureSystem _system;
 		public string Name { private set; get; }
 
-		public FsmParseWebPatchFile(ProcedureSystem system)
+		public FsmParseWebPatchManifest(ProcedureSystem system)
 		{
 			_system = system;
-			Name = EPatchStates.ParseWebPatchFile.ToString();
+			Name = EPatchStates.ParseWebPatchManifest.ToString();
 		}
 		void IFsmNode.OnEnter()
 		{
-			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.ParseWebPatchFile);
+			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.ParseWebPatchManifest);
 			AppEngine.Instance.StartCoroutine(Download());
 		}
 		void IFsmNode.OnUpdate()
@@ -37,9 +37,9 @@ namespace MotionFramework.Patch
 
 		private IEnumerator Download()
 		{
-			// 从网络上解析最新的补丁文件
+			// 从网络上解析最新的补丁清单
 			int newResourceVersion = PatchSystem.Instance.GameVersion.Revision;
-			string url = PatchSystem.Instance.GetWebDownloadURL(newResourceVersion.ToString(), PatchDefine.PatchFileName);
+			string url = PatchSystem.Instance.GetWebDownloadURL(newResourceVersion.ToString(), PatchDefine.PatchManifestFileName);
 			WebDataRequest download = new WebDataRequest(url);
 			yield return download.DownLoad();
 
@@ -47,13 +47,12 @@ namespace MotionFramework.Patch
 			if (download.States != EWebRequestStates.Succeed)
 			{
 				download.Dispose();
-				PatchEventDispatcher.SendPatchFileDownloadFailedMsg();
+				PatchEventDispatcher.SendWebPatchManifestDownloadFailedMsg();
 				yield break;
 			}
 
-			// 解析补丁文件
-			PatchHelper.Log(ELogType.Log, $"Parse web patch file.");
-			PatchSystem.Instance.ParseWebPatchFile(download.GetText());
+			PatchHelper.Log(ELogType.Log, $"Parse web patch manifest.");
+			PatchSystem.Instance.ParseWebPatchManifest(download.GetText());
 			download.Dispose();
 			_system.SwitchNext();
 		}

@@ -11,6 +11,9 @@ namespace MotionFramework.Patch
 	/// </summary>
 	public enum EPatchStates
 	{
+		None,
+
+		#region 准备阶段
 		/// <summary>
 		/// 准备阶段开始
 		/// </summary>
@@ -23,30 +26,31 @@ namespace MotionFramework.Patch
 		CheckSandboxDirty,
 
 		/// <summary>
-		/// 分析APP内的补丁文件
+		/// 分析APP内的补丁清单
 		/// </summary>
-		ParseAppPatchFile,
+		ParseAppPatchManifest,
 
 		/// <summary>
-		/// 分析沙盒内的补丁文件
+		/// 分析沙盒内的补丁清单
 		/// </summary>
-		ParseSandboxPatchFile,
+		ParseSandboxPatchManifest,
 
 		/// <summary>
 		/// 准备阶段结束
 		/// </summary>
-		PrepareEnd,
+		PrepareOver,
+		#endregion
 
-
+		#region 下载阶段
 		/// <summary>
 		/// 请求最新的游戏版本
 		/// </summary>
 		RequestGameVersion,
 
 		/// <summary>
-		/// 分析网络上的补丁文件
+		/// 分析网络上的补丁清单
 		/// </summary>
-		ParseWebPatchFile,
+		ParseWebPatchManifest,
 
 		/// <summary>
 		/// 获取下载列表
@@ -59,14 +63,15 @@ namespace MotionFramework.Patch
 		DownloadWebFiles,
 
 		/// <summary>
-		/// 下载网络补丁文件到沙盒
+		/// 下载网络补丁清单到沙盒
 		/// </summary>
-		DownloadWebPatchFile,
+		DownloadWebPatchManifest,
 
 		/// <summary>
-		/// 补丁更新结束
+		/// 下载结束
 		/// </summary>
-		PatchOver,
+		DownloadOver,
+		#endregion
 	}
 
 	/// <summary>
@@ -77,7 +82,7 @@ namespace MotionFramework.Patch
 		BeginingRequestGameVersion,
 		BeginingDownloadWebFiles,
 		TryRequestGameVersion,
-		TryDownloadPatchFile,
-		TryDownloadWebFile,
+		TryDownloadWebPatchManifest,
+		TryDownloadWebFiles,
 	}
 }

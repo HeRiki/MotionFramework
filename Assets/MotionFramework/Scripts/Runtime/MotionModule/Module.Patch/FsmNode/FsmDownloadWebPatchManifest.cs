@@ -11,19 +11,19 @@ using MotionFramework.Network;
 
 namespace MotionFramework.Patch
 {
-	internal class FsmDownloadWebPatchFile : IFsmNode
+	internal class FsmDownloadWebPatchManifest : IFsmNode
 	{
 		private ProcedureSystem _system;
 		public string Name { private set; get; }
 
-		public FsmDownloadWebPatchFile(ProcedureSystem system)
+		public FsmDownloadWebPatchManifest(ProcedureSystem system)
 		{
 			_system = system;
-			Name = EPatchStates.DownloadWebPatchFile.ToString();
+			Name = EPatchStates.DownloadWebPatchManifest.ToString();
 		}
 		void IFsmNode.OnEnter()
 		{
-			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.DownloadWebPatchFile);
+			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.DownloadWebPatchManifest);
 			AppEngine.Instance.StartCoroutine(Download());
 		}
 		void IFsmNode.OnUpdate()
@@ -38,22 +38,22 @@ namespace MotionFramework.Patch
 
 		private IEnumerator Download()
 		{
-			// 注意：等所有文件下载完毕后，再替换补丁文件
+			// 注意：等所有文件下载完毕后，下载并替换补丁清单
 			int newResourceVersion = PatchSystem.Instance.GameVersion.Revision;
-			string url = PatchSystem.Instance.GetWebDownloadURL(newResourceVersion.ToString(), PatchDefine.PatchFileName);
-			string savePath = AssetPathHelper.MakePersistentLoadPath(PatchDefine.PatchFileName);
+			string url = PatchSystem.Instance.GetWebDownloadURL(newResourceVersion.ToString(), PatchDefine.PatchManifestFileName);
+			string savePath = AssetPathHelper.MakePersistentLoadPath(PatchDefine.PatchManifestFileName);
 			WebFileRequest download = new WebFileRequest(url, savePath);
 			yield return download.DownLoad();
 
 			if (download.States != EWebRequestStates.Succeed)
 			{
 				download.Dispose();
-				PatchEventDispatcher.SendPatchFileDownloadFailedMsg();
+				PatchEventDispatcher.SendWebPatchManifestDownloadFailedMsg();
 				yield break;
 			}
 			else
 			{
-				PatchHelper.Log(ELogType.Log, "Web patch file is download.");
+				PatchHelper.Log(ELogType.Log, "Web patch manifest is download.");
 				download.Dispose();
 				_system.SwitchNext();
 			}

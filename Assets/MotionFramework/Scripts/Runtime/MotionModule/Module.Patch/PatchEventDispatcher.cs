@@ -42,9 +42,9 @@ namespace MotionFramework.Patch
 			PatchEventMessageDefine.GameVersionRequestFailed msg = new PatchEventMessageDefine.GameVersionRequestFailed();
 			EventManager.Instance.SendMessage(EPatchEventMessageTag.PatchSystemDispatchEvents.ToString(), msg);
 		}
-		public static void SendPatchFileDownloadFailedMsg()
+		public static void SendWebPatchManifestDownloadFailedMsg()
 		{
-			PatchEventMessageDefine.PatchFileDownloadFailed msg = new PatchEventMessageDefine.PatchFileDownloadFailed();
+			PatchEventMessageDefine.WebPatchManifestDownloadFailed msg = new PatchEventMessageDefine.WebPatchManifestDownloadFailed();
 			EventManager.Instance.SendMessage(EPatchEventMessageTag.PatchSystemDispatchEvents.ToString(), msg);
 		}
 		public static void SendWebFileDownloadFailedMsg(string filePath)

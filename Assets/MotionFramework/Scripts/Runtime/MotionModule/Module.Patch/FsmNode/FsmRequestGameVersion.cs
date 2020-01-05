@@ -59,7 +59,7 @@ namespace MotionFramework.Patch
 			}
 
 			int newResourceVersion = PatchSystem.Instance.GameVersion.Revision;
-			int oldResourceVersion = PatchSystem.Instance.SandboxPatchFile.Version;
+			int oldResourceVersion = PatchSystem.Instance.SandboxPatchManifest.Version;
 
 			// 检测是否需要重新下载安装包
 			if (PatchSystem.Instance.GameVersion.Major != PatchSystem.Instance.AppVersion.Major || PatchSystem.Instance.GameVersion.Minor != PatchSystem.Instance.AppVersion.Minor)
@@ -69,11 +69,11 @@ namespace MotionFramework.Patch
 				yield break;
 			}
 
-			// 检测是否需要下载热更文件
+			// 检测资源版本是否变化
 			if (newResourceVersion == oldResourceVersion)
 			{
 				PatchHelper.Log(ELogType.Log, $"Resource version is not change.");
-				_system.Switch(EPatchStates.PatchOver.ToString());
+				_system.Switch(EPatchStates.DownloadOver.ToString());
 			}
 			else
 			{

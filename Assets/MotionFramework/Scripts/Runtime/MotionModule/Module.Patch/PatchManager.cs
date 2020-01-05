@@ -52,6 +52,14 @@ namespace MotionFramework.Patch
 		}
 
 		/// <summary>
+		/// 修复客户端
+		/// </summary>
+		public void FixClient()
+		{
+			PatchSystem.Instance.FixClient();
+		}
+
+		/// <summary>
 		/// 获取APP版本号
 		/// </summary>
 		public string GetAPPVersion()
@@ -72,14 +80,6 @@ namespace MotionFramework.Patch
 		}
 
 		/// <summary>
-		/// 修复客户端
-		/// </summary>
-		public void FixClient()
-		{
-			PatchSystem.Instance.FixClient();
-		}
-
-		/// <summary>
 		/// 接收事件
 		/// </summary>
 		public void HandleEventMessage(IEventMessage msg)
@@ -87,12 +87,21 @@ namespace MotionFramework.Patch
 			PatchSystem.Instance.HandleEventMessage(msg);
 		}
 
+		/// <summary>
+		/// 重新载入Unity清单
+		/// 注意：在补丁更新结束之后，清单位置可能发生变化。
+		/// </summary>
+		public void ReloadUnityManifest()
+		{
+			_unityManifest = LoadUnityManifest();
+		}
+
 		#region IBundleServices接口
-		private AssetBundleManifest _manifest;
-		private AssetBundleManifest LoadManifest()
+		private AssetBundleManifest _unityManifest;
+		private AssetBundleManifest LoadUnityManifest()
 		{
 			IBundleServices bundleServices = this as IBundleServices;
-			string loadPath = bundleServices.GetAssetBundleLoadPath(PatchDefine.ManifestFileName);
+			string loadPath = bundleServices.GetAssetBundleLoadPath(PatchDefine.UnityManifestFileName);
 			AssetBundle bundle = AssetBundle.LoadFromFile(loadPath);
 			if (bundle == null)
 				return null;
@@ -103,19 +112,19 @@ namespace MotionFramework.Patch
 		}
 		string IBundleServices.GetAssetBundleLoadPath(string manifestPath)
 		{
-			PatchFile patchFile;
-			if (PatchSystem.Instance.WebPatchFile != null)
-				patchFile = PatchSystem.Instance.WebPatchFile;
+			PatchManifest patchManifest;
+			if (PatchSystem.Instance.WebPatchManifest != null)
+				patchManifest = PatchSystem.Instance.WebPatchManifest;
 			else
-				patchFile = PatchSystem.Instance.SandboxPatchFile;
+				patchManifest = PatchSystem.Instance.SandboxPatchManifest;
 
 			// 注意：可能从APP内加载，也可能从沙盒内加载
 			PatchElement element;
-			if (patchFile.Elements.TryGetValue(manifestPath, out element))
+			if (patchManifest.Elements.TryGetValue(manifestPath, out element))
 			{
 				// 先查询APP内的资源
 				PatchElement appElement;
-				if (PatchSystem.Instance.AppPatchFile.Elements.TryGetValue(manifestPath, out appElement))
+				if (PatchSystem.Instance.AppPatchManifest.Elements.TryGetValue(manifestPath, out appElement))
 				{
 					if (appElement.MD5 == element.MD5)
 						return AssetPathHelper.MakeStreamingLoadPath(manifestPath);
@@ -126,21 +135,21 @@ namespace MotionFramework.Patch
 			}
 			else
 			{
-				PatchHelper.Log(ELogType.Warning, $"Not found bundle in package : {manifestPath}");
+				PatchHelper.Log(ELogType.Warning, $"Not found element in patch manifest : {manifestPath}");
 				return AssetPathHelper.MakeStreamingLoadPath(manifestPath);
 			}
 		}
 		string[] IBundleServices.GetDirectDependencies(string assetBundleName)
 		{
-			if (_manifest == null)
-				_manifest = LoadManifest();
-			return _manifest.GetDirectDependencies(assetBundleName);
+			if (_unityManifest == null)
+				_unityManifest = LoadUnityManifest();
+			return _unityManifest.GetDirectDependencies(assetBundleName);
 		}
 		string[] IBundleServices.GetAllDependencies(string assetBundleName)
 		{
-			if (_manifest == null)
-				_manifest = LoadManifest();
-			return _manifest.GetAllDependencies(assetBundleName);
+			if (_unityManifest == null)
+				_unityManifest = LoadUnityManifest();
+			return _unityManifest.GetAllDependencies(assetBundleName);
 		}
 		#endregion
 	}

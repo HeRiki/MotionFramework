@@ -11,19 +11,19 @@ using MotionFramework.Network;
 
 namespace MotionFramework.Patch
 {
-	internal class FsmParseAppPatchFile : IFsmNode
+	internal class FsmParseAppPatchManifest : IFsmNode
 	{
 		private ProcedureSystem _system;
 		public string Name { private set; get; }
 
-		public FsmParseAppPatchFile(ProcedureSystem system)
+		public FsmParseAppPatchManifest(ProcedureSystem system)
 		{
 			_system = system;
-			Name = EPatchStates.ParseAppPatchFile.ToString();
+			Name = EPatchStates.ParseAppPatchManifest.ToString();
 		}
 		void IFsmNode.OnEnter()
 		{
-			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.ParseAppPatchFile);
+			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.ParseAppPatchManifest);
 			AppEngine.Instance.StartCoroutine(DownLoad());
 		}
 		void IFsmNode.OnUpdate()
@@ -38,16 +38,16 @@ namespace MotionFramework.Patch
 
 		private IEnumerator DownLoad()
 		{
-			// 解析APP里的补丁文件
-			string filePath = AssetPathHelper.MakeStreamingLoadPath(PatchDefine.PatchFileName);
+			// 解析APP里的补丁清单
+			string filePath = AssetPathHelper.MakeStreamingLoadPath(PatchDefine.PatchManifestFileName);
 			string url = AssetPathHelper.ConvertToWWWPath(filePath);
 			WebDataRequest downloader = new WebDataRequest(url);
 			yield return downloader.DownLoad();
 
 			if (downloader.States == EWebRequestStates.Succeed)
 			{
-				PatchHelper.Log(ELogType.Log, "Parse app patch file.");
-				PatchSystem.Instance.ParseAppPatchFile(downloader.GetText());
+				PatchHelper.Log(ELogType.Log, "Parse app patch manifest.");
+				PatchSystem.Instance.ParseAppPatchManifest(downloader.GetText());
 				downloader.Dispose();
 				_system.SwitchNext();
 			}

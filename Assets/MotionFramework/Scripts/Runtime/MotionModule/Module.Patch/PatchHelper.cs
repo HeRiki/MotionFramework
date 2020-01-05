@@ -81,20 +81,20 @@ namespace MotionFramework.Patch
 		}
 
 		/// <summary>
-		/// 检测沙盒内补丁文件是否存在
+		/// 检测沙盒内补丁清单文件是否存在
 		/// </summary>
-		public static bool CheckSandboxPatchFileExist()
+		public static bool CheckSandboxPatchManifestFileExist()
 		{
-			string filePath = AssetPathHelper.MakePersistentLoadPath(PatchDefine.PatchFileName);
+			string filePath = AssetPathHelper.MakePersistentLoadPath(PatchDefine.PatchManifestFileName);
 			return File.Exists(filePath);
 		}
 
 		/// <summary>
-		/// 检测沙盒内清单文件是否存在
+		/// 检测沙盒内Unity清单文件是否存在
 		/// </summary>
-		public static bool CheckSandboxManifestFileExist()
+		public static bool CheckSandboxUnityManifestFileExist()
 		{
-			string filePath = AssetPathHelper.MakePersistentLoadPath(PatchDefine.ManifestFileName);
+			string filePath = AssetPathHelper.MakePersistentLoadPath(PatchDefine.UnityManifestFileName);
 			return File.Exists(filePath);
 		}
 	}

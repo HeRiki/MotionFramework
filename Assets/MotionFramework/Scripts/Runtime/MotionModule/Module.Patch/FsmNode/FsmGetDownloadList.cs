@@ -44,21 +44,21 @@ namespace MotionFramework.Patch
 			List<PatchElement> downloadList = new List<PatchElement>(1000);
 
 			// 准备下载列表
-			foreach (var pair in PatchSystem.Instance.WebPatchFile.Elements)
+			foreach (var pair in PatchSystem.Instance.WebPatchManifest.Elements)
 			{
 				PatchElement element = pair.Value;
 
-				// 先检测APP里的资源
+				// 先检测APP里的清单
 				PatchElement appElement;
-				if (PatchSystem.Instance.AppPatchFile.Elements.TryGetValue(element.Name, out appElement))
+				if (PatchSystem.Instance.AppPatchManifest.Elements.TryGetValue(element.Name, out appElement))
 				{
 					if (appElement.MD5 == element.MD5)
 						continue;
 				}
 
-				// 再检测沙盒里的资源
+				// 再检测沙盒里的清单
 				PatchElement sandboxElement;
-				if (PatchSystem.Instance.SandboxPatchFile.Elements.TryGetValue(element.Name, out sandboxElement))
+				if (PatchSystem.Instance.SandboxPatchManifest.Elements.TryGetValue(element.Name, out sandboxElement))
 				{
 					if (sandboxElement.MD5 != element.MD5)
 						downloadList.Add(element);

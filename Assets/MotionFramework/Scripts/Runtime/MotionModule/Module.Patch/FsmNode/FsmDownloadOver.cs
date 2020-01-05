@@ -9,19 +9,19 @@ using MotionFramework.AI;
 
 namespace MotionFramework.Patch
 {
-	internal class FsmPatchOver : IFsmNode
+	internal class FsmDownloadOver : IFsmNode
 	{
 		private ProcedureSystem _system;
 		public string Name { private set; get; }
 
-		public FsmPatchOver(ProcedureSystem system)
+		public FsmDownloadOver(ProcedureSystem system)
 		{
 			_system = system;
-			Name = EPatchStates.PatchOver.ToString();
+			Name = EPatchStates.DownloadOver.ToString();
 		}
 		void IFsmNode.OnEnter()
 		{
-			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.PatchOver);
+			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.DownloadOver);
 		}
 		void IFsmNode.OnUpdate()
 		{

@@ -22,10 +22,10 @@ namespace MotionFramework.Patch
 		public Version AppVersion { private set; get; }
 		public Version GameVersion { private set; get; }
 
-		// 补丁文件
-		public PatchFile AppPatchFile { private set; get; }
-		public PatchFile SandboxPatchFile { private set; get; }
-		public PatchFile WebPatchFile { private set; get; }
+		// 补丁清单
+		public PatchManifest AppPatchManifest { private set; get; }
+		public PatchManifest SandboxPatchManifest { private set; get; }
+		public PatchManifest WebPatchManifest { private set; get; }
 
 		/// <summary>
 		/// 下载列表
@@ -54,30 +54,20 @@ namespace MotionFramework.Patch
 			// 注意：按照先后顺序添加流程节点
 			_system.AddNode(new FsmPrepareBegin(_system));
 			_system.AddNode(new FsmCheckSandboxDirty(_system));
-			_system.AddNode(new FsmParseAppPatchFile(_system));
-			_system.AddNode(new FsmParseSandboxPatchFile(_system));
-			_system.AddNode(new FsmPrepareEnd(_system));
+			_system.AddNode(new FsmParseAppPatchManifest(_system));
+			_system.AddNode(new FsmParseSandboxPatchManifest(_system));
+			_system.AddNode(new FsmPrepareOver(_system));
 			_system.AddNode(new FsmRequestGameVersion(_system));
-			_system.AddNode(new FsmParseWebPatchFile(_system));
+			_system.AddNode(new FsmParseWebPatchManifest(_system));
 			_system.AddNode(new FsmGetDonwloadList(_system));
 			_system.AddNode(new FsmDownloadWebFiles(_system));
-			_system.AddNode(new FsmDownloadWebPatchFile(_system));
-			_system.AddNode(new FsmPatchOver(_system));
+			_system.AddNode(new FsmDownloadWebPatchManifest(_system));
+			_system.AddNode(new FsmDownloadOver(_system));
 			_system.Run();
 		}
 		public void Update()
 		{
 			_system.Update();
-		}
-
-		/// <summary>
-		/// 创建游戏版本号
-		/// </summary>
-		public void CreateGameVesion(string version)
-		{
-			if (GameVersion != null)
-				throw new Exception("Should never get here.");
-			GameVersion = new Version(version);
 		}
 
 		/// <summary>
@@ -94,6 +84,16 @@ namespace MotionFramework.Patch
 #else
 			Application.Quit();
 #endif
+		}
+
+		/// <summary>
+		/// 创建游戏版本号
+		/// </summary>
+		public void CreateGameVesion(string version)
+		{
+			if (GameVersion != null)
+				throw new Exception("Should never get here.");
+			GameVersion = new Version(version);
 		}
 
 		/// <summary>
@@ -119,34 +119,39 @@ namespace MotionFramework.Patch
 				var message = msg as PatchEventMessageDefine.OperationEvent;
 				if (message.operationType == EOperationType.BeginingRequestGameVersion)
 				{
-					if (_system.Current == EPatchStates.PrepareEnd.ToString())
+					// 从挂起的地方继续
+					if (_system.Current == EPatchStates.PrepareOver.ToString())
 						_system.SwitchNext();
 					else
 						AppLog.Log(ELogType.Error, $"Patch system is not prepare : {_system.Current}");
 				}
 				else if (message.operationType == EOperationType.BeginingDownloadWebFiles)
 				{
+					// 从挂起的地方继续
 					if (_system.Current == EPatchStates.GetDonwloadList.ToString())
 						_system.SwitchNext();
 					else
-						AppLog.Log(ELogType.Error, $"Patch system is not prepare : {_system.Current}");
+						AppLog.Log(ELogType.Error, $"Patch states is incorrect : {_system.Current}");
 				}
 				else if (message.operationType == EOperationType.TryRequestGameVersion)
 				{
+					// 修复当前节点错误
 					if (_system.Current == EPatchStates.RequestGameVersion.ToString())
 						_system.Switch(_system.Current);
 					else
 						AppLog.Log(ELogType.Error, $"Patch states is incorrect : {_system.Current}");
 				}
-				else if (message.operationType == EOperationType.TryDownloadPatchFile)
+				else if (message.operationType == EOperationType.TryDownloadWebPatchManifest)
 				{
-					if (_system.Current == EPatchStates.DownloadWebPatchFile.ToString() || _system.Current == EPatchStates.ParseWebPatchFile.ToString())
+					// 修复当前节点错误
+					if (_system.Current == EPatchStates.DownloadWebPatchManifest.ToString() || _system.Current == EPatchStates.ParseWebPatchManifest.ToString())
 						_system.Switch(_system.Current);
 					else
 						AppLog.Log(ELogType.Error, $"Patch states is incorrect : {_system.Current}");
 				}
-				else if (message.operationType == EOperationType.TryDownloadWebFile)
+				else if (message.operationType == EOperationType.TryDownloadWebFiles)
 				{
+					// 修复当前节点错误
 					if (_system.Current == EPatchStates.DownloadWebFiles.ToString())
 						_system.Switch(EPatchStates.GetDonwloadList.ToString());
 					else
@@ -159,33 +164,33 @@ namespace MotionFramework.Patch
 			}
 		}
 
-		// 解析补丁文件相关接口
-		public void ParseAppPatchFile(string fileContent)
+		// 解析补丁清单文件相关接口
+		public void ParseAppPatchManifest(string fileContent)
 		{
-			if (AppPatchFile != null)
+			if (AppPatchManifest != null)
 				throw new Exception("Should never get here.");
-			AppPatchFile = new PatchFile();
-			AppPatchFile.Parse(fileContent);
+			AppPatchManifest = new PatchManifest();
+			AppPatchManifest.Parse(fileContent);
 		}
-		public void ParseSandboxPatchFile(string fileContent)
+		public void ParseSandboxPatchManifest(string fileContent)
 		{
-			if (SandboxPatchFile != null)
+			if (SandboxPatchManifest != null)
 				throw new Exception("Should never get here.");
-			SandboxPatchFile = new PatchFile();
-			SandboxPatchFile.Parse(fileContent);
+			SandboxPatchManifest = new PatchManifest();
+			SandboxPatchManifest.Parse(fileContent);
 		}
-		public void ParseSandboxPatchFile(PatchFile patchFile)
+		public void ParseSandboxPatchManifest(PatchManifest patchFile)
 		{
-			if (SandboxPatchFile != null)
+			if (SandboxPatchManifest != null)
 				throw new Exception("Should never get here.");
-			SandboxPatchFile = patchFile;
+			SandboxPatchManifest = patchFile;
 		}
-		public void ParseWebPatchFile(string fileContent)
+		public void ParseWebPatchManifest(string fileContent)
 		{
-			if (WebPatchFile != null)
+			if (WebPatchManifest != null)
 				throw new Exception("Should never get here.");
-			WebPatchFile = new PatchFile();
-			WebPatchFile.Parse(fileContent);
+			WebPatchManifest = new PatchManifest();
+			WebPatchManifest.Parse(fileContent);
 		}
 	}
 }

@@ -10,33 +10,32 @@ using MotionFramework.Resource;
 
 namespace MotionFramework.Patch
 {
-	internal class FsmParseSandboxPatchFile : IFsmNode
+	internal class FsmParseSandboxPatchManifest : IFsmNode
 	{
 		private ProcedureSystem _system;
 		public string Name { private set; get; }
 
-		public FsmParseSandboxPatchFile(ProcedureSystem system)
+		public FsmParseSandboxPatchManifest(ProcedureSystem system)
 		{
 			_system = system;
-			Name = EPatchStates.ParseSandboxPatchFile.ToString();
+			Name = EPatchStates.ParseSandboxPatchManifest.ToString();
 		}
 		void IFsmNode.OnEnter()
 		{
-			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.ParseSandboxPatchFile);
+			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.ParseSandboxPatchManifest);
 
-			// 读取并解析沙盒内的补丁文件
-			if (PatchHelper.CheckSandboxPatchFileExist())
+			// 读取并解析沙盒内的补丁清单
+			if (PatchHelper.CheckSandboxPatchManifestFileExist())
 			{
-				string filePath = AssetPathHelper.MakePersistentLoadPath(PatchDefine.PatchFileName);
+				string filePath = AssetPathHelper.MakePersistentLoadPath(PatchDefine.PatchManifestFileName);
 				string fileContent = PatchHelper.ReadFile(filePath);
 
-				// 解析补丁文件
 				PatchHelper.Log(ELogType.Log, $"Parse sandbox patch file.");
-				PatchSystem.Instance.ParseSandboxPatchFile(fileContent);
+				PatchSystem.Instance.ParseSandboxPatchManifest(fileContent);
 			}
 			else
 			{
-				PatchSystem.Instance.ParseSandboxPatchFile(PatchSystem.Instance.AppPatchFile);
+				PatchSystem.Instance.ParseSandboxPatchManifest(PatchSystem.Instance.AppPatchManifest);
 			}
 
 			_system.SwitchNext();
