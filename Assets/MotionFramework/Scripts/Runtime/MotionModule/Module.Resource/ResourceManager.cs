@@ -61,6 +61,14 @@ namespace MotionFramework.Resource
 		}
 
 		/// <summary>
+		/// 强制回收所有资源
+		/// </summary>
+		public void ForceReleaseAll()
+		{
+			AssetSystem.Instance.ForceReleaseAll();
+		}
+
+		/// <summary>
 		/// 同步加载接口
 		/// 注意：仅支持无依赖关系的资源
 		/// </summary>
