@@ -15,9 +15,9 @@ namespace MotionFramework.Editor
 	public static class AssetBuilderHelper
 	{
 		/// <summary>
-		/// 获取默认导出路径
+		/// 获取默认的导出根路径
 		/// </summary>
-		public static string MakeDefaultOutputRootPath()
+		public static string GetDefaultOutputRootPath()
 		{
 			string projectPath = EditorTools.GetProjectPath();
 			return $"{projectPath}/BuildBundles";
@@ -60,12 +60,12 @@ namespace MotionFramework.Editor
 
 
 		/// <summary>
-		/// 获取所有补丁版本列表
+		/// 获取所有补丁包版本列表
 		/// 注意：列表会按照版本号从小到大排序
 		/// </summary>
 		private static List<int> GetPackageVersionList(BuildTarget buildTarget, string outputRoot)
 		{
-			// 获取所有Package文件夹
+			// 获取所有补丁包文件夹
 			string parentPath = $"{outputRoot}/{buildTarget}";
 			string[] allFolders = Directory.GetDirectories(parentPath);
 			List<int> versionList = new List<int>();
@@ -83,7 +83,7 @@ namespace MotionFramework.Editor
 		}
 
 		/// <summary>
-		/// 获取当前最大的补丁版本号
+		/// 获取当前最大的补丁包版本号
 		/// </summary>
 		/// <returns>如果没有任何补丁版本，那么返回-1</returns>
 		public static int GetMaxPackageVersion(BuildTarget buildTarget, string outputRoot)
@@ -95,21 +95,21 @@ namespace MotionFramework.Editor
 		}
 
 		/// <summary>
-		/// 复制补丁文件到流目录
+		/// 复制所有补丁包文件到流目录
 		/// </summary>
-		/// <param name="targetPackageVersion">目标补丁版本。如果版本为负值则拷贝所有版本</param>
-		public static void CopyPackageToStreamingFolder(BuildTarget buildTarget, string outputRoot, int targetPackageVersion = -1)
+		/// <param name="targetVersion">目标版本。如果版本为负值则拷贝所有版本</param>
+		public static void CopyPackageToStreamingFolder(BuildTarget buildTarget, string outputRoot, int targetVersion = -1)
 		{
 			string parentPath = $"{outputRoot}/{buildTarget}";
 			string streamingPath = Application.dataPath + "/StreamingAssets";
 
-			// 获取所有Package文件夹
+			// 获取所有补丁包版本列表
 			List<int> versionList = GetPackageVersionList(buildTarget, outputRoot);
 
 			// 拷贝资源
 			for (int i = 0; i < versionList.Count; i++)
 			{
-				if (targetPackageVersion >= 0 && versionList[i] > targetPackageVersion)
+				if (targetVersion >= 0 && versionList[i] > targetVersion)
 					break;
 
 				string sourcePath = $"{parentPath}/{versionList[i]}";
@@ -122,21 +122,21 @@ namespace MotionFramework.Editor
 		}
 
 		/// <summary>
-		/// 复制补丁文件到主目录
-		/// <param name="targetPackageVersion">目标补丁版本。如果版本为负值则拷贝所有版本</param>
+		/// 复制补丁文件到输出目录
+		/// <param name="targetVersion">目标版本。如果版本为负值则拷贝所有版本</param>
 		/// </summary>
-		public static void CopyPackageToManifestFolder(BuildTarget buildTarget, string outputRoot, int targetPackageVersion = -1)
+		public static void CopyPackageToUnityManifestFolder(BuildTarget buildTarget, string outputRoot, int targetVersion = -1)
 		{
 			string parentPath = $"{outputRoot}/{buildTarget}";
-			string outputPath = $"{outputRoot}/{buildTarget}/{PatchDefine.ManifestFileName}";
+			string outputPath = $"{outputRoot}/{buildTarget}/{PatchDefine.UnityManifestFileName}";
 
-			// 获取所有Package文件夹
+			// 获取所有补丁包版本列表
 			List<int> versionList = GetPackageVersionList(buildTarget, outputRoot);
 
 			// 拷贝资源
 			for (int i = 0; i < versionList.Count; i++)
 			{
-				if (targetPackageVersion >= 0 && versionList[i] > targetPackageVersion)
+				if (targetVersion >= 0 && versionList[i] > targetVersion)
 					break;
 
 				string sourcePath = $"{parentPath}/{versionList[i]}";

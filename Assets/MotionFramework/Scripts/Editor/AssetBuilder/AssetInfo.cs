@@ -17,7 +17,11 @@ namespace MotionFramework.Editor
 		public bool IsSceneAsset { private set; get; }
 		public bool IsVideoAsset { private set; get; }
 
-		public int DependCount = 0; //被依赖次数
+		/// <summary>
+		/// 被依赖次数
+		/// </summary>
+		public int DependCount = 0;
+
 		public string AssetBundleName = null;
 		public string AssetBundleVariant = null;
 

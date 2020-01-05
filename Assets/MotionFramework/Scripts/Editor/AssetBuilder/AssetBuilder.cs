@@ -33,9 +33,9 @@ namespace MotionFramework.Editor
 		private readonly string _outputRoot;
 
 		// 构建相关
-		public BuildTarget BuildTarget { private set; get; } = BuildTarget.NoTarget; //构建平台
-		public int BuildVersion { set; get; } = -1; //构建版本
-		public string OutputPath { private set; get; } = string.Empty; //输出目录
+		public BuildTarget BuildTarget { private set; get; } = BuildTarget.NoTarget;
+		public int BuildVersion { set; get; } = -1;
+		public string OutputPath { private set; get; } = string.Empty;
 
 		// 构建选项
 		public ECompressOption CompressOption = ECompressOption.Uncompressed;
@@ -52,14 +52,10 @@ namespace MotionFramework.Editor
 		/// <param name="buildVersion">构建版本</param>
 		public AssetBuilder(BuildTarget buildTarget, int buildVersion)
 		{
-			_outputRoot = AssetBuilderHelper.MakeDefaultOutputRootPath();
-
-			// 构建平台
+			_outputRoot = AssetBuilderHelper.GetDefaultOutputRootPath();
 			BuildTarget = buildTarget;
-			// 构建版本
 			BuildVersion = buildVersion;
-			// 输出路径
-			OutputPath = $"{_outputRoot}/{buildTarget}/{PatchDefine.ManifestFileName}";
+			OutputPath = GetOutputPath();
 		}
 
 		/// <summary>
@@ -84,9 +80,9 @@ namespace MotionFramework.Editor
 				throw new Exception("[BuildPatch] 输出目录不能为空");
 
 			// 检测补丁包是否已经存在
-			string patchFolderPath = GetPatchFolderPath();
-			if (Directory.Exists(patchFolderPath))
-				throw new Exception($"[BuildPatch] 补丁包已经存在：{patchFolderPath}");
+			string packageFolderPath = GetPackageFolderPath();
+			if (Directory.Exists(packageFolderPath))
+				throw new Exception($"[BuildPatch] 补丁包已经存在：{packageFolderPath}");
 
 			// 检测标签是否有冲突
 			CheckTagNameConflict();
@@ -99,7 +95,7 @@ namespace MotionFramework.Editor
 				if (Directory.Exists(parentPath))
 				{
 					Directory.Delete(parentPath, true);
-					ShowBuildLog($"删除平台总目录：{parentPath}");
+					Log($"删除平台总目录：{parentPath}");
 				}
 			}
 
@@ -107,7 +103,7 @@ namespace MotionFramework.Editor
 			if (Directory.Exists(OutputPath) == false)
 			{
 				Directory.CreateDirectory(OutputPath);
-				ShowBuildLog($"创建输出目录：{OutputPath}");
+				Log($"创建输出目录：{OutputPath}");
 			}
 		}
 
@@ -124,7 +120,7 @@ namespace MotionFramework.Editor
 			if (assetInfoList.Count == 0)
 				throw new Exception("[BuildPatch] 构建列表不能为空");
 
-			ShowBuildLog($"构建列表里总共有{assetInfoList.Count}个资源需要构建");
+			Log($"构建列表里总共有{assetInfoList.Count}个资源需要构建");
 			for (int i = 0; i < assetInfoList.Count; i++)
 			{
 				AssetInfo assetInfo = assetInfoList[i];
@@ -136,7 +132,7 @@ namespace MotionFramework.Editor
 			}
 
 			// 开始构建
-			ShowBuildLog($"开始构建......");
+			Log($"开始构建......");
 			BuildAssetBundleOptions opt = MakeBuildOptions();
 			AssetBundleManifest buildManifest = BuildPipeline.BuildAssetBundles(OutputPath, buildInfoList.ToArray(), opt, BuildTarget);
 			if (buildManifest == null)
@@ -144,22 +140,22 @@ namespace MotionFramework.Editor
 
 			// 清单列表
 			string[] allAssetBundles = buildManifest.GetAllAssetBundles();
-			ShowBuildLog($"资产清单里总共有{allAssetBundles.Length}个资产");
+			Log($"资产清单里总共有{allAssetBundles.Length}个资产");
 
 			// 视频单独打包
-			PackageVideo(assetInfoList);
+			PackVideo(assetInfoList);
 			// 加密资源文件
 			EncryptFiles(allAssetBundles);
 
 			// 创建补丁文件
-			CreatePatchFile(allAssetBundles);
+			CreatePatchManifestFile(allAssetBundles);
 			// 创建说明文件
 			CreateReadmeFile(allAssetBundles);
 
 			// 复制更新文件到新的补丁文件夹
 			CopyUpdateFiles();
 
-			ShowBuildLog("构建完成");
+			Log("构建完成");
 		}
 
 		/// <summary>
@@ -188,14 +184,6 @@ namespace MotionFramework.Editor
 				opt |= BuildAssetBundleOptions.IgnoreTypeTreeChanges; //Ignore the type tree changes when doing the incremental build check.
 
 			return opt;
-		}
-
-		/// <summary>
-		/// 打印日志
-		/// </summary>
-		private void ShowBuildLog(string log)
-		{
-			Debug.Log($"[BuildPatch] {log}");
 		}
 
 		/// <summary>
@@ -245,6 +233,19 @@ namespace MotionFramework.Editor
 			}
 			EditorUtility.ClearProgressBar();
 			progressBarCount = 0;
+		}
+
+		private void Log(string log)
+		{
+			Debug.Log($"[BuildPatch] {log}");
+		}
+		private string GetOutputPath()
+		{
+			return $"{_outputRoot}/{BuildTarget}/{PatchDefine.UnityManifestFileName}";
+		}
+		private string GetPackageFolderPath()
+		{
+			return $"{_outputRoot}/{BuildTarget}/{BuildVersion}";
 		}
 
 		#region 准备工作
@@ -373,12 +374,12 @@ namespace MotionFramework.Editor
 		#endregion
 
 		#region 视频相关
-		private void PackageVideo(List<AssetInfo> assetInfoList)
+		private void PackVideo(List<AssetInfo> assetInfoList)
 		{
 			// 注意：在Unity2018.4截止的版本里，安卓还不支持压缩的视频Bundle
 			if (BuildTarget == BuildTarget.Android)
 			{
-				ShowBuildLog($"开始视频单独打包（安卓平台）");
+				Log($"开始视频单独打包（安卓平台）");
 				for (int i = 0; i < assetInfoList.Count; i++)
 				{
 					AssetInfo assetInfo = assetInfoList[i];
@@ -402,7 +403,7 @@ namespace MotionFramework.Editor
 		#region 文件加密
 		private void EncryptFiles(string[] allAssetBundles)
 		{
-			ShowBuildLog($"开始加密资源文件");
+			Log($"开始加密资源文件");
 
 			// 初始化加密器
 			InitAssetEncrypter();
@@ -420,7 +421,7 @@ namespace MotionFramework.Editor
 					{
 						byte[] bytes = AssetEncrypterEncrypt(fileData);
 						File.WriteAllBytes(path, bytes);
-						ShowBuildLog($"文件加密完成：{path}");
+						Log($"文件加密完成：{path}");
 					}
 				}
 
@@ -467,20 +468,20 @@ namespace MotionFramework.Editor
 		private readonly List<string> _updateFiles = new List<string>();
 
 		/// <summary>
-		/// 1. 创建补丁文件到输出目录
+		/// 1. 创建补丁清单文件到输出目录
 		/// </summary>
-		private void CreatePatchFile(string[] allAssetBundles)
+		private void CreatePatchManifestFile(string[] allAssetBundles)
 		{
 			// 加载旧文件
-			PatchFile patchFile = LoadPatchFile();
+			PatchManifest patchManifest = LoadPatchManifestFile();
 
 			// 删除旧文件
-			string filePath = OutputPath + $"/{PatchDefine.PatchFileName}";
+			string filePath = OutputPath + $"/{PatchDefine.PatchManifestFileName}";
 			if (File.Exists(filePath))
 				File.Delete(filePath);
 
 			// 创建新文件
-			ShowBuildLog($"创建补丁文件：{filePath}");
+			Log($"创建补丁清单文件：{filePath}");
 			using (FileStream fs = File.Create(filePath))
 			{
 				StreamWriter sw = new StreamWriter(fs);
@@ -490,9 +491,9 @@ namespace MotionFramework.Editor
 				sw.Write("\n");
 				sw.Flush();
 
-				// 写入Manifest文件的信息
+				// 写入UnityManifest文件的信息
 				{
-					string assetName = PatchDefine.ManifestFileName;
+					string assetName = PatchDefine.UnityManifestFileName;
 					string path = $"{OutputPath}/{assetName}";
 					string md5 = HashUtility.FileMD5(path);
 					long sizeKB = EditorTools.GetFileSize(path) / 1024;
@@ -513,7 +514,7 @@ namespace MotionFramework.Editor
 
 					// 注意：如果文件没有变化使用旧版本号
 					PatchElement element;
-					if (patchFile.Elements.TryGetValue(assetName, out element))
+					if (patchManifest.Elements.TryGetValue(assetName, out element))
 					{
 						if (element.MD5 == md5)
 							version = element.Version;
@@ -540,7 +541,7 @@ namespace MotionFramework.Editor
 			if (File.Exists(filePath))
 				File.Delete(filePath);
 
-			ShowBuildLog($"创建说明文件：{filePath}");
+			Log($"创建说明文件：{filePath}");
 
 			StringBuilder content = new StringBuilder();
 			AppendData(content, $"构建平台：{BuildTarget}");
@@ -571,7 +572,7 @@ namespace MotionFramework.Editor
 
 			AppendData(content, "");
 			AppendData(content, $"--更新清单--");
-			PatchFile patchFile = LoadPatchFile();
+			PatchManifest patchFile = LoadPatchManifestFile();
 			foreach (var pair in patchFile.Elements)
 			{
 				if (pair.Value.Version == BuildVersion)
@@ -594,66 +595,62 @@ namespace MotionFramework.Editor
 		/// </summary>
 		private void CopyUpdateFiles()
 		{
-			string patchFolderPath = GetPatchFolderPath();
-			ShowBuildLog($"开始复制更新文件到补丁包目录：{patchFolderPath}");
+			string packageFolderPath = GetPackageFolderPath();
+			Log($"开始复制更新文件到补丁包目录：{packageFolderPath}");
 
 			// 复制Readme文件
 			{
 				string sourcePath = $"{OutputPath}/readme.txt";
-				string destPath = $"{patchFolderPath}/readme.txt";
+				string destPath = $"{packageFolderPath}/readme.txt";
 				EditorTools.CopyFile(sourcePath, destPath, true);
-				ShowBuildLog($"复制Readme文件到：{destPath}");
+				Log($"复制Readme文件到：{destPath}");
 			}
 
-			// 复制补丁文件
+			// 复制PatchManifest文件
 			{
-				string sourcePath = $"{OutputPath}/{PatchDefine.PatchFileName}";
-				string destPath = $"{patchFolderPath}/{PatchDefine.PatchFileName}";
+				string sourcePath = $"{OutputPath}/{PatchDefine.PatchManifestFileName}";
+				string destPath = $"{packageFolderPath}/{PatchDefine.PatchManifestFileName}";
 				EditorTools.CopyFile(sourcePath, destPath, true);
-				ShowBuildLog($"复制Patch文件到：{destPath}");
+				Log($"复制PatchManifest文件到：{destPath}");
+			}
+
+			// 复制UnityManifest文件
+			{
+				string sourcePath = $"{OutputPath}/{PatchDefine.UnityManifestFileName}";
+				string destPath = $"{packageFolderPath}/{PatchDefine.UnityManifestFileName}";
+				EditorTools.CopyFile(sourcePath, destPath, true);
+				Log($"复制UnityManifest文件到：{destPath}");
 			}
 
 			// 复制Manifest文件
 			{
-				string sourcePath = $"{OutputPath}/{PatchDefine.ManifestFileName}";
-				string destPath = $"{patchFolderPath}/{PatchDefine.ManifestFileName}";
-				EditorTools.CopyFile(sourcePath, destPath, true);
-				ShowBuildLog($"复制Manifest文件到：{destPath}");
-			}
-
-			// 复制Manifest文件
-			{
-				string sourcePath = $"{OutputPath}/{PatchDefine.ManifestFileName}.manifest";
-				string destPath = $"{patchFolderPath}/{PatchDefine.ManifestFileName}.manifest";
+				string sourcePath = $"{OutputPath}/{PatchDefine.UnityManifestFileName}.manifest";
+				string destPath = $"{packageFolderPath}/{PatchDefine.UnityManifestFileName}.manifest";
 				EditorTools.CopyFile(sourcePath, destPath, true);
 			}
 
 			// 复制所有更新文件
-			PatchFile patchFile = LoadPatchFile();
+			PatchManifest patchFile = LoadPatchManifestFile();
 			foreach (var pair in patchFile.Elements)
 			{
 				if (pair.Value.Version == BuildVersion)
 				{
 					string sourcePath = $"{OutputPath}/{pair.Key}";
-					string destPath = $"{patchFolderPath}/{pair.Key}";
+					string destPath = $"{packageFolderPath}/{pair.Key}";
 					EditorTools.CopyFile(sourcePath, destPath, true);
-					ShowBuildLog($"复制更新文件：{destPath}");
+					Log($"复制更新文件：{destPath}");
 				}
 			}
 		}
-		private string GetPatchFolderPath()
-		{
-			return $"{_outputRoot}/{BuildTarget}/{BuildVersion}";
-		}
 
 		/// <summary>
-		/// 加载补丁文件从输出目录
+		/// 从输出目录加载补丁清单文件
 		/// </summary>
-		private PatchFile LoadPatchFile()
+		private PatchManifest LoadPatchManifestFile()
 		{
-			string filePath = $"{OutputPath}/{PatchDefine.PatchFileName}";
+			string filePath = $"{OutputPath}/{PatchDefine.PatchManifestFileName}";
 
-			PatchFile patchFile = new PatchFile();
+			PatchManifest patchFile = new PatchManifest();
 
 			// 如果文件不存在
 			if (File.Exists(filePath) == false)

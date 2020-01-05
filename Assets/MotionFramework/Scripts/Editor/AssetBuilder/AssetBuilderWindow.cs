@@ -30,7 +30,7 @@ namespace MotionFramework.Editor
 		private GUIStyle _centerStyle;
 		private GUIStyle _leftStyle;
 		private bool _showSettingFoldout = true;
-		private bool _showToolsFoldout = false;
+		private bool _showToolsFoldout = true;
 
 		/// <summary>
 		/// 构建器
@@ -70,7 +70,7 @@ namespace MotionFramework.Editor
 			_assetBuilder.BuildVersion = EditorGUILayout.IntField("Build Version", _assetBuilder.BuildVersion, GUILayout.MaxWidth(250));
 
 			// 输出路径
-			EditorGUILayout.LabelField("Build Output Path", _assetBuilder.OutputPath);
+			EditorGUILayout.LabelField("Build Output", _assetBuilder.OutputPath);
 
 			// 构建选项
 			EditorGUILayout.Space();
@@ -143,12 +143,12 @@ namespace MotionFramework.Editor
 						EditorApplication.delayCall += CheckAllPrefabValid;
 					}
 
-					if (GUILayout.Button("清空并拷贝所有补丁包到Assets/StreamingAssets目录", GUILayout.MaxWidth(300), GUILayout.MaxHeight(40)))
+					if (GUILayout.Button("清空并拷贝所有补丁包到StreamingAssets目录", GUILayout.MaxWidth(260), GUILayout.MaxHeight(40)))
 					{
 						EditorApplication.delayCall += RefreshStreammingFolder;
 					}
 
-					if (GUILayout.Button("清空并拷贝所有补丁包到BuildBundles/Manifest目录", GUILayout.MaxWidth(300), GUILayout.MaxHeight(40)))
+					if (GUILayout.Button("清空并拷贝所有补丁包到UnityManifest目录", GUILayout.MaxWidth(260), GUILayout.MaxHeight(40)))
 					{
 						EditorApplication.delayCall += RefreshOutputMainFolder;
 					}
@@ -204,27 +204,27 @@ namespace MotionFramework.Editor
 		}
 
 		/// <summary>
-		/// 刷新流目录（清空后拷贝所有补丁包到流目录）
+		/// 刷新流目录
 		/// </summary>
 		private void RefreshStreammingFolder()
 		{
 			string streamingPath = Application.dataPath + "/StreamingAssets";
 			EditorTools.ClearFolder(streamingPath);
 
-			string outputRoot = AssetBuilderHelper.MakeDefaultOutputRootPath();
+			string outputRoot = AssetBuilderHelper.GetDefaultOutputRootPath();
 			AssetBuilderHelper.CopyPackageToStreamingFolder(_assetBuilder.BuildTarget, outputRoot);
 		}
 
 		/// <summary>
-		/// 刷新输出主目录（清空后拷贝所有补丁包到输出主目录）
+		/// 刷新输出目录
 		/// </summary>
 		private void RefreshOutputMainFolder()
 		{
 			string outputPath = _assetBuilder.OutputPath;
 			EditorTools.ClearFolder(outputPath);
 
-			string outputRoot = AssetBuilderHelper.MakeDefaultOutputRootPath();
-			AssetBuilderHelper.CopyPackageToManifestFolder(_assetBuilder.BuildTarget, outputRoot);
+			string outputRoot = AssetBuilderHelper.GetDefaultOutputRootPath();
+			AssetBuilderHelper.CopyPackageToUnityManifestFolder(_assetBuilder.BuildTarget, outputRoot);
 		}
 
 		#region 设置相关
