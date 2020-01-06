@@ -53,6 +53,19 @@ namespace MotionFramework.Patch
 			}
 		}
 
+		/// <summary>
+		/// 向WEB服务器请求的资源版本号
+		/// </summary>
+		public int RequestedResourceVersion
+		{
+			get
+			{
+				if (GameVersion.Revision < 0)
+					return 0;
+				return GameVersion.Revision;
+			}
+		}
+
 
 		public void Initialize(string cdnServerIP, string webServerIP)
 		{
@@ -110,14 +123,14 @@ namespace MotionFramework.Patch
 		/// <summary>
 		/// 获取网络文件下载地址
 		/// </summary>
-		public string GetWebDownloadURL(string version, string fileName)
+		public string GetWebDownloadURL(string resourceVersion, string fileName)
 		{
 			if (Application.platform == RuntimePlatform.Android)
-				return $"{CDNServerIP}/Android/{version}/{fileName}";
+				return $"{CDNServerIP}/Android/{resourceVersion}/{fileName}";
 			else if (Application.platform == RuntimePlatform.IPhonePlayer)
-				return $"{CDNServerIP}/IPhone/{version}/{fileName}";
+				return $"{CDNServerIP}/IPhone/{resourceVersion}/{fileName}";
 			else
-				return $"{CDNServerIP}/Standalone/{version}/{fileName}";
+				return $"{CDNServerIP}/Standalone/{resourceVersion}/{fileName}";
 		}
 
 		/// <summary>

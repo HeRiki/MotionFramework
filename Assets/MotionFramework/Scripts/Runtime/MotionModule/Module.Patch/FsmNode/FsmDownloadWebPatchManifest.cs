@@ -39,7 +39,7 @@ namespace MotionFramework.Patch
 		private IEnumerator Download()
 		{
 			// 注意：等所有文件下载完毕后，下载并替换补丁清单
-			int newResourceVersion = PatchSystem.Instance.GameVersion.Revision;
+			int newResourceVersion = PatchSystem.Instance.RequestedResourceVersion;
 			string url = PatchSystem.Instance.GetWebDownloadURL(newResourceVersion.ToString(), PatchDefine.PatchManifestFileName);
 			string savePath = AssetPathHelper.MakePersistentLoadPath(PatchDefine.PatchManifestFileName);
 			WebFileRequest download = new WebFileRequest(url, savePath);

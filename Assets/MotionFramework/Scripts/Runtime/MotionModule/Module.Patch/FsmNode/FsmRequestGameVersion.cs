@@ -58,7 +58,7 @@ namespace MotionFramework.Patch
 				download.Dispose();
 			}
 
-			int newResourceVersion = PatchSystem.Instance.GameVersion.Revision;
+			int newResourceVersion = PatchSystem.Instance.RequestedResourceVersion;
 			int oldResourceVersion = PatchSystem.Instance.SandboxPatchManifest.Version;
 
 			// 检测是否需要重新下载安装包
