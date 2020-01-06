@@ -25,7 +25,7 @@ namespace MotionFramework.Patch
 		}
 		void IFsmNode.OnUpdate()
 		{
-			// 准备阶段结束之后，不再进行下面的流程
+			// 准备阶段结束之后，挂起流程系统
 		}
 		void IFsmNode.OnExit()
 		{

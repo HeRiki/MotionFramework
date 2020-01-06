@@ -7,7 +7,7 @@
 namespace MotionFramework.Patch
 {
 	/// <summary>
-	/// 补丁更新状态
+	/// 更新状态
 	/// </summary>
 	public enum EPatchStates
 	{
@@ -75,9 +75,9 @@ namespace MotionFramework.Patch
 	}
 
 	/// <summary>
-	/// 操作类型
+	/// 操作方式
 	/// </summary>
-	public enum EOperationType
+	public enum EPatchOperation
 	{
 		BeginingRequestGameVersion,
 		BeginingDownloadWebFiles,

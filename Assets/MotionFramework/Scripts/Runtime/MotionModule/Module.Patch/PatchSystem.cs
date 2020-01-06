@@ -42,6 +42,17 @@ namespace MotionFramework.Patch
 		/// </summary>
 		public string WebServerIP { private set; get; }
 
+		/// <summary>
+		/// 当前运行的状态
+		/// </summary>
+		public string CurrentStates
+		{
+			get
+			{
+				return _system.Current;
+			}
+		}
+
 
 		public void Initialize(string cdnServerIP, string webServerIP)
 		{
@@ -117,7 +128,7 @@ namespace MotionFramework.Patch
 			if (msg is PatchEventMessageDefine.OperationEvent)
 			{
 				var message = msg as PatchEventMessageDefine.OperationEvent;
-				if (message.operationType == EOperationType.BeginingRequestGameVersion)
+				if (message.operation == EPatchOperation.BeginingRequestGameVersion)
 				{
 					// 从挂起的地方继续
 					if (_system.Current == EPatchStates.PrepareOver.ToString())
@@ -125,7 +136,7 @@ namespace MotionFramework.Patch
 					else
 						AppLog.Log(ELogType.Error, $"Patch system is not prepare : {_system.Current}");
 				}
-				else if (message.operationType == EOperationType.BeginingDownloadWebFiles)
+				else if (message.operation == EPatchOperation.BeginingDownloadWebFiles)
 				{
 					// 从挂起的地方继续
 					if (_system.Current == EPatchStates.GetDonwloadList.ToString())
@@ -133,7 +144,7 @@ namespace MotionFramework.Patch
 					else
 						AppLog.Log(ELogType.Error, $"Patch states is incorrect : {_system.Current}");
 				}
-				else if (message.operationType == EOperationType.TryRequestGameVersion)
+				else if (message.operation == EPatchOperation.TryRequestGameVersion)
 				{
 					// 修复当前节点错误
 					if (_system.Current == EPatchStates.RequestGameVersion.ToString())
@@ -141,7 +152,7 @@ namespace MotionFramework.Patch
 					else
 						AppLog.Log(ELogType.Error, $"Patch states is incorrect : {_system.Current}");
 				}
-				else if (message.operationType == EOperationType.TryDownloadWebPatchManifest)
+				else if (message.operation == EPatchOperation.TryDownloadWebPatchManifest)
 				{
 					// 修复当前节点错误
 					if (_system.Current == EPatchStates.DownloadWebPatchManifest.ToString() || _system.Current == EPatchStates.ParseWebPatchManifest.ToString())
@@ -149,7 +160,7 @@ namespace MotionFramework.Patch
 					else
 						AppLog.Log(ELogType.Error, $"Patch states is incorrect : {_system.Current}");
 				}
-				else if (message.operationType == EOperationType.TryDownloadWebFiles)
+				else if (message.operation == EPatchOperation.TryDownloadWebFiles)
 				{
 					// 修复当前节点错误
 					if (_system.Current == EPatchStates.DownloadWebFiles.ToString())
@@ -159,7 +170,7 @@ namespace MotionFramework.Patch
 				}
 				else
 				{
-					throw new NotImplementedException($"{message.operationType}");
+					throw new NotImplementedException($"{message.operation}");
 				}
 			}
 		}

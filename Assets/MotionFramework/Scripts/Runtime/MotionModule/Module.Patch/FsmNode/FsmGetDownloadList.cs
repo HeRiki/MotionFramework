@@ -105,7 +105,7 @@ namespace MotionFramework.Patch
 				PatchSystem.Instance.DownloadList.AddRange(downloadList);
 				downloadList.Clear();
 
-				// 发送事件后流程不再继续
+				// 发现新更新文件后，挂起流程系统
 				int totalDownloadCount = PatchSystem.Instance.DownloadList.Count;
 				long totalDownloadSizeKB = 0;
 				foreach (var element in PatchSystem.Instance.DownloadList)

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using MotionFramework.Resource;
 using MotionFramework.Event;
+using MotionFramework.Console;
 
 namespace MotionFramework.Patch
 {
@@ -49,6 +50,7 @@ namespace MotionFramework.Patch
 		}
 		void IMotionModule.OnGUI()
 		{
+			AppConsole.GUILable($"[{nameof(PatchManager)}] States : {PatchSystem.Instance.CurrentStates}");
 		}
 
 		/// <summary>
@@ -89,7 +91,7 @@ namespace MotionFramework.Patch
 
 		/// <summary>
 		/// 重新载入Unity清单
-		/// 注意：在补丁更新结束之后，清单位置可能发生变化。
+		/// 注意：在补丁更新结束之后，清单内容会发生变化。
 		/// </summary>
 		public void ReloadUnityManifest()
 		{

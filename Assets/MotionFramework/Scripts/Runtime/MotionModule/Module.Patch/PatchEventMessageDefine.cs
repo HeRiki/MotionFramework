@@ -24,7 +24,7 @@ namespace MotionFramework.Patch
 		/// </summary>
 		public class OperationEvent : IEventMessage
 		{
-			public EOperationType operationType;
+			public EPatchOperation operation;
 		}
 		#endregion
 
