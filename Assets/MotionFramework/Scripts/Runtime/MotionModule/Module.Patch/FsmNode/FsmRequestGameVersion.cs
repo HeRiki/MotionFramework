@@ -39,9 +39,9 @@ namespace MotionFramework.Patch
 		{
 			// 获取最新的游戏版本号
 			{
-				string url = $"{PatchSystem.Instance.WebServerIP}/GameVersion.php";
+				string url = PatchSystem.Instance.GetWebServerIP();
 				string post = PatchSystem.Instance.AppVersion.ToString();
-				PatchHelper.Log(ELogType.Log, $"Request game version : {url}");
+				PatchHelper.Log(ELogType.Log, $"Request game version : {url} : {post}");
 				WebPostRequest download = new WebPostRequest(url, post);
 				yield return download.DownLoad();
 
@@ -77,7 +77,7 @@ namespace MotionFramework.Patch
 			}
 			else
 			{
-				PatchHelper.Log(ELogType.Log, $"Resource version is change : {newResourceVersion.ToString()}");
+				PatchHelper.Log(ELogType.Log, $"Resource version is change : {oldResourceVersion} -> {newResourceVersion}");
 				_system.SwitchNext();
 			}
 		}

@@ -47,16 +47,17 @@ namespace MotionFramework.Patch
 			PatchEventMessageDefine.WebPatchManifestDownloadFailed msg = new PatchEventMessageDefine.WebPatchManifestDownloadFailed();
 			EventManager.Instance.SendMessage(EPatchEventMessageTag.PatchSystemDispatchEvents.ToString(), msg);
 		}
-		public static void SendWebFileDownloadFailedMsg(string filePath)
+		public static void SendWebFileDownloadFailedMsg(string url, string name)
 		{
 			PatchEventMessageDefine.WebFileDownloadFailed msg = new PatchEventMessageDefine.WebFileDownloadFailed();
-			msg.FilePath = filePath;
+			msg.URL = url;
+			msg.Name = name;
 			EventManager.Instance.SendMessage(EPatchEventMessageTag.PatchSystemDispatchEvents.ToString(), msg);
 		}
-		public static void SendWebFileMD5VerifyFailedMsg(string filePath)
+		public static void SendWebFileMD5VerifyFailedMsg(string name)
 		{
 			PatchEventMessageDefine.WebFileMD5VerifyFailed msg = new PatchEventMessageDefine.WebFileMD5VerifyFailed();
-			msg.FilePath = filePath;
+			msg.Name = name;
 			EventManager.Instance.SendMessage(EPatchEventMessageTag.PatchSystemDispatchEvents.ToString(), msg);
 		}
 	}

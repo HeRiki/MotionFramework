@@ -71,7 +71,7 @@ namespace MotionFramework.Patch
 				// 检测是否下载失败
 				if (download.States != EWebRequestStates.Succeed)
 				{
-					PatchEventDispatcher.SendWebFileDownloadFailedMsg(url);
+					PatchEventDispatcher.SendWebFileDownloadFailedMsg(url, element.Name);
 					yield break;
 				}
 

@@ -21,16 +21,26 @@ namespace MotionFramework.Patch
 		public class CreateParameters
 		{
 			/// <summary>
-			/// CDN服务器IP地址
+			/// WEB服务器地址
 			/// </summary>
-			public string CDNServerIP;
+			public Dictionary<RuntimePlatform, string> WebServers;
 
 			/// <summary>
-			/// Web服务器IP地址
+			/// CDN服务器地址
 			/// </summary>
-			public string WebServerIP;
-		}
+			public Dictionary<RuntimePlatform, string> CDNServers;
 
+			/// <summary>
+			/// 默认的Web服务器地址
+			/// </summary>
+			public string DefaultWebServerIP;
+
+			/// <summary>
+			/// 默认的CDN服务器地址
+			/// </summary>
+			public string DefaultCDNServerIP;
+		}
+		
 
 		void IMotionModule.OnCreate(System.Object param)
 		{
@@ -38,7 +48,7 @@ namespace MotionFramework.Patch
 			if (createParam == null)
 				throw new Exception($"{nameof(PatchManager)} create param is invalid.");
 
-			PatchSystem.Instance.Initialize(createParam.CDNServerIP, createParam.WebServerIP);
+			PatchSystem.Instance.Initialize(createParam.WebServers, createParam.CDNServers, createParam.DefaultWebServerIP, createParam.DefaultCDNServerIP);
 		}
 		void IMotionModule.OnStart()
 		{

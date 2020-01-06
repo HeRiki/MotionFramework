@@ -84,7 +84,8 @@ namespace MotionFramework.Patch
 		/// </summary>
 		public class WebFileDownloadFailed : IEventMessage
 		{
-			public string FilePath;
+			public string URL;
+			public string Name;
 		}
 
 		/// <summary>
@@ -92,7 +93,7 @@ namespace MotionFramework.Patch
 		/// </summary>
 		public class WebFileMD5VerifyFailed : IEventMessage
 		{
-			public string FilePath;
+			public string Name;
 		}
 		#endregion
 	}

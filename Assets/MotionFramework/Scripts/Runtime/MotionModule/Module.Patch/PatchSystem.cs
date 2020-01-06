@@ -17,6 +17,10 @@ namespace MotionFramework.Patch
 		public readonly static PatchSystem Instance = new PatchSystem();
 
 		private readonly ProcedureSystem _system = new ProcedureSystem();
+		private Dictionary<RuntimePlatform, string> _webServers;
+		private Dictionary<RuntimePlatform, string> _cdnServers;
+		private string _defaultWebServer;
+		private string _defaultCDNServer;
 
 		// 版本号
 		public Version AppVersion { private set; get; }
@@ -31,16 +35,6 @@ namespace MotionFramework.Patch
 		/// 下载列表
 		/// </summary>
 		public readonly List<PatchElement> DownloadList = new List<PatchElement>(1000);
-
-		/// <summary>
-		/// CDN服务器IP地址
-		/// </summary>
-		public string CDNServerIP { private set; get; }
-
-		/// <summary>
-		/// WEB服务器IP地址
-		/// </summary>
-		public string WebServerIP { private set; get; }
 
 		/// <summary>
 		/// 当前运行的状态
@@ -67,10 +61,12 @@ namespace MotionFramework.Patch
 		}
 
 
-		public void Initialize(string cdnServerIP, string webServerIP)
+		public void Initialize(Dictionary<RuntimePlatform, string> webServers, Dictionary<RuntimePlatform, string> cdnServers, string defaultWebServer, string defaultCDNServer)
 		{
-			CDNServerIP = cdnServerIP;
-			WebServerIP = webServerIP;
+			_webServers = webServers;
+			_cdnServers = cdnServers;
+			_defaultWebServer = defaultWebServer;
+			_defaultCDNServer = defaultCDNServer;
 			AppVersion = new Version(Application.version);
 		}
 		public void Start()
@@ -125,12 +121,7 @@ namespace MotionFramework.Patch
 		/// </summary>
 		public string GetWebDownloadURL(string resourceVersion, string fileName)
 		{
-			if (Application.platform == RuntimePlatform.Android)
-				return $"{CDNServerIP}/Android/{resourceVersion}/{fileName}";
-			else if (Application.platform == RuntimePlatform.IPhonePlayer)
-				return $"{CDNServerIP}/IPhone/{resourceVersion}/{fileName}";
-			else
-				return $"{CDNServerIP}/Standalone/{resourceVersion}/{fileName}";
+			return $"{GetCDNServerIP()}/{resourceVersion}/{fileName}";
 		}
 
 		/// <summary>
@@ -215,6 +206,24 @@ namespace MotionFramework.Patch
 				throw new Exception("Should never get here.");
 			WebPatchManifest = new PatchManifest();
 			WebPatchManifest.Parse(fileContent);
+		}
+
+		// 服务器IP相关
+		public string GetWebServerIP()
+		{
+			RuntimePlatform runtimePlatform = Application.platform;
+			if (_webServers != null && _webServers.ContainsKey(runtimePlatform))
+				return _webServers[runtimePlatform];
+			else
+				return _defaultWebServer;
+		}
+		public string GetCDNServerIP()
+		{
+			RuntimePlatform runtimePlatform = Application.platform;
+			if (_cdnServers != null && _cdnServers.ContainsKey(runtimePlatform))
+				return _cdnServers[runtimePlatform];
+			else
+				return _defaultCDNServer;
 		}
 	}
 }
