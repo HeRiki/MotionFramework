@@ -73,6 +73,9 @@ namespace MotionFramework
 		/// <param name="priority">运行时的优先级，优先级越大越早执行。如果没有设置优先级，那么会按照添加顺序执行</param>
 		public T CreateModule<T>(System.Object createParam, int priority = 0) where T : class, IMotionModule
 		{
+			if (priority < 0)
+				throw new Exception("The priority can not be negative");
+
 			if (Contains(typeof(T)))
 				throw new Exception($"Game module {typeof(T)} is already existed");
 
