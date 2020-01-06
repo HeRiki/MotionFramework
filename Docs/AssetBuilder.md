@@ -4,9 +4,9 @@
 
 **界面说明**  
 ```
-Build Version : 补丁包的版本号
-Build Output Path : 打包完成后的输出路径（在工程目录下）。该路径无法修改！
-Force Rebuild : 强制重建会删除当前平台下所有的补丁文件，并重新生成补丁文件
+Build Version : 补丁包的版本号（资源版本号）
+Build Output : 打包完成后的输出路径（在工程目录下）。该路径无法修改！
+Force Rebuild : 强制重建会删除当前平台下所有的补丁包文件
 
 Compression : Assetbundle的压缩格式
 Append Hash : 生成的AssetBundle文件名称添加Hash信息
@@ -59,12 +59,12 @@ public static class AssetEncrypter
 ![image](https://github.com/gmhevinci/MotionFramework/raw/master/Docs/Image/img101_1.png)
 
 **补丁文件**  
-每次打包都会生成一个名为patch.bytes的补丁文件，补丁文件内包含了所有资源的信息，例如：名称，版本，大小，MD5
+每次打包都会生成一个名为PatchManifest.bytes的补丁清单，补丁清单内包含了所有资源的信息，例如：名称，版本，大小，MD5
 
-**Jenkins支持**
+**Jenkins支持**  
 ```
-安卓打包调用静态方法：BuildPackage.BuildAndroid
-苹果打包调用静态方法：BuildPackage.BuildIOS
+安卓手机打包调用静态方法：BuildPatch.BuildAndroid
+苹果手机打包调用静态方法：BuildPatch.BuildIOS
 
 命令行参数
 "forceBuild=false"
