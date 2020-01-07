@@ -13,16 +13,16 @@ namespace MotionFramework.Network
 {
 	public class WebPostRequest : WebRequest
 	{
-		public string PostContent { private set; get; }
+		public string PostData { private set; get; }
 
 		public WebPostRequest(string url, string post) : base(url)
 		{
-			PostContent = post;
+			PostData = post;
 		}
 		public override IEnumerator DownLoad()
 		{
 			// Check fatal
-			if (string.IsNullOrEmpty(PostContent))
+			if (string.IsNullOrEmpty(PostData))
 				throw new Exception($"{nameof(WebPostRequest)} post content is null or empty : {URL}");
 
 			// Check fatal
@@ -31,14 +31,9 @@ namespace MotionFramework.Network
 
 			States = EWebRequestStates.Loading;
 
-			// 投递数据
-			byte[] bodyRaw = Encoding.UTF8.GetBytes(PostContent);
-
 			// 下载文件
-			CacheRequest = new UnityWebRequest(URL, UnityWebRequest.kHttpVerbPOST);
-			UploadHandlerRaw uploadHandler = new UploadHandlerRaw(bodyRaw);
+			CacheRequest = UnityWebRequest.Post(URL, PostData);
 			DownloadHandlerBuffer downloadhandler = new DownloadHandlerBuffer();
-			CacheRequest.uploadHandler = uploadHandler;
 			CacheRequest.downloadHandler = downloadhandler;
 			CacheRequest.disposeDownloadHandlerOnDispose = true;
 			CacheRequest.timeout = NetworkDefine.WebRequestTimeout;
