@@ -39,6 +39,16 @@ namespace MotionFramework.Patch
 			/// 默认的CDN服务器地址
 			/// </summary>
 			public string DefaultCDNServerIP;
+
+			/// <summary>
+			/// 渠道ID
+			/// </summary>
+			public int ChannelID;
+
+			/// <summary>
+			/// 设备唯一ID
+			/// </summary>
+			public long DeviceID;
 		}
 		
 
@@ -48,7 +58,7 @@ namespace MotionFramework.Patch
 			if (createParam == null)
 				throw new Exception($"{nameof(PatchManager)} create param is invalid.");
 
-			PatchSystem.Instance.Initialize(createParam.WebServers, createParam.CDNServers, createParam.DefaultWebServerIP, createParam.DefaultCDNServerIP);
+			PatchSystem.Instance.Initialize(createParam);
 		}
 		void IMotionModule.OnStart()
 		{

@@ -9,28 +9,23 @@ using MotionFramework.AI;
 
 namespace MotionFramework.Patch
 {
-	internal class FsmPrepareBegin : IFsmNode
+	internal class FsmInitiationOver : IFsmNode
 	{
 		private ProcedureSystem _system;
 		public string Name { private set; get; }
-		private int _delayFrame = 1;
 
-		public FsmPrepareBegin(ProcedureSystem system)
+		public FsmInitiationOver(ProcedureSystem system)
 		{
 			_system = system;
-			Name = EPatchStates.PrepareBegin.ToString();
+			Name = EPatchStates.InitiationOver.ToString();
 		}
 		void IFsmNode.OnEnter()
 		{
-			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.PrepareBegin);
+			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.InitiationOver);
 		}
 		void IFsmNode.OnUpdate()
 		{
-			_delayFrame--;
-			if (_delayFrame < 0)
-			{
-				_system.SwitchNext();
-			}
+			// 初始化阶段结束之后，挂起流程系统
 		}
 		void IFsmNode.OnExit()
 		{

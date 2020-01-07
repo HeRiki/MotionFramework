@@ -15,10 +15,11 @@ namespace MotionFramework.Patch
 			msg.CurrentStates = currentStates;
 			EventManager.Instance.SendMessage(EPatchEventMessageTag.PatchSystemDispatchEvents.ToString(), msg);
 		}
-		public static void SendFoundNewAPPMsg(string newVersion)
+		public static void SendFoundNewAPPMsg(string newVersion, string installURL)
 		{
 			PatchEventMessageDefine.FoundNewAPP msg = new PatchEventMessageDefine.FoundNewAPP();
 			msg.NewVersion = newVersion;
+			msg.InstallURL = installURL;
 			EventManager.Instance.SendMessage(EPatchEventMessageTag.PatchSystemDispatchEvents.ToString(), msg);
 		}
 		public static void SendFoundUpdateFiles(int totalCount, long totalSizeKB)

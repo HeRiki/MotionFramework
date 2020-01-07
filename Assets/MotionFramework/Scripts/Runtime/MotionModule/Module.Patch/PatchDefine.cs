@@ -13,11 +13,11 @@ namespace MotionFramework.Patch
 	{
 		None,
 
-		#region 准备阶段
+		#region 初始化阶段
 		/// <summary>
-		/// 准备阶段开始
+		/// 初始化开始
 		/// </summary>
-		PrepareBegin,
+		InitiationBegin,
 
 		/// <summary>
 		/// 检测沙盒是否变脏
@@ -36,9 +36,9 @@ namespace MotionFramework.Patch
 		ParseSandboxPatchManifest,
 
 		/// <summary>
-		/// 准备阶段结束
+		/// 初始化结束
 		/// </summary>
-		PrepareOver,
+		InitiationOver,
 		#endregion
 
 		#region 下载阶段

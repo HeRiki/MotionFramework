@@ -21,6 +21,9 @@ namespace MotionFramework.Patch
 		private Dictionary<RuntimePlatform, string> _cdnServers;
 		private string _defaultWebServer;
 		private string _defaultCDNServer;
+		private int _channelID;
+		private long _deviceID;
+		private string _newAppInstallURL;
 
 		// 版本号
 		public Version AppVersion { private set; get; }
@@ -61,22 +64,24 @@ namespace MotionFramework.Patch
 		}
 
 
-		public void Initialize(Dictionary<RuntimePlatform, string> webServers, Dictionary<RuntimePlatform, string> cdnServers, string defaultWebServer, string defaultCDNServer)
+		public void Initialize(PatchManager.CreateParameters createParam)
 		{
-			_webServers = webServers;
-			_cdnServers = cdnServers;
-			_defaultWebServer = defaultWebServer;
-			_defaultCDNServer = defaultCDNServer;
+			_webServers = createParam.WebServers;
+			_cdnServers = createParam.CDNServers;
+			_defaultWebServer = createParam.DefaultWebServerIP;
+			_defaultCDNServer = createParam.DefaultCDNServerIP;
+			_channelID = createParam.ChannelID;
+			_deviceID = createParam.DeviceID;
 			AppVersion = new Version(Application.version);
 		}
 		public void Start()
 		{
 			// 注意：按照先后顺序添加流程节点
-			_system.AddNode(new FsmPrepareBegin(_system));
+			_system.AddNode(new FsmInitiationBegin(_system));
 			_system.AddNode(new FsmCheckSandboxDirty(_system));
 			_system.AddNode(new FsmParseAppPatchManifest(_system));
 			_system.AddNode(new FsmParseSandboxPatchManifest(_system));
-			_system.AddNode(new FsmPrepareOver(_system));
+			_system.AddNode(new FsmInitiationOver(_system));
 			_system.AddNode(new FsmRequestGameVersion(_system));
 			_system.AddNode(new FsmParseWebPatchManifest(_system));
 			_system.AddNode(new FsmGetDonwloadList(_system));
@@ -107,24 +112,6 @@ namespace MotionFramework.Patch
 		}
 
 		/// <summary>
-		/// 创建游戏版本号
-		/// </summary>
-		public void CreateGameVesion(string version)
-		{
-			if (GameVersion != null)
-				throw new Exception("Should never get here.");
-			GameVersion = new Version(version);
-		}
-
-		/// <summary>
-		/// 获取网络文件下载地址
-		/// </summary>
-		public string GetWebDownloadURL(string resourceVersion, string fileName)
-		{
-			return $"{GetCDNServerIP()}/{resourceVersion}/{fileName}";
-		}
-
-		/// <summary>
 		/// 接收事件
 		/// </summary>
 		public void HandleEventMessage(IEventMessage msg)
@@ -135,7 +122,7 @@ namespace MotionFramework.Patch
 				if (message.operation == EPatchOperation.BeginingRequestGameVersion)
 				{
 					// 从挂起的地方继续
-					if (_system.Current == EPatchStates.PrepareOver.ToString())
+					if (_system.Current == EPatchStates.InitiationOver.ToString())
 						_system.SwitchNext();
 					else
 						AppLog.Log(ELogType.Error, $"Patch system is not prepare : {_system.Current}");
@@ -224,6 +211,34 @@ namespace MotionFramework.Patch
 				return _cdnServers[runtimePlatform];
 			else
 				return _defaultCDNServer;
+		}
+
+		// WEB相关
+		public string GetWebDownloadURL(string resourceVersion, string fileName)
+		{
+			return $"{GetCDNServerIP()}/{resourceVersion}/{fileName}";
+		}
+		public string GetWebPostData()
+		{
+			return $"{AppVersion}&{_channelID}&{_deviceID}";
+		}
+		public void ParseResponseData(string data)
+		{
+			if (string.IsNullOrEmpty(data))
+				throw new Exception("Web server response data is null or empty.");
+			if (GameVersion != null)
+				throw new Exception("Should never get here.");
+		
+			// $"{GameVersion}&{AppInstallURL}"
+			string[] splits = data.Split('&');
+			string gameVersionContent = splits[0];
+			GameVersion = new Version(data);
+			_newAppInstallURL = splits[1];
+		}
+		public string GetNewAppInstallURL()
+		{
+			// 注意：如果不需要重新下载安装包，返回的安装路径会为空
+			return _newAppInstallURL;
 		}
 	}
 }

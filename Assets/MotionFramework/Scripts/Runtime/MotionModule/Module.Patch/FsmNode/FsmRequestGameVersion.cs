@@ -40,7 +40,7 @@ namespace MotionFramework.Patch
 			// 获取最新的游戏版本号
 			{
 				string url = PatchSystem.Instance.GetWebServerIP();
-				string post = PatchSystem.Instance.AppVersion.ToString();
+				string post = PatchSystem.Instance.GetWebPostData();
 				PatchHelper.Log(ELogType.Log, $"Request game version : {url} : {post}");
 				WebPostRequest download = new WebPostRequest(url, post);
 				yield return download.DownLoad();
@@ -53,8 +53,8 @@ namespace MotionFramework.Patch
 					yield break;
 				}
 
-				string version = download.GetResponse();
-				PatchSystem.Instance.CreateGameVesion(version);
+				string responseData = download.GetResponse();
+				PatchSystem.Instance.ParseResponseData(responseData);
 				download.Dispose();
 			}
 
@@ -62,10 +62,11 @@ namespace MotionFramework.Patch
 			int oldResourceVersion = PatchSystem.Instance.SandboxPatchManifest.Version;
 
 			// 检测是否需要重新下载安装包
-			if (PatchSystem.Instance.GameVersion.Major != PatchSystem.Instance.AppVersion.Major || PatchSystem.Instance.GameVersion.Minor != PatchSystem.Instance.AppVersion.Minor)
+			string newAppInstallURL = PatchSystem.Instance.GetNewAppInstallURL();
+			if(string.IsNullOrEmpty(newAppInstallURL) == false)
 			{
 				PatchHelper.Log(ELogType.Log, $"Found new APP can be install : {PatchSystem.Instance.GameVersion.ToString()}");
-				PatchEventDispatcher.SendFoundNewAPPMsg(PatchSystem.Instance.GameVersion.ToString());
+				PatchEventDispatcher.SendFoundNewAPPMsg(PatchSystem.Instance.GameVersion.ToString(), newAppInstallURL);
 				yield break;
 			}
 

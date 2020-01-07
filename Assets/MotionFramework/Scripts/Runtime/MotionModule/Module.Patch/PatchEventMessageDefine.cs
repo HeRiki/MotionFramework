@@ -30,7 +30,7 @@ namespace MotionFramework.Patch
 
 		#region PatchSystemDispatchEvent
 		/// <summary>
-		/// 补丁更新状态改变
+		/// 补丁流程状态改变
 		/// </summary>
 		public class PatchStatesChange : IEventMessage
 		{
@@ -43,6 +43,7 @@ namespace MotionFramework.Patch
 		public class FoundNewAPP : IEventMessage
 		{
 			public string NewVersion;
+			public string InstallURL;
 		}
 
 		/// <summary>
