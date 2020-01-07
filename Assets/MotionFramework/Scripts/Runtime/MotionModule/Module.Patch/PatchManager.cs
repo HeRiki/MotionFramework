@@ -21,6 +21,21 @@ namespace MotionFramework.Patch
 		public class CreateParameters
 		{
 			/// <summary>
+			/// 渠道ID
+			/// </summary>
+			public int ChannelID;
+
+			/// <summary>
+			/// 设备唯一ID
+			/// </summary>
+			public long DeviceID;
+
+			/// <summary>
+			/// 测试包标记
+			/// </summary>
+			public int TestFlag;
+
+			/// <summary>
 			/// WEB服务器地址
 			/// </summary>
 			public Dictionary<RuntimePlatform, string> WebServers;
@@ -39,16 +54,6 @@ namespace MotionFramework.Patch
 			/// 默认的CDN服务器地址
 			/// </summary>
 			public string DefaultCDNServerIP;
-
-			/// <summary>
-			/// 渠道ID
-			/// </summary>
-			public int ChannelID;
-
-			/// <summary>
-			/// 设备唯一ID
-			/// </summary>
-			public long DeviceID;
 		}
 		
 

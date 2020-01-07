@@ -23,6 +23,7 @@ namespace MotionFramework.Patch
 		private string _defaultCDNServer;
 		private int _channelID;
 		private long _deviceID;
+		private int _testFlag;
 		private string _forceInstallAppURL;
 
 		// 版本号
@@ -72,6 +73,7 @@ namespace MotionFramework.Patch
 			_defaultCDNServer = createParam.DefaultCDNServerIP;
 			_channelID = createParam.ChannelID;
 			_deviceID = createParam.DeviceID;
+			_testFlag = createParam.TestFlag;
 			AppVersion = new Version(Application.version);
 		}
 		public void Start()
@@ -220,7 +222,7 @@ namespace MotionFramework.Patch
 		}
 		public string GetWebPostData()
 		{
-			return $"{AppVersion}&{_channelID}&{_deviceID}";
+			return $"{AppVersion}&{_channelID}&{_deviceID}&{_testFlag}";
 		}
 		public void ParseResponseData(string data)
 		{
