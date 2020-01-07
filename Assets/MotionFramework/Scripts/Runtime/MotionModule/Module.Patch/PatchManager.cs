@@ -21,6 +21,11 @@ namespace MotionFramework.Patch
 		public class CreateParameters
 		{
 			/// <summary>
+			/// 最近登录的服务器ID
+			/// </summary>
+			public int ServerID;
+			
+			/// <summary>
 			/// 渠道ID
 			/// </summary>
 			public int ChannelID;

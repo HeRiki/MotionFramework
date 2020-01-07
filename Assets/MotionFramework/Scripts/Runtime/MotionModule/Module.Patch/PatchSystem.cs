@@ -21,6 +21,7 @@ namespace MotionFramework.Patch
 		private Dictionary<RuntimePlatform, string> _cdnServers;
 		private string _defaultWebServer;
 		private string _defaultCDNServer;
+		private int _serverID;
 		private int _channelID;
 		private long _deviceID;
 		private int _testFlag;
@@ -71,6 +72,7 @@ namespace MotionFramework.Patch
 			_cdnServers = createParam.CDNServers;
 			_defaultWebServer = createParam.DefaultWebServerIP;
 			_defaultCDNServer = createParam.DefaultCDNServerIP;
+			_serverID = createParam.ServerID;
 			_channelID = createParam.ChannelID;
 			_deviceID = createParam.DeviceID;
 			_testFlag = createParam.TestFlag;
@@ -222,7 +224,7 @@ namespace MotionFramework.Patch
 		}
 		public string GetWebPostData()
 		{
-			return $"{AppVersion}&{_channelID}&{_deviceID}&{_testFlag}";
+			return $"{AppVersion}&{_serverID}&{_channelID}&{_deviceID}&{_testFlag}";
 		}
 		public void ParseResponseData(string data)
 		{
