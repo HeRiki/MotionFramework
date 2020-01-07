@@ -5,10 +5,11 @@
 public void Start()
 {
 	// 设置参数
-	var createParam = new PatchManager.CreateParameters();	
-	patchCreateParam.ChannelID = 0; //渠道ID
-	patchCreateParam.DeviceID = 0; //设备唯一ID
-	patchCreateParam.TestFlag = 0; //测试包标记
+	var createParam = new PatchManager.CreateParameters();
+	createParam.ServerID = PlayerPrefs.GetInt("SERVER_ID_KEY", 0); //最近登录的服务器ID
+	createParam.ChannelID = 0; //渠道ID
+	createParam.DeviceID = 0; //设备唯一ID
+	createParam.TestFlag = PlayerPrefs.GetInt("TEST_FLAG_KEY", 0); //测试包标记
 
 	createParam.WebServers = new Dictionary<RuntimePlatform, string>();
 	createParam.WebServers.Add(RuntimePlatform.Android, "127.0.0.1/WEB/Android/GameVersion.php");
