@@ -61,12 +61,12 @@ namespace MotionFramework.Patch
 			int newResourceVersion = PatchSystem.Instance.RequestedResourceVersion;
 			int oldResourceVersion = PatchSystem.Instance.SandboxPatchManifest.Version;
 
-			// 检测是否需要重新下载安装包
-			string newAppInstallURL = PatchSystem.Instance.GetNewAppInstallURL();
-			if(string.IsNullOrEmpty(newAppInstallURL) == false)
+			// 检测强更安装包
+			string appInstallURL = PatchSystem.Instance.GetForceInstallAppURL();
+			if(string.IsNullOrEmpty(appInstallURL) == false)
 			{
 				PatchHelper.Log(ELogType.Log, $"Found new APP can be install : {PatchSystem.Instance.GameVersion.ToString()}");
-				PatchEventDispatcher.SendFoundNewAPPMsg(PatchSystem.Instance.GameVersion.ToString(), newAppInstallURL);
+				PatchEventDispatcher.SendFoundForceInstallAPPMsg(PatchSystem.Instance.GameVersion.ToString(), appInstallURL);
 				yield break;
 			}
 

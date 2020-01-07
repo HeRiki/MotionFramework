@@ -23,7 +23,7 @@ namespace MotionFramework.Patch
 		private string _defaultCDNServer;
 		private int _channelID;
 		private long _deviceID;
-		private string _newAppInstallURL;
+		private string _forceInstallAppURL;
 
 		// 版本号
 		public Version AppVersion { private set; get; }
@@ -233,12 +233,12 @@ namespace MotionFramework.Patch
 			string[] splits = data.Split('&');
 			string gameVersionContent = splits[0];
 			GameVersion = new Version(data);
-			_newAppInstallURL = splits[1];
+			_forceInstallAppURL = splits[1];
 		}
-		public string GetNewAppInstallURL()
+		public string GetForceInstallAppURL()
 		{
-			// 注意：如果不需要重新下载安装包，返回的安装路径会为空
-			return _newAppInstallURL;
+			// 注意：如果不需要强更安装包，返回的路径会为空
+			return _forceInstallAppURL;
 		}
 	}
 }

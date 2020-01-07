@@ -38,9 +38,9 @@ namespace MotionFramework.Patch
 		}
 
 		/// <summary>
-		/// 发现新的APP安装包
+		/// 发现强更安装包
 		/// </summary>
-		public class FoundNewAPP : IEventMessage
+		public class FoundForceInstallAPP : IEventMessage
 		{
 			public string NewVersion;
 			public string InstallURL;

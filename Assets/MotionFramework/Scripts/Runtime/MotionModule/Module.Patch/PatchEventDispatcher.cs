@@ -15,9 +15,9 @@ namespace MotionFramework.Patch
 			msg.CurrentStates = currentStates;
 			EventManager.Instance.SendMessage(EPatchEventMessageTag.PatchSystemDispatchEvents.ToString(), msg);
 		}
-		public static void SendFoundNewAPPMsg(string newVersion, string installURL)
+		public static void SendFoundForceInstallAPPMsg(string newVersion, string installURL)
 		{
-			PatchEventMessageDefine.FoundNewAPP msg = new PatchEventMessageDefine.FoundNewAPP();
+			PatchEventMessageDefine.FoundForceInstallAPP msg = new PatchEventMessageDefine.FoundForceInstallAPP();
 			msg.NewVersion = newVersion;
 			msg.InstallURL = installURL;
 			EventManager.Instance.SendMessage(EPatchEventMessageTag.PatchSystemDispatchEvents.ToString(), msg);
