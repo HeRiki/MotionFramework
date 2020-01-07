@@ -25,7 +25,9 @@ C# && .Net4.x
 
 7. [资源系统](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/AssetSystem.md) **(AssetSystem)** - 资源系统提供了三种加载方式：AssetDatabase加载方式，Resources加载方式，AssetBundle加载方式，三种方式可以自由切换。业务逻辑支持协程，异步，委托多种方式。
 
-8. [网络系统](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/Network.md) **(Network)** - 异步IOCP SOCKET长连接方案，支持TCP和UDP协议。还支持同时建立多个通信通道，例如连接逻辑服务器的同时还可以连接聊天服务器。不同的通信频道支持使用不同的网络包解析器。我们可以定义支持ProtoBuf的网络包解析器，当然也可以使用自己的序列化和反序列化方案。
+8. [补丁系统](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/PatchSystem.md) **(PatchSystem)** - 通用的补丁系统，可以实现资源热更。支持版本回退，支持区分审核版本，测试版本，线上版本，支持灰度更新。
+
+9. [网络系统](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/Network.md) **(Network)** - 异步IOCP SOCKET长连接方案，支持TCP和UDP协议。还支持同时建立多个通信通道，例如连接逻辑服务器的同时还可以连接聊天服务器。不同的通信频道支持使用不同的网络包解析器。我们可以定义支持ProtoBuf的网络包解析器，当然也可以使用自己的序列化和反序列化方案。
 
 ## 模块介绍
 游戏开发过程中常用的管理器
