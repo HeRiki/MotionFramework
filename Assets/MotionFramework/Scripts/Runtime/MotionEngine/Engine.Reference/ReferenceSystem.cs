@@ -36,7 +36,7 @@ namespace MotionFramework.Reference
 
 
 		/// <summary>
-		/// 构造函数
+		/// 私有构造函数
 		/// </summary>
 		private ReferenceSystem()
 		{
