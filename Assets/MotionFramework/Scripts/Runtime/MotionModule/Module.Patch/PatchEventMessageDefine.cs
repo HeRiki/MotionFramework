@@ -7,22 +7,13 @@ using MotionFramework.Event;
 
 namespace MotionFramework.Patch
 {
-	/// <summary>
-	/// 补丁事件标签
-	/// </summary>
-	public enum EPatchEventMessageTag
-	{
-		PatchWindowDispatchEvents,
-		PatchSystemDispatchEvents,
-	}
-
 	public class PatchEventMessageDefine
 	{
 		#region PatchWindowDispatchEvent
 		/// <summary>
 		/// 开始请求游戏版本号
 		/// </summary>
-		public class OperationEvent : IEventMessage
+		public class OperationEvent : EventMessage<OperationEvent>
 		{
 			public EPatchOperation operation;
 		}
@@ -32,7 +23,7 @@ namespace MotionFramework.Patch
 		/// <summary>
 		/// 补丁流程状态改变
 		/// </summary>
-		public class PatchStatesChange : IEventMessage
+		public class PatchStatesChange : EventMessage<PatchStatesChange>
 		{
 			public EPatchStates CurrentStates;
 		}
@@ -40,7 +31,7 @@ namespace MotionFramework.Patch
 		/// <summary>
 		/// 发现强更安装包
 		/// </summary>
-		public class FoundForceInstallAPP : IEventMessage
+		public class FoundForceInstallAPP : EventMessage<FoundForceInstallAPP>
 		{
 			public string NewVersion;
 			public string InstallURL;
@@ -49,7 +40,7 @@ namespace MotionFramework.Patch
 		/// <summary>
 		/// 发现更新文件
 		/// </summary>
-		public class FoundUpdateFiles : IEventMessage
+		public class FoundUpdateFiles : EventMessage<FoundUpdateFiles>
 		{
 			public int TotalCount;
 			public long TotalSizeKB;
@@ -58,7 +49,7 @@ namespace MotionFramework.Patch
 		/// <summary>
 		/// 下载文件列表进度
 		/// </summary>
-		public class DownloadFilesProgress : IEventMessage
+		public class DownloadFilesProgress : EventMessage<DownloadFilesProgress>
 		{
 			public int TotalDownloadCount;
 			public int CurrentDownloadCount;	
@@ -69,21 +60,21 @@ namespace MotionFramework.Patch
 		/// <summary>
 		/// 游戏版本号请求失败
 		/// </summary>
-		public class GameVersionRequestFailed : IEventMessage
+		public class GameVersionRequestFailed : EventMessage<GameVersionRequestFailed>
 		{
 		}
 
 		/// <summary>
 		/// 网络上补丁清单下载失败
 		/// </summary>
-		public class WebPatchManifestDownloadFailed : IEventMessage
+		public class WebPatchManifestDownloadFailed : EventMessage<WebPatchManifestDownloadFailed>
 		{
 		}
 
 		/// <summary>
 		/// 网络文件下载失败
 		/// </summary>
-		public class WebFileDownloadFailed : IEventMessage
+		public class WebFileDownloadFailed : EventMessage<WebFileDownloadFailed>
 		{
 			public string URL;
 			public string Name;
@@ -92,7 +83,7 @@ namespace MotionFramework.Patch
 		/// <summary>
 		/// 文件MD5验证失败
 		/// </summary>
-		public class WebFileMD5VerifyFailed : IEventMessage
+		public class WebFileMD5VerifyFailed : EventMessage<WebFileMD5VerifyFailed>
 		{
 			public string Name;
 		}
