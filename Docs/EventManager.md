@@ -19,7 +19,7 @@ public class TestEventMsg : IEventMessage
 }
 ```
 
-监听事件
+订阅事件
 ```C#
 using UnityEngine;
 using MotionFramework.Event;
@@ -28,7 +28,12 @@ public class Test
 {
   public void Start()
   {
-    EventManager.Instance.AddListener("customEventTag", OnHandleEventMsg);
+    EventManager.Instance.AddListener<TestEventMsg>(OnHandleEventMsg);
+  }
+
+  public void Destroy()
+  {
+    EventManager.Instance.RemoveListener<TestEventMsg>(OnHandleEventMsg);
   }
 
   private void OnHandleEventMsg(IEventMessage msg)
@@ -55,7 +60,7 @@ public class Test
     {
       Value = $"hello world",
     };
-    EventManager.Instance.SendMessage("customEventTag", msg);
+    EventManager.Instance.SendMessage(msg);
   }
 }
 ```
