@@ -56,18 +56,18 @@ namespace MotionFramework.AI
 		/// <summary>
 		/// 启动状态机
 		/// </summary>
-		/// <param name="runNode">初始运行的节点</param>
+		/// <param name="entryNode">入口节点</param>
 		/// <param name="graph">节点转换关系图，如果为NULL则不检测转换关系</param>
-		public void Run(string runNode, FsmGraph graph)
+		public void Run(string entryNode, FsmGraph graph)
 		{
 			_graph = graph;
-			_curNode = GetNode(runNode);
-			_preNode = GetNode(runNode);
+			_curNode = GetNode(entryNode);
+			_preNode = GetNode(entryNode);
 
 			if (_curNode != null)
 				_curNode.OnEnter();
 			else
-				AppLog.Log(ELogType.Error, $"Not found run node : {runNode}");
+				AppLog.Log(ELogType.Error, $"Not found entry node : {entryNode}");
 		}
 
 		/// <summary>

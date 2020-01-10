@@ -25,9 +25,9 @@ namespace MotionFramework.AI
 			public FsmGraph Graph;
 
 			/// <summary>
-			/// 初始运行的节点
+			/// 入口节点
 			/// </summary>
-			public string RunNode;
+			public string EntryNode;
 
 			/// <summary>
 			/// 节点列表
@@ -37,7 +37,7 @@ namespace MotionFramework.AI
 
 		private readonly FsmSystem _system = new FsmSystem();
 		private FsmGraph _graph;
-		private string _runNode;
+		private string _entryNode;
 
 
 		void IMotionModule.OnCreate(System.Object param)
@@ -50,7 +50,7 @@ namespace MotionFramework.AI
 				AppLog.Log(ELogType.Error, "Fsm nodes is null or empty");
 
 			_graph = createParam.Graph;
-			_runNode = createParam.RunNode;
+			_entryNode = createParam.EntryNode;
 			for(int i=0; i< createParam.Nodes .Count; i++)
 			{
 				_system.AddNode(createParam.Nodes[i]);
@@ -58,7 +58,7 @@ namespace MotionFramework.AI
 		}
 		void IMotionModule.OnStart()
 		{
-			_system.Run(_runNode, _graph);
+			_system.Run(_entryNode, _graph);
 		}
 		void IMotionModule.OnUpdate()
 		{
