@@ -56,9 +56,8 @@ namespace MotionFramework.Event
 		/// 广播事件
 		/// </summary>
 		/// <param name="msg">消息类</param>
-		public void Broadcast(IEventMessage msg)
+		public void Broadcast(int eventId, IEventMessage msg)
 		{
-			int eventId = msg.EventId;
 			if (_listeners.ContainsKey(eventId) == false)
 			{
 				AppLog.Log(ELogType.Warning, $"Not found listener eventId : {eventId}");
