@@ -14,16 +14,16 @@ namespace MotionFramework.Event
 	/// </summary>
 	public class EventSystem
 	{
-		private readonly Dictionary<string, List<Action<IEventMessage>>> _listeners = new Dictionary<string, List<Action<IEventMessage>>>();
+		private readonly Dictionary<int, List<Action<IEventMessage>>> _listeners = new Dictionary<int, List<Action<IEventMessage>>>();
 
 		/// <summary>
 		/// 清空所有监听
 		/// </summary>
 		public void ClearListeners()
 		{
-			foreach (string type in _listeners.Keys)
+			foreach (int eventId in _listeners.Keys)
 			{
-				_listeners[type].Clear();
+				_listeners[eventId].Clear();
 			}
 			_listeners.Clear();
 		}
@@ -31,41 +31,41 @@ namespace MotionFramework.Event
 		/// <summary>
 		/// 注册监听
 		/// </summary>
-		public void AddListener(string eventTag, Action<IEventMessage> listener)
+		public void AddListener(int eventId, Action<IEventMessage> listener)
 		{
-			if (_listeners.ContainsKey(eventTag) == false)
-				_listeners.Add(eventTag, new List<Action<IEventMessage>>());
+			if (_listeners.ContainsKey(eventId) == false)
+				_listeners.Add(eventId, new List<Action<IEventMessage>>());
 
-			if (_listeners[eventTag].Contains(listener) == false)
-				_listeners[eventTag].Add(listener);
+			if (_listeners[eventId].Contains(listener) == false)
+				_listeners[eventId].Add(listener);
 		}
 
 		/// <summary>
 		/// 移除监听
 		/// </summary>
-		public void RemoveListener(string eventTag, Action<IEventMessage> listener)
+		public void RemoveListener(int eventId, Action<IEventMessage> listener)
 		{
-			if (_listeners.ContainsKey(eventTag))
+			if (_listeners.ContainsKey(eventId))
 			{
-				if (_listeners[eventTag].Contains(listener))
-					_listeners[eventTag].Remove(listener);
+				if (_listeners[eventId].Contains(listener))
+					_listeners[eventId].Remove(listener);
 			}
 		}
 
 		/// <summary>
 		/// 广播事件
 		/// </summary>
-		/// <param name="eventTag">事件标签</param>
 		/// <param name="msg">消息类</param>
-		public void Broadcast(string eventTag, IEventMessage msg)
+		public void Broadcast(IEventMessage msg)
 		{
-			if (_listeners.ContainsKey(eventTag) == false)
+			int eventId = msg.EventId;
+			if (_listeners.ContainsKey(eventId) == false)
 			{
-				AppLog.Log(ELogType.Warning, $"Not found listener eventTag : {eventTag}");
+				AppLog.Log(ELogType.Warning, $"Not found listener eventId : {eventId}");
 				return;
 			}
 
-			List<Action<IEventMessage>> listeners = _listeners[eventTag];
+			List<Action<IEventMessage>> listeners = _listeners[eventId];
 			for(int i=0; i< listeners.Count; i++)
 			{
 				listeners[i].Invoke(msg);

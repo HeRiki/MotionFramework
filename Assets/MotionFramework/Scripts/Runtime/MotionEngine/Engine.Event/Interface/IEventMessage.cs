@@ -8,5 +8,6 @@ namespace MotionFramework.Event
 {
 	public interface IEventMessage
 	{
+		int EventId { get; }
 	}
 }

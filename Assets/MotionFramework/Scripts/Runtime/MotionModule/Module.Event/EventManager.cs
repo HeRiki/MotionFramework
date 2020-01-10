@@ -32,25 +32,25 @@ namespace MotionFramework.Event
 		/// <summary>
 		/// 添加监听
 		/// </summary>
-		public void AddListener(string eventTag, System.Action<IEventMessage> listener)
+		public void AddListener(int eventId, System.Action<IEventMessage> listener)
 		{
-			_system.AddListener(eventTag, listener);
+			_system.AddListener(eventId, listener);
 		}
 
 		/// <summary>
 		/// 移除监听
 		/// </summary>
-		public void RemoveListener(string eventTag, System.Action<IEventMessage> listener)
+		public void RemoveListener(int eventId, System.Action<IEventMessage> listener)
 		{
-			_system.RemoveListener(eventTag, listener);
+			_system.RemoveListener(eventId, listener);
 		}
 
 		/// <summary>
 		/// 发送事件消息
 		/// </summary>
-		public void SendMessage(string eventTag, IEventMessage message)
+		public void SendMessage(IEventMessage message)
 		{
-			_system.Broadcast(eventTag, message);
+			_system.Broadcast(message);
 		}
 
 		/// <summary>
