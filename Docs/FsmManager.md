@@ -62,7 +62,7 @@ public class Test
 		// 设置参数
 		FsmManager.CreateParameters param = new FsmManager.CreateParameters();
 		param.Graph = null;
-		param.RunNode = "Start";
+		param.EntryNode = "Start";
 		param.Nodes = new List<IFsmNode>() { new FsmStart(), new FsmRunning() };
 
 		// 创建模块
