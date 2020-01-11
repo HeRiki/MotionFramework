@@ -12,9 +12,9 @@ using UnityEngine;
 namespace MotionFramework.Console
 {
 	/// <summary>
-	/// 控制台
+	/// 控制台系统
 	/// </summary>
-	public static class AppConsole
+	public static class ConsoleSystem
 	{
 		/// <summary>
 		/// 窗口封装类
