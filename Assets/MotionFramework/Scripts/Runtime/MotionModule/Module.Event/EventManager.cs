@@ -3,6 +3,9 @@
 // Copyright©2018-2020 何冠峰
 // Licensed under the MIT license
 //--------------------------------------------------
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using MotionFramework.Console;
 
 namespace MotionFramework.Event
@@ -12,7 +15,7 @@ namespace MotionFramework.Event
 	/// </summary>
 	public sealed class EventManager : ModuleSingleton<EventManager>, IMotionModule
 	{
-		private readonly EventSystem _system = new EventSystem();
+		private readonly Dictionary<int, List<Action<IEventMessage>>> _listeners = new Dictionary<int, List<Action<IEventMessage>>>();
 
 
 		void IMotionModule.OnCreate(System.Object param)
@@ -23,7 +26,7 @@ namespace MotionFramework.Event
 		}
 		void IMotionModule.OnGUI()
 		{
-			AppConsole.GUILable($"[{nameof(EventManager)}] Listener total count : {_system.GetAllListenerCount()}");
+			ConsoleSystem.GUILable($"[{nameof(EventManager)}] Listener total count : {GetAllListenerCount()}");
 		}
 
 		/// <summary>
@@ -32,7 +35,10 @@ namespace MotionFramework.Event
 		public void AddListener<TEvent>(System.Action<IEventMessage> listener) where TEvent : IEventMessage
 		{
 			int eventId = typeof(TEvent).GetHashCode();
-			_system.AddListener(eventId, listener);
+			if (_listeners.ContainsKey(eventId) == false)
+				_listeners.Add(eventId, new List<Action<IEventMessage>>());
+			if (_listeners[eventId].Contains(listener) == false)
+				_listeners[eventId].Add(listener);
 		}
 
 		/// <summary>
@@ -41,16 +47,27 @@ namespace MotionFramework.Event
 		public void RemoveListener<TEvent>(System.Action<IEventMessage> listener) where TEvent : IEventMessage
 		{
 			int eventId = typeof(TEvent).GetHashCode();
-			_system.RemoveListener(eventId, listener);
+			if (_listeners.ContainsKey(eventId))
+			{
+				if (_listeners[eventId].Contains(listener))
+					_listeners[eventId].Remove(listener);
+			}
 		}
 
 		/// <summary>
-		/// 发送事件消息
+		/// 广播事件
 		/// </summary>
 		public void SendMessage(IEventMessage message)
 		{
 			int eventId = message.GetType().GetHashCode();
-			_system.Broadcast(eventId, message);
+			if (_listeners.ContainsKey(eventId) == false)
+				return;
+
+			List<Action<IEventMessage>> listeners = _listeners[eventId];
+			for (int i = 0; i < listeners.Count; i++)
+			{
+				listeners[i].Invoke(message);
+			}
 		}
 
 		/// <summary>
@@ -58,7 +75,24 @@ namespace MotionFramework.Event
 		/// </summary>
 		public void ClearListeners()
 		{
-			_system.ClearListeners();
+			foreach (int eventId in _listeners.Keys)
+			{
+				_listeners[eventId].Clear();
+			}
+			_listeners.Clear();
+		}
+
+		/// <summary>
+		/// 获取监听者总数
+		/// </summary>
+		private int GetAllListenerCount()
+		{
+			int count = 0;
+			foreach (var list in _listeners)
+			{
+				count += list.Value.Count;
+			}
+			return count;
 		}
 	}
 }
