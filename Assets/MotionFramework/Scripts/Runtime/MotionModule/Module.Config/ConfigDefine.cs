@@ -6,7 +6,7 @@
 
 namespace MotionFramework.Config
 {
-	public class ConfigDefine
+	internal class ConfigDefine
 	{
 		/// <summary>
 		/// 配表文件最大128MB
