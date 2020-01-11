@@ -12,10 +12,6 @@ public class BattleManager : ModuleSingleton<BattleManager>, IMotionModule
   {
     //当模块被创建的时候
   }
-  void IMotionModule.OnStart()
-  {
-    //在首次Update之前被调用，仅被执行一次
-  }
   void IMotionModule.OnUpdate()
   {
     //轮询模块
