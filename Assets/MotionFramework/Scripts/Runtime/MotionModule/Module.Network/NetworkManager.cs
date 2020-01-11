@@ -50,20 +50,18 @@ namespace MotionFramework.Network
 		/// </summary>
 		public Action<INetPackage> HotfixPackageCallback;
 
+		public Action OnConnected { get; set; }
+		public Action OnDisconnect { get; set; }
+		
 
 		void IMotionModule.OnCreate(System.Object param)
-		{
-		}
-		void IMotionModule.OnStart()
 		{
 			_server = new TServer();
 			_server.Start(false, null);
 		}
 		void IMotionModule.OnUpdate()
 		{
-			if (_server != null)
-				_server.Update();
-
+			_server.Update();
 			UpdatePickMsg();
 			UpdateNetworkState();
 		}

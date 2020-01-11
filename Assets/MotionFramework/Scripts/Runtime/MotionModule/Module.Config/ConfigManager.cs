@@ -39,9 +39,6 @@ namespace MotionFramework.Config
 
 			_baseFolderPath = createParam.BaseFolderPath;
 		}
-		void IMotionModule.OnStart()
-		{
-		}
 		void IMotionModule.OnUpdate()
 		{
 		}

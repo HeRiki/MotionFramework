@@ -38,6 +38,7 @@ namespace MotionFramework.AI
 		private readonly FsmSystem _system = new FsmSystem();
 		private FsmGraph _graph;
 		private string _entryNode;
+		private bool _isRun = false;
 
 
 		void IMotionModule.OnCreate(System.Object param)
@@ -51,14 +52,10 @@ namespace MotionFramework.AI
 
 			_graph = createParam.Graph;
 			_entryNode = createParam.EntryNode;
-			for(int i=0; i< createParam.Nodes .Count; i++)
+			for (int i = 0; i < createParam.Nodes.Count; i++)
 			{
 				_system.AddNode(createParam.Nodes[i]);
 			}
-		}
-		void IMotionModule.OnStart()
-		{
-			_system.Run(_entryNode, _graph);
 		}
 		void IMotionModule.OnUpdate()
 		{
@@ -67,6 +64,18 @@ namespace MotionFramework.AI
 		void IMotionModule.OnGUI()
 		{
 			AppConsole.GUILable($"[{nameof(FsmManager)}] FSM : {_system.CurrentNodeName}");
+		}
+
+		/// <summary>
+		/// 运行状态机
+		/// </summary>
+		public void Run()
+		{
+			if (_isRun == false)
+			{
+				_isRun = true;
+				_system.Run(_entryNode, _graph);
+			}
 		}
 
 		/// <summary>

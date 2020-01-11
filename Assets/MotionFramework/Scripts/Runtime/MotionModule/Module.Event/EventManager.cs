@@ -18,9 +18,6 @@ namespace MotionFramework.Event
 		void IMotionModule.OnCreate(System.Object param)
 		{
 		}
-		void IMotionModule.OnStart()
-		{
-		}
 		void IMotionModule.OnUpdate()
 		{
 		}

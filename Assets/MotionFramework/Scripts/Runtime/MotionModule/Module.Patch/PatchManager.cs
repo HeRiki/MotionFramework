@@ -60,7 +60,9 @@ namespace MotionFramework.Patch
 			/// </summary>
 			public string DefaultCDNServerIP;
 		}
-		
+
+		private bool _isRun = false;
+
 
 		void IMotionModule.OnCreate(System.Object param)
 		{
@@ -70,10 +72,6 @@ namespace MotionFramework.Patch
 
 			PatchSystem.Instance.Initialize(createParam);
 		}
-		void IMotionModule.OnStart()
-		{
-			PatchSystem.Instance.Start();
-		}
 		void IMotionModule.OnUpdate()
 		{
 			PatchSystem.Instance.Update();
@@ -81,6 +79,18 @@ namespace MotionFramework.Patch
 		void IMotionModule.OnGUI()
 		{
 			AppConsole.GUILable($"[{nameof(PatchManager)}] States : {PatchSystem.Instance.CurrentStates}");
+		}
+
+		/// <summary>
+		/// 运行补丁更新流程
+		/// </summary>
+		public void Run()
+		{
+			if(_isRun == false)
+			{
+				_isRun = true;
+				PatchSystem.Instance.Run();
+			}
 		}
 
 		/// <summary>

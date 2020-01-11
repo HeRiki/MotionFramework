@@ -14,15 +14,12 @@ namespace MotionFramework.Scene
 	/// 场景管理器
 	/// </summary>
 	public sealed class SceneManager : ModuleSingleton<SceneManager>, IMotionModule
-	{		
+	{
 		private readonly List<AssetScene> _additionScenes = new List<AssetScene>();
 		private AssetScene _mainScene;
 
 
 		void IMotionModule.OnCreate(System.Object param)
-		{
-		}
-		void IMotionModule.OnStart()
 		{
 		}
 		void IMotionModule.OnUpdate()

@@ -44,9 +44,6 @@ namespace MotionFramework.Resource
 
 			AssetSystem.Instance.Initialize(createParam.AssetRootPath, createParam.AssetSystemMode, createParam.BundleServices);
 		}
-		void IMotionModule.OnStart()
-		{
-		}
 		void IMotionModule.OnUpdate()
 		{
 			AssetSystem.Instance.UpdatePoll();

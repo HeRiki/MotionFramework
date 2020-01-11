@@ -78,7 +78,7 @@ namespace MotionFramework.Patch
 			_testFlag = createParam.TestFlag;
 			AppVersion = new Version(Application.version);
 		}
-		public void Start()
+		public void Run()
 		{
 			// 注意：按照先后顺序添加流程节点
 			_system.AddNode(new FsmInitiationBegin(_system));

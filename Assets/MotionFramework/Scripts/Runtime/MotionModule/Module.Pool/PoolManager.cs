@@ -26,9 +26,6 @@ namespace MotionFramework.Pool
 			_root.transform.eulerAngles = Vector3.zero;
 			UnityEngine.Object.DontDestroyOnLoad(_root);
 		}
-		void IMotionModule.OnStart()
-		{
-		}
 		void IMotionModule.OnUpdate()
 		{
 		}

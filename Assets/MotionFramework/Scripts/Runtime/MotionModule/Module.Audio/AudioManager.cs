@@ -54,9 +54,6 @@ namespace MotionFramework.Audio
 				_audioSourceWrappers.Add(layer, new AudioSourceWrapper(layer.ToString(), _root.transform));
 			}
 		}
-		void IMotionModule.OnStart()
-		{
-		}
 		void IMotionModule.OnUpdate()
 		{
 		}
