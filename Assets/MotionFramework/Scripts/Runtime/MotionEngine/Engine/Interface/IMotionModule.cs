@@ -14,11 +14,6 @@ namespace MotionFramework
 		void OnCreate(System.Object createParam);
 
 		/// <summary>
-		/// 启动模块（在首次Update之前被调用，仅被执行一次）
-		/// </summary>
-		void OnStart();
-
-		/// <summary>
 		/// 轮询模块
 		/// </summary>
 		void OnUpdate();
