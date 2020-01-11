@@ -50,9 +50,6 @@ namespace MotionFramework.Network
 		/// </summary>
 		public Action<INetPackage> HotfixPackageCallback;
 
-		public Action OnConnected { get; set; }
-		public Action OnDisconnect { get; set; }
-		
 
 		void IMotionModule.OnCreate(System.Object param)
 		{
@@ -62,8 +59,32 @@ namespace MotionFramework.Network
 		void IMotionModule.OnUpdate()
 		{
 			_server.Update();
-			UpdatePickMsg();
-			UpdateNetworkState();
+
+			if (_channel != null)
+			{
+				// 拉取网络消息
+				// 注意：如果服务器意外断开，未拉取的消息将不会处理
+				INetPackage package = (INetPackage)_channel.PickMsg();
+				if (package != null)
+				{
+					if (package.IsHotfixPackage)
+						HotfixPackageCallback.Invoke(package);
+					else
+						MonoPackageCallback.Invoke(package);
+				}
+
+				// 侦测服务器主动断开的连接
+				if (State == ENetworkStates.Connected)
+				{
+					if (_channel.IsConnected() == false)
+					{
+						State = ENetworkStates.Disconnect;
+						NetworkEventDispatcher.SendDisconnectMsg();
+						CloseChannel();
+						AppLog.Log(ELogType.Warning, "Server disconnect.");
+					}
+				}
+			}
 		}
 		void IMotionModule.OnGUI()
 		{
@@ -71,32 +92,6 @@ namespace MotionFramework.Network
 			AppConsole.GUILable($"[{nameof(NetworkManager)}] IP Host : {_host}");
 			AppConsole.GUILable($"[{nameof(NetworkManager)}] IP Port : {_port}");
 			AppConsole.GUILable($"[{nameof(NetworkManager)}] IP Type : {_family}");
-		}
-
-		private void UpdatePickMsg()
-		{
-			if (_channel != null)
-			{
-				INetPackage package = (INetPackage)_channel.PickMsg();
-				if (package != null)
-				{
-					if (package.IsHotfixPackage)
-						HotfixPackageCallback.Invoke(package);
-					else
-						MonoPackageCallback.Invoke(package);		
-				}
-			}
-		}
-		private void UpdateNetworkState()
-		{
-			if (State == ENetworkStates.Connected)
-			{
-				if (_channel != null && _channel.IsConnected() == false)
-				{
-					State = ENetworkStates.Disconnect;
-					AppLog.Log(ELogType.Warning, "Server disconnect.");
-				}
-			}
 		}
 
 		/// <summary>
@@ -107,6 +102,7 @@ namespace MotionFramework.Network
 			if (State == ENetworkStates.Disconnect)
 			{
 				State = ENetworkStates.Connecting;
+				NetworkEventDispatcher.SendBeginConnectMsg();
 				IPEndPoint remote = new IPEndPoint(IPAddress.Parse(host), port);
 				_server.ConnectAsync(remote, OnConnectServer, packageParseType);
 
@@ -123,10 +119,12 @@ namespace MotionFramework.Network
 			{
 				_channel = channel;
 				State = ENetworkStates.Connected;
+				NetworkEventDispatcher.SendConnectSuccessMsg();
 			}
 			else
 			{
 				State = ENetworkStates.Disconnect;
+				NetworkEventDispatcher.SendConnectFailMsg(error.ToString());
 			}
 		}
 
@@ -135,11 +133,11 @@ namespace MotionFramework.Network
 		/// </summary>
 		public void DisconnectServer()
 		{
-			State = ENetworkStates.Disconnect;
-			if (_channel != null)
+			if (State == ENetworkStates.Connected)
 			{
-				_server.ReleaseChannel(_channel);
-				_channel = null;
+				State = ENetworkStates.Disconnect;
+				NetworkEventDispatcher.SendDisconnectMsg();
+				CloseChannel();
 			}
 		}
 
@@ -156,6 +154,15 @@ namespace MotionFramework.Network
 
 			if (_channel != null)
 				_channel.SendMsg(package);
+		}
+
+		private void CloseChannel()
+		{
+			if (_channel != null)
+			{
+				_server.CloseChannel(_channel);
+				_channel = null;
+			}
 		}
 	}
 }
