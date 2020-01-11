@@ -59,7 +59,7 @@ namespace MotionFramework.Audio
 		}
 		void IMotionModule.OnGUI()
 		{
-			AppConsole.GUILable($"[{nameof(AudioManager)}] Audio total count : {_assets.Count}");
+			ConsoleSystem.GUILable($"[{nameof(AudioManager)}] Audio total count : {_assets.Count}");
 		}
 
 		/// <summary>
