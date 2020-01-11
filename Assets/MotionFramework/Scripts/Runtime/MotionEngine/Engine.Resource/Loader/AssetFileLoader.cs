@@ -70,7 +70,7 @@ namespace MotionFramework.Resource
 		/// </summary>
 		public virtual bool IsDone()
 		{
-			return States == EAssetFileLoaderStates.LoadAssetFileOK || States == EAssetFileLoaderStates.LoadAssetFileFailed;
+			return States == EAssetFileLoaderStates.LoadAssetFileSuccess || States == EAssetFileLoaderStates.LoadAssetFileFail;
 		}
 
 		/// <summary>
@@ -127,7 +127,7 @@ namespace MotionFramework.Resource
 			for (int i = 0; i < _providers.Count; i++)
 			{
 				var provider = _providers[i];
-				if (provider.States == EAssetProviderStates.Failed)
+				if (provider.States == EAssetProviderStates.Fail)
 					failedCount++;
 			}
 			return failedCount;

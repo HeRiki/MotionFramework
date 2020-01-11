@@ -37,8 +37,8 @@ namespace MotionFramework.Resource
 		CheckDepends,
 		LoadAssetFile,
 		CheckAssetFile,
-		LoadAssetFileOK,
-		LoadAssetFileFailed,
+		LoadAssetFileSuccess,
+		LoadAssetFileFail,
 	}
 
 	/// <summary>
@@ -49,7 +49,7 @@ namespace MotionFramework.Resource
 		None = 0,
 		Loading,
 		Checking,
-		Succeed,
-		Failed,
+		Success,
+		Fail,
 	}
 }

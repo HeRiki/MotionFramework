@@ -19,13 +19,13 @@ namespace MotionFramework.Resource
 		public override void Update()
 		{
 			// 如果资源文件加载完毕
-			if (States == EAssetFileLoaderStates.LoadAssetFileOK || States == EAssetFileLoaderStates.LoadAssetFileFailed)
+			if (States == EAssetFileLoaderStates.LoadAssetFileSuccess || States == EAssetFileLoaderStates.LoadAssetFileFail)
 			{
 				UpdateAllProvider();
 				return;
 			}
 
-			States = EAssetFileLoaderStates.LoadAssetFileOK;
+			States = EAssetFileLoaderStates.LoadAssetFileSuccess;
 		}
 		public override bool IsDone()
 		{

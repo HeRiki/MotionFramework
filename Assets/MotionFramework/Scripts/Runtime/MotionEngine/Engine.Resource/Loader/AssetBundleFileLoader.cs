@@ -25,7 +25,7 @@ namespace MotionFramework.Resource
 		public override void Update()
 		{
 			// 如果资源文件加载完毕
-			if (States == EAssetFileLoaderStates.LoadAssetFileOK || States == EAssetFileLoaderStates.LoadAssetFileFailed)
+			if (States == EAssetFileLoaderStates.LoadAssetFileSuccess || States == EAssetFileLoaderStates.LoadAssetFileFail)
 			{
 				UpdateAllProvider();
 				return;
@@ -71,7 +71,7 @@ namespace MotionFramework.Resource
 				if (System.IO.File.Exists(LoadPath) == false)
 				{
 					AppLog.Log(ELogType.Warning, $"Not found assetBundle file : {LoadPath}");
-					States = EAssetFileLoaderStates.LoadAssetFileFailed;
+					States = EAssetFileLoaderStates.LoadAssetFileFail;
 					return;
 				}
 #endif
@@ -92,11 +92,11 @@ namespace MotionFramework.Resource
 				if (CacheBundle == null)
 				{
 					AppLog.Log(ELogType.Warning, $"Failed to load assetBundle file : {LoadPath}");
-					States = EAssetFileLoaderStates.LoadAssetFileFailed;
+					States = EAssetFileLoaderStates.LoadAssetFileFail;
 				}
 				else
 				{
-					States = EAssetFileLoaderStates.LoadAssetFileOK;
+					States = EAssetFileLoaderStates.LoadAssetFileSuccess;
 				}
 			}
 		}

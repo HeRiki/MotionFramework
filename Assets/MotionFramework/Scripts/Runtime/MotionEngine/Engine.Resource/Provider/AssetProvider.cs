@@ -20,7 +20,7 @@ namespace MotionFramework.Resource
 		{
 			get
 			{
-				return States == EAssetProviderStates.Succeed || States == EAssetProviderStates.Failed;
+				return States == EAssetProviderStates.Success || States == EAssetProviderStates.Fail;
 			}
 		}
 		public bool IsValid

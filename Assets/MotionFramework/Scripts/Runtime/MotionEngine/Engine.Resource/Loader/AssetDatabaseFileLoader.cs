@@ -20,7 +20,7 @@ namespace MotionFramework.Resource
 		{
 #if UNITY_EDITOR
 			// 如果资源文件加载完毕
-			if (States == EAssetFileLoaderStates.LoadAssetFileFailed || States == EAssetFileLoaderStates.LoadAssetFileOK)
+			if (States == EAssetFileLoaderStates.LoadAssetFileFail || States == EAssetFileLoaderStates.LoadAssetFileSuccess)
 			{
 				UpdateAllProvider();
 				return;
@@ -29,9 +29,9 @@ namespace MotionFramework.Resource
 			// 检测资源文件是否存在
 			string guid = UnityEditor.AssetDatabase.AssetPathToGUID(LoadPath);
 			if (string.IsNullOrEmpty(guid))
-				States = EAssetFileLoaderStates.LoadAssetFileFailed;
+				States = EAssetFileLoaderStates.LoadAssetFileFail;
 			else
-				States = EAssetFileLoaderStates.LoadAssetFileOK;
+				States = EAssetFileLoaderStates.LoadAssetFileSuccess;
 #endif
 		}
 	}

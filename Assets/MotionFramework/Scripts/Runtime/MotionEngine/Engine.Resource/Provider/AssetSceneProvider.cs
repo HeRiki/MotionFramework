@@ -52,7 +52,7 @@ namespace MotionFramework.Resource
 				else
 				{
 					AppLog.Log(ELogType.Warning, $"Failed to load scene : {AssetName}");
-					States = EAssetProviderStates.Failed;
+					States = EAssetProviderStates.Fail;
 					InvokeCompletion();
 				}
 			}
@@ -65,7 +65,7 @@ namespace MotionFramework.Resource
 					SceneInstance instance = new SceneInstance(_asyncOp);
 					instance.Scene = SceneManager.GetSceneByName(AssetName);
 					AssetObject = instance;
-					States = EAssetProviderStates.Succeed;
+					States = EAssetProviderStates.Success;
 					InvokeCompletion();
 				}
 			}

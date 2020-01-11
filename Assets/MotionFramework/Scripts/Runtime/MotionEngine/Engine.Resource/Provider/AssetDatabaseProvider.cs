@@ -57,8 +57,8 @@ namespace MotionFramework.Resource
 			// 2. 检测加载结果
 			if (States == EAssetProviderStates.Checking)
 			{
-				States = AssetObject == null ? EAssetProviderStates.Failed : EAssetProviderStates.Succeed;
-				if (States == EAssetProviderStates.Failed)
+				States = AssetObject == null ? EAssetProviderStates.Fail : EAssetProviderStates.Success;
+				if (States == EAssetProviderStates.Fail)
 					AppLog.Log(ELogType.Warning, $"Failed to load asset object : {_owner.LoadPath} : {AssetName}");
 				InvokeCompletion();
 			}
