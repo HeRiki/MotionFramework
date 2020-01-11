@@ -55,9 +55,9 @@ namespace UnityEngine
 		}
 
 		/// <summary>
-		/// 获取子物体（广度优先搜索）
+		/// 广度优先搜索查找子物体
 		/// </summary>
-		public static Transform FindChildByName(this Transform root, string childName)
+		public static Transform BFSearch(this Transform root, string childName)
 		{
 			if (root == null) return null;
 
