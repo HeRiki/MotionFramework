@@ -26,30 +26,4 @@ namespace MotionFramework.Resource
 		/// </summary>
 		BundleMode,
 	}
-
-	/// <summary>
-	/// 资源文件加载器的状态
-	/// </summary>
-	internal enum EAssetFileLoaderStates
-	{
-		None = 0,
-		LoadDepends,
-		CheckDepends,
-		LoadAssetFile,
-		CheckAssetFile,
-		LoadAssetFileSuccess,
-		LoadAssetFileFail,
-	}
-
-	/// <summary>
-	/// 资源提供者的状态
-	/// </summary>
-	public enum EAssetProviderStates
-	{
-		None = 0,
-		Loading,
-		Checking,
-		Success,
-		Fail,
-	}
 }

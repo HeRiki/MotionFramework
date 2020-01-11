@@ -49,11 +49,4 @@ namespace MotionFramework.Resource
 		/// </summary>
 		public bool ActivateOnLoad { set; get; }
 	}
-
-	/// <summary>
-	/// 扩展的包裹实例对象
-	/// </summary>
-	public class PackageInstance
-	{
-	}
 }

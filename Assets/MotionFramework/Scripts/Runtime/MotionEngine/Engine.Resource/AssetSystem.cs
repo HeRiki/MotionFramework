@@ -14,43 +14,34 @@ namespace MotionFramework.Resource
 	/// <summary>
 	/// 资源系统
 	/// </summary>
-	internal class AssetSystem
+	internal static class AssetSystem
 	{
-		public readonly static AssetSystem Instance = new AssetSystem();
-
-		private readonly List<AssetFileLoader> _fileLoaders = new List<AssetFileLoader>(1000);
-		private readonly List<string> _removeKeys = new List<string>(100);
-		private bool _isInitialize = false;
+		private static readonly List<AssetFileLoader> _fileLoaders = new List<AssetFileLoader>(1000);
+		private static readonly List<string> _removeKeys = new List<string>(100);
+		private static bool _isInitialize = false;
 
 
 		/// <summary>
 		/// 资源系统根路径
 		/// </summary>
-		public string AssetRootPath { private set; get; }
+		public static string AssetRootPath { private set; get; }
 
 		/// <summary>
 		/// 资源系统模式
 		/// </summary>
-		public EAssetSystemMode AssetSystemMode { private set; get; }
+		public static EAssetSystemMode AssetSystemMode { private set; get; }
 
 		/// <summary>
 		/// AssetBundle服务接口
 		/// </summary>
-		public IBundleServices BundleServices { private set; get; }
+		public static IBundleServices BundleServices { private set; get; }
 
-
-		/// <summary>
-		/// 私有构造函数
-		/// </summary>
-		private AssetSystem()
-		{
-		}
 
 		/// <summary>
 		/// 初始化资源系统
 		/// 注意：在使用AssetSystem之前需要初始化
 		/// </summary>
-		public void Initialize(string assetRootPath, EAssetSystemMode assetSystemMode, IBundleServices bundleServices)
+		public static void Initialize(string assetRootPath, EAssetSystemMode assetSystemMode, IBundleServices bundleServices)
 		{
 			if (_isInitialize == false)
 			{
@@ -68,7 +59,7 @@ namespace MotionFramework.Resource
 		/// <summary>
 		/// 轮询更新
 		/// </summary>
-		public void UpdatePoll()
+		public static void UpdatePoll()
 		{
 			for (int i = 0; i < _fileLoaders.Count; i++)
 			{
@@ -79,7 +70,7 @@ namespace MotionFramework.Resource
 		/// <summary>
 		/// 创建资源文件加载器
 		/// </summary>
-		public AssetFileLoader CreateFileLoader(string location)
+		public static AssetFileLoader CreateFileLoader(string location)
 		{
 			AssetFileLoader loader;
 			if (AssetSystemMode == EAssetSystemMode.EditorMode)
@@ -115,7 +106,7 @@ namespace MotionFramework.Resource
 		/// <summary>
 		/// 创建资源文件加载器
 		/// </summary>
-		internal AssetFileLoader CreateFileLoaderInternal(string loadPath, string manifestPath)
+		internal static AssetFileLoader CreateFileLoaderInternal(string loadPath, string manifestPath)
 		{
 			// 如果加载器已经存在
 			AssetFileLoader loader = TryGetFileLoader(loadPath);
@@ -146,7 +137,7 @@ namespace MotionFramework.Resource
 		/// 资源回收
 		/// 卸载引用计数为零的资源
 		/// </summary>
-		public void Release()
+		public static void Release()
 		{
 			for (int i = _fileLoaders.Count - 1; i >= 0; i--)
 			{
@@ -162,7 +153,7 @@ namespace MotionFramework.Resource
 		/// <summary>
 		/// 强制回收所有资源
 		/// </summary>
-		public void ForceReleaseAll()
+		public static void ForceReleaseAll()
 		{
 			for (int i = 0; i < _fileLoaders.Count; i++)
 			{
@@ -178,7 +169,7 @@ namespace MotionFramework.Resource
 		/// <summary>
 		/// 从列表里获取加载器
 		/// </summary>
-		private AssetFileLoader TryGetFileLoader(string loadPath)
+		private static AssetFileLoader TryGetFileLoader(string loadPath)
 		{
 			AssetFileLoader loader = null;
 			for (int i = 0; i < _fileLoaders.Count; i++)
@@ -194,15 +185,15 @@ namespace MotionFramework.Resource
 		}
 
 		#region 调试专属方法
-		internal List<AssetFileLoader> GetAllLoaders()
+		internal static List<AssetFileLoader> GetAllLoaders()
 		{
 			return _fileLoaders;
 		}
-		internal int GetFileLoaderCount()
+		internal static int GetFileLoaderCount()
 		{
 			return _fileLoaders.Count;
 		}
-		internal int GetFileLoaderFailedCount()
+		internal static int GetFileLoaderFailedCount()
 		{
 			int count = 0;
 			for (int i = 0; i < _fileLoaders.Count; i++)

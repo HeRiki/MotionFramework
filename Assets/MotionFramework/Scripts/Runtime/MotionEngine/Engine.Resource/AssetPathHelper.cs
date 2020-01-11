@@ -68,9 +68,9 @@ namespace MotionFramework.Resource
 		{
 			if (CachedManifestRootPath == null)
 			{
-				if (string.IsNullOrEmpty(AssetSystem.Instance.AssetRootPath))
+				if (string.IsNullOrEmpty(AssetSystem.AssetRootPath))
 					throw new System.Exception("Asset system root path is null or empty.");
-				CachedManifestRootPath = AssetSystem.Instance.AssetRootPath.ToLower();
+				CachedManifestRootPath = AssetSystem.AssetRootPath.ToLower();
 			}
 
 			location = location.ToLower(); //转换为小写形式
@@ -84,7 +84,7 @@ namespace MotionFramework.Resource
 		{
 #if UNITY_EDITOR
 			// 如果定位地址的资源是一个文件夹
-			string path = $"{AssetSystem.Instance.AssetRootPath}/{location}";
+			string path = $"{AssetSystem.AssetRootPath}/{location}";
 			if (UnityEditor.AssetDatabase.IsValidFolder(path))
 				return path;
 
