@@ -27,8 +27,21 @@ namespace MotionFramework.Network
 	/// </summary>
 	public sealed class NetworkManager : ModuleSingleton<NetworkManager>, IMotionModule
 	{
+		/// <summary>
+		/// 游戏模块创建参数
+		/// </summary>
+		public class CreateParameters
+		{
+			/// <summary>
+			/// 网络包编码解码器
+			/// </summary>
+			public System.Type PackageCoderType;
+		}
+
+
 		private TServer _server;
 		private TChannel _channel;
+		private System.Type _packageCoderType;
 
 		// GUI显示数据
 		private string _host;
@@ -53,6 +66,11 @@ namespace MotionFramework.Network
 
 		void IMotionModule.OnCreate(System.Object param)
 		{
+			CreateParameters createParam = param as CreateParameters;
+			if (createParam == null)
+				throw new Exception($"{nameof(NetworkManager)} create param is invalid.");
+
+			_packageCoderType = createParam.PackageCoderType;
 			_server = new TServer();
 			_server.Start(false, null);
 		}
@@ -97,14 +115,16 @@ namespace MotionFramework.Network
 		/// <summary>
 		/// 连接服务器
 		/// </summary>
-		public void ConnectServer(string host, int port, Type packageParseType)
+		/// <param name="host">地址</param>
+		/// <param name="port">端口</param>
+		public void ConnectServer(string host, int port)
 		{
 			if (State == ENetworkStates.Disconnect)
 			{
 				State = ENetworkStates.Connecting;
 				NetworkEventDispatcher.SendBeginConnectMsg();
 				IPEndPoint remote = new IPEndPoint(IPAddress.Parse(host), port);
-				_server.ConnectAsync(remote, OnConnectServer, packageParseType);
+				_server.ConnectAsync(remote, OnConnectServer, _packageCoderType);
 
 				// 记录数据
 				_host = host;
