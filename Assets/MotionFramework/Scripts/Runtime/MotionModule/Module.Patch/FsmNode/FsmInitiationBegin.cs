@@ -13,7 +13,6 @@ namespace MotionFramework.Patch
 	{
 		private ProcedureSystem _system;
 		public string Name { private set; get; }
-		private int _delayFrame = 1;
 
 		public FsmInitiationBegin(ProcedureSystem system)
 		{
@@ -26,11 +25,7 @@ namespace MotionFramework.Patch
 		}
 		void IFsmNode.OnUpdate()
 		{
-			_delayFrame--;
-			if (_delayFrame < 0)
-			{
-				_system.SwitchNext();
-			}
+			_system.SwitchNext();
 		}
 		void IFsmNode.OnExit()
 		{
