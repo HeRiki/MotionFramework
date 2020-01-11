@@ -35,24 +35,24 @@ namespace MotionFramework.Network
 			if (CacheRequest.isNetworkError || CacheRequest.isHttpError)
 			{
 				AppLog.Log(ELogType.Warning, $"Failed to download web data : {URL} Error : {CacheRequest.error}");
-				States = EWebRequestStates.Failed;
+				States = EWebRequestStates.Fail;
 			}
 			else
 			{
-				States = EWebRequestStates.Succeed;
+				States = EWebRequestStates.Success;
 			}
 		}
 
 		public byte[] GetData()
 		{
-			if (States == EWebRequestStates.Succeed)
+			if (States == EWebRequestStates.Success)
 				return CacheRequest.downloadHandler.data;
 			else
 				return null;
 		}
 		public string GetText()
 		{
-			if (States == EWebRequestStates.Succeed)
+			if (States == EWebRequestStates.Success)
 				return CacheRequest.downloadHandler.text;
 			else
 				return null;

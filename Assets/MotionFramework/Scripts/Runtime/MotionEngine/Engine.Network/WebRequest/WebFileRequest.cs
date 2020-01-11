@@ -42,11 +42,11 @@ namespace MotionFramework.Network
 			if (CacheRequest.isNetworkError || CacheRequest.isHttpError)
 			{
 				AppLog.Log(ELogType.Warning, $"Failed to download web file : {URL} Error : {CacheRequest.error}");
-				States = EWebRequestStates.Failed;
+				States = EWebRequestStates.Fail;
 			}
 			else
 			{
-				States = EWebRequestStates.Succeed;
+				States = EWebRequestStates.Success;
 			}
 		}
 	}

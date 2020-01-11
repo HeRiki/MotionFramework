@@ -146,6 +146,40 @@ namespace MotionFramework.Network
 		}
 
 		/// <summary>
+		/// 更新
+		/// </summary>
+		public void Update()
+		{
+			MainThreadSyncContext.Instance.Update();
+
+			for (int i = 0; i < _allChannels.Count; i++)
+			{
+				_allChannels[i].Update();
+			}
+		}
+
+		/// <summary>
+		/// 关闭频道并从列表里移除
+		/// </summary>
+		public void CloseChannel(TChannel channel)
+		{
+			if (channel == null)
+				return;
+
+			channel.Dispose();
+
+			// 从频道列表里删除
+			lock (_allChannels)
+			{
+				_allChannels.Remove(channel);
+			}
+
+			// 信号减弱
+			if (_maxAcceptedSemaphore != null)
+				_maxAcceptedSemaphore.Release();
+		}
+
+		/// <summary>
 		/// Dispose
 		/// </summary>
 		public void Dispose()
@@ -167,37 +201,6 @@ namespace MotionFramework.Network
 				_allChannels[i].Dispose();
 			}
 			_allChannels.Clear();
-		}
-
-		/// <summary>
-		/// 更新
-		/// </summary>
-		public void Update()
-		{
-			MainThreadSyncContext.Instance.Update();
-
-			for (int i = 0; i < _allChannels.Count; i++)
-			{
-				_allChannels[i].Update();
-			}
-		}
-
-		/// <summary>
-		/// 操作完成时回调函数
-		/// </summary>
-		private void AcceptEventArg_Completed(object sender, SocketAsyncEventArgs e)
-		{
-			switch (e.LastOperation)
-			{
-				case SocketAsyncOperation.Accept:
-					MainThreadSyncContext.Instance.Post(ProcessAccept, e);
-					break;
-				case SocketAsyncOperation.Connect:
-					MainThreadSyncContext.Instance.Post(ProcessConnected, e);
-					break;
-				default:
-					throw new ArgumentException("The last operation completed on the socket was not a accept or connect");
-			}
 		}
 
 		#region 监听连接
@@ -243,8 +246,11 @@ namespace MotionFramework.Network
 				TChannel channel = new TChannel();
 				channel.InitChannel(e.AcceptSocket, _listenerPackageParseType);
 
-				// 添加频道
-				AddChannel(channel);
+				// 加入到频道列表
+				lock (_allChannels)
+				{
+					_allChannels.Add(channel);
+				}
 			}
 			else
 			{
@@ -271,6 +277,12 @@ namespace MotionFramework.Network
 		/// <param name="packageParseType">网络包解析器</param>
 		public void ConnectAsync(IPEndPoint remote, System.Action<TChannel, SocketError> callback, System.Type packageParseType)
 		{
+			if(IsRunning == false)
+			{
+				AppLog.Log(ELogType.Warning, "Server is not start.");
+				return;
+			}
+
 			UserToken token = new UserToken()
 			{
 				Callback = callback,
@@ -321,36 +333,18 @@ namespace MotionFramework.Network
 		}
 		#endregion
 
-		/// <summary>
-		/// 释放频道并从列表里移除
-		/// </summary>
-		public void ReleaseChannel(TChannel channel)
+		private void AcceptEventArg_Completed(object sender, SocketAsyncEventArgs e)
 		{
-			if (channel == null)
-				return;
-
-			channel.Dispose();
-
-			// 从频道列表里删除
-			lock (_allChannels)
+			switch (e.LastOperation)
 			{
-				_allChannels.Remove(channel);
-			}
-
-			// 信号减弱
-			if (_maxAcceptedSemaphore != null)
-				_maxAcceptedSemaphore.Release();
-		}
-
-		private void AddChannel(TChannel channel)
-		{
-			if (channel == null)
-				return;
-
-			// 加入到频道列表
-			lock (_allChannels)
-			{
-				_allChannels.Add(channel);
+				case SocketAsyncOperation.Accept:
+					MainThreadSyncContext.Instance.Post(ProcessAccept, e);
+					break;
+				case SocketAsyncOperation.Connect:
+					MainThreadSyncContext.Instance.Post(ProcessConnected, e);
+					break;
+				default:
+					throw new ArgumentException("The last operation completed on the socket was not a accept or connect");
 			}
 		}
 	}

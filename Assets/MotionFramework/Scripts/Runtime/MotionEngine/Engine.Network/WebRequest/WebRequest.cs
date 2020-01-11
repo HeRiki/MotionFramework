@@ -85,7 +85,7 @@ namespace MotionFramework.Network
 		/// </summary>
 		public bool IsDone()
 		{
-			return States == EWebRequestStates.Succeed || States == EWebRequestStates.Failed;
+			return States == EWebRequestStates.Success || States == EWebRequestStates.Fail;
 		}
 	}
 }

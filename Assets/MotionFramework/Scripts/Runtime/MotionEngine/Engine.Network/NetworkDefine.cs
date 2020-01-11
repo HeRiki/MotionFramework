@@ -31,7 +31,7 @@ namespace MotionFramework.Network
 	{
 		None = 0,
 		Loading,
-		Succeed,
-		Failed,
+		Success,
+		Fail,
 	}
 }
