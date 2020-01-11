@@ -77,7 +77,7 @@ namespace MotionFramework.Console
 			for (int i = 0; i < _cacheInfos.Count; i++)
 			{
 				var element = _cacheInfos[i];
-				if (element.LoadState == EAssetFileLoaderStates.LoadAssetFileFailed || element.ProviderFailedCount > 0)
+				if (element.LoadState == EAssetFileLoaderStates.LoadAssetFileFail || element.ProviderFailedCount > 0)
 					AppConsole.GUIRedLable(element.Info);
 				else
 					AppConsole.GUILable(element.Info);
