@@ -21,15 +21,15 @@ namespace MotionFramework.Console
 		}
 		public void OnGUI()
 		{
-			var pools = ReferenceSystem.Instance.GetAllPools;
-			AppConsole.GUILable($"池总数：{pools.Count}");
+			var pools = ReferenceSystem.GetAllPools;
+			ConsoleSystem.GUILable($"池总数：{pools.Count}");
 
-			_scrollPos = AppConsole.GUIBeginScrollView(_scrollPos, 30);
+			_scrollPos = ConsoleSystem.GUIBeginScrollView(_scrollPos, 30);
 			foreach (var pair in pools)
 			{
-				AppConsole.GUILable($"[{pair.Value.ClassType.FullName}] CacheCount = {pair.Value.Count} SpwanCount = {pair.Value.SpawnCount}");
+				ConsoleSystem.GUILable($"[{pair.Value.ClassType.FullName}] CacheCount = {pair.Value.Count} SpwanCount = {pair.Value.SpawnCount}");
 			}
-			AppConsole.GUIEndScrollView();
+			ConsoleSystem.GUIEndScrollView();
 		}
 	}
 }

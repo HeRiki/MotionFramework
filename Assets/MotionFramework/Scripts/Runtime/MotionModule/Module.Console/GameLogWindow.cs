@@ -48,44 +48,44 @@ namespace MotionFramework.Console
 		public void OnGUI()
 		{
 			GUILayout.BeginHorizontal();
-			_showLog = AppConsole.GUIToggle("Log", _showLog);
-			_showWarning = AppConsole.GUIToggle("Warning", _showWarning);
-			_showError = AppConsole.GUIToggle("Error", _showError);
+			_showLog = ConsoleSystem.GUIToggle("Log", _showLog);
+			_showWarning = ConsoleSystem.GUIToggle("Warning", _showWarning);
+			_showError = ConsoleSystem.GUIToggle("Error", _showError);
 			GUILayout.EndHorizontal();
 
-			_scrollPos = AppConsole.GUIBeginScrollView(_scrollPos, 40);
+			_scrollPos = ConsoleSystem.GUIBeginScrollView(_scrollPos, 40);
 			for (int i = 0; i < _logs.Count; i++)
 			{
 				LogWrapper wrapper = _logs[i];
 				if (wrapper.Type == LogType.Log)
 				{
 					if (_showLog)
-						AppConsole.GUILable(wrapper.Log);
+						ConsoleSystem.GUILable(wrapper.Log);
 				}
 				else if (wrapper.Type == LogType.Warning)
 				{
 					if (_showWarning)
-						AppConsole.GUIYellowLable(wrapper.Log);
+						ConsoleSystem.GUIYellowLable(wrapper.Log);
 				}
 				else
 				{
 					if (_showError)
-						AppConsole.GUIRedLable(wrapper.Log);
+						ConsoleSystem.GUIRedLable(wrapper.Log);
 				}
 			}
-			AppConsole.GUIEndScrollView();
+			ConsoleSystem.GUIEndScrollView();
 		}
 
 		private void HandleUnityEngineLog(string logString, string stackTrace, LogType type)
 		{
-			LogWrapper wrapper = ReferenceSystem.Instance.Spawn<LogWrapper>();
+			LogWrapper wrapper = ReferenceSystem.Spawn<LogWrapper>();
 			wrapper.Type = type;
 			wrapper.Log = $"[{type}] {logString}";
 			_logs.Add(wrapper);
 
 			if (_logs.Count > LOG_MAX_COUNT)
 			{
-				ReferenceSystem.Instance.Release(_logs[0]);
+				ReferenceSystem.Release(_logs[0]);
 				_logs.RemoveAt(0);
 			}
 		}

@@ -66,34 +66,34 @@ namespace MotionFramework.Console
 
 			GUILayout.BeginHorizontal();
 			{
-				GUILayout.Label("搜索关键字 : ", AppConsole.GUILableStyle, GUILayout.Width(140));
-				_filterKey = GUILayout.TextField(_filterKey, AppConsole.GUITextFieldStyle, GUILayout.Width(400));
+				GUILayout.Label("搜索关键字 : ", ConsoleSystem.GUILableStyle, GUILayout.Width(140));
+				_filterKey = GUILayout.TextField(_filterKey, ConsoleSystem.GUITextFieldStyle, GUILayout.Width(400));
 			}
 			GUILayout.EndHorizontal();
 
-			AppConsole.GUILable($"加载器总数：{_loaderTotalCount}");
+			ConsoleSystem.GUILable($"加载器总数：{_loaderTotalCount}");
 
-			_scrollPos = AppConsole.GUIBeginScrollView(_scrollPos, 80);
+			_scrollPos = ConsoleSystem.GUIBeginScrollView(_scrollPos, 80);
 			for (int i = 0; i < _cacheInfos.Count; i++)
 			{
 				var element = _cacheInfos[i];
 				if (element.LoadState == EAssetFileLoaderStates.LoadAssetFileFail || element.ProviderFailedCount > 0)
-					AppConsole.GUIRedLable(element.Info);
+					ConsoleSystem.GUIRedLable(element.Info);
 				else
-					AppConsole.GUILable(element.Info);
+					ConsoleSystem.GUILable(element.Info);
 			}
-			AppConsole.GUIEndScrollView();
+			ConsoleSystem.GUIEndScrollView();
 		}
 		private void FilterInfos()
 		{
 			// 回收引用
-			ReferenceSystem.Instance.Release(_cacheInfos);
+			ReferenceSystem.Release(_cacheInfos);
 
 			// 清空列表
 			_cacheInfos.Clear();
 
 			// 绘制显示列表
-			var fileLoaders = AssetSystem.Instance.GetAllLoaders();
+			var fileLoaders = AssetSystem.GetAllLoaders();
 			_loaderTotalCount = fileLoaders.Count;
 			foreach (var loader in fileLoaders)
 			{
@@ -108,7 +108,7 @@ namespace MotionFramework.Console
 				info = info.Replace(".unity3d", string.Empty);
 				info = $"{info} = {loader.RefCount}";
 
-				InfoWrapper element = ReferenceSystem.Instance.Spawn<InfoWrapper>();
+				InfoWrapper element = ReferenceSystem.Spawn<InfoWrapper>();
 				element.Info = info;
 				element.LoadState = loader.States;
 				element.ProviderFailedCount = loader.GetFailedProviderCount();

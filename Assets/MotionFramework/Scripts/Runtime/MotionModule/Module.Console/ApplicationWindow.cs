@@ -23,67 +23,67 @@ namespace MotionFramework.Console
 		{
 			int space = 15;
 
-			_scrollPos = AppConsole.GUIBeginScrollView(_scrollPos, 0);
+			_scrollPos = ConsoleSystem.GUIBeginScrollView(_scrollPos, 0);
 
 			GUILayout.Space(space);
-			AppConsole.GUILable($"Unity Version : {Application.unityVersion}");
-			AppConsole.GUILable($"Unity Pro License : {Application.HasProLicense()}");
-			AppConsole.GUILable($"Application Version : {Application.version}");
-			AppConsole.GUILable($"Application Install Path : {Application.dataPath}");
-			AppConsole.GUILable($"Application Persistent Path : {Application.persistentDataPath}");
+			ConsoleSystem.GUILable($"Unity Version : {Application.unityVersion}");
+			ConsoleSystem.GUILable($"Unity Pro License : {Application.HasProLicense()}");
+			ConsoleSystem.GUILable($"Application Version : {Application.version}");
+			ConsoleSystem.GUILable($"Application Install Path : {Application.dataPath}");
+			ConsoleSystem.GUILable($"Application Persistent Path : {Application.persistentDataPath}");
 
 			GUILayout.Space(space);
-			AppConsole.GUILable($"OS : {SystemInfo.operatingSystem}");
-			AppConsole.GUILable($"OS Memory : {SystemInfo.systemMemorySize / 1000}GB");
-			AppConsole.GUILable($"CPU : {SystemInfo.processorType}");
-			AppConsole.GUILable($"CPU Core : {SystemInfo.processorCount}");
+			ConsoleSystem.GUILable($"OS : {SystemInfo.operatingSystem}");
+			ConsoleSystem.GUILable($"OS Memory : {SystemInfo.systemMemorySize / 1000}GB");
+			ConsoleSystem.GUILable($"CPU : {SystemInfo.processorType}");
+			ConsoleSystem.GUILable($"CPU Core : {SystemInfo.processorCount}");
 
 			GUILayout.Space(space);
-			AppConsole.GUILable($"Device Model : {SystemInfo.deviceModel}");
-			AppConsole.GUILable($"Device Name : {SystemInfo.deviceName}");
-			AppConsole.GUILable($"Device Type : {SystemInfo.deviceType}");
+			ConsoleSystem.GUILable($"Device Model : {SystemInfo.deviceModel}");
+			ConsoleSystem.GUILable($"Device Name : {SystemInfo.deviceName}");
+			ConsoleSystem.GUILable($"Device Type : {SystemInfo.deviceType}");
 
 			GUILayout.Space(space);
-			AppConsole.GUILable($"Graphics Device Name : {SystemInfo.graphicsDeviceName}");
-			AppConsole.GUILable($"Graphics Device Type : {SystemInfo.graphicsDeviceType}");
-			AppConsole.GUILable($"Graphics Memory : {SystemInfo.graphicsMemorySize / 1000}GB");
-			AppConsole.GUILable($"Graphics Shader Level : {SystemInfo.graphicsShaderLevel}");
-			AppConsole.GUILable($"Multi-threaded Rendering : {SystemInfo.graphicsMultiThreaded}");
-			AppConsole.GUILable($"Max Cubemap Size : {SystemInfo.maxCubemapSize}");
-			AppConsole.GUILable($"Max Texture Size : {SystemInfo.maxTextureSize}");
+			ConsoleSystem.GUILable($"Graphics Device Name : {SystemInfo.graphicsDeviceName}");
+			ConsoleSystem.GUILable($"Graphics Device Type : {SystemInfo.graphicsDeviceType}");
+			ConsoleSystem.GUILable($"Graphics Memory : {SystemInfo.graphicsMemorySize / 1000}GB");
+			ConsoleSystem.GUILable($"Graphics Shader Level : {SystemInfo.graphicsShaderLevel}");
+			ConsoleSystem.GUILable($"Multi-threaded Rendering : {SystemInfo.graphicsMultiThreaded}");
+			ConsoleSystem.GUILable($"Max Cubemap Size : {SystemInfo.maxCubemapSize}");
+			ConsoleSystem.GUILable($"Max Texture Size : {SystemInfo.maxTextureSize}");
 
 			GUILayout.Space(space);
-			AppConsole.GUILable($"Supports Accelerometer : {SystemInfo.supportsAccelerometer}"); //加速计硬件
-			AppConsole.GUILable($"Supports Gyroscope : {SystemInfo.supportsGyroscope}"); //陀螺仪硬件
-			AppConsole.GUILable($"Supports Audio : {SystemInfo.supportsAudio}"); //音频硬件
-			AppConsole.GUILable($"Supports GPS : {SystemInfo.supportsLocationService}"); //GPS硬件
+			ConsoleSystem.GUILable($"Supports Accelerometer : {SystemInfo.supportsAccelerometer}"); //加速计硬件
+			ConsoleSystem.GUILable($"Supports Gyroscope : {SystemInfo.supportsGyroscope}"); //陀螺仪硬件
+			ConsoleSystem.GUILable($"Supports Audio : {SystemInfo.supportsAudio}"); //音频硬件
+			ConsoleSystem.GUILable($"Supports GPS : {SystemInfo.supportsLocationService}"); //GPS硬件
 
 			GUILayout.Space(space);
-			AppConsole.GUILable($"Screen DPI : {Screen.dpi}");
-			AppConsole.GUILable($"Game Resolution : {Screen.width} x {Screen.height}");
-			AppConsole.GUILable($"Device Resolution : {Screen.currentResolution.width} x {Screen.currentResolution.height}");
-			AppConsole.GUILable($"Graphics Quality : {QualitySettings.names[QualitySettings.GetQualityLevel()]}");
+			ConsoleSystem.GUILable($"Screen DPI : {Screen.dpi}");
+			ConsoleSystem.GUILable($"Game Resolution : {Screen.width} x {Screen.height}");
+			ConsoleSystem.GUILable($"Device Resolution : {Screen.currentResolution.width} x {Screen.currentResolution.height}");
+			ConsoleSystem.GUILable($"Graphics Quality : {QualitySettings.names[QualitySettings.GetQualityLevel()]}");
 
 			GUILayout.Space(space);
 			long memory = Profiler.GetTotalReservedMemoryLong() / 1000000;
-			AppConsole.GUILable($"Total Memory : {memory}MB");
+			ConsoleSystem.GUILable($"Total Memory : {memory}MB");
 			memory = Profiler.GetTotalAllocatedMemoryLong() / 1000000;
-			AppConsole.GUILable($"Used Memory : {memory}MB");
+			ConsoleSystem.GUILable($"Used Memory : {memory}MB");
 			memory = Profiler.GetTotalUnusedReservedMemoryLong() / 1000000;
-			AppConsole.GUILable($"Free Memory : {memory}MB");
+			ConsoleSystem.GUILable($"Free Memory : {memory}MB");
 			memory = Profiler.GetMonoHeapSizeLong() / 1000000;
-			AppConsole.GUILable($"Total Mono Memory : {memory}MB");
+			ConsoleSystem.GUILable($"Total Mono Memory : {memory}MB");
 			memory = Profiler.GetMonoUsedSizeLong() / 1000000;
-			AppConsole.GUILable($"Used Mono Memory : {memory}MB");
+			ConsoleSystem.GUILable($"Used Mono Memory : {memory}MB");
 
 			GUILayout.Space(space);
-			AppConsole.GUILable($"Battery Level : {SystemInfo.batteryLevel}");
-			AppConsole.GUILable($"Battery Status : {SystemInfo.batteryStatus}");
-			AppConsole.GUILable($"Network Status : {GetNetworkState()}");
-			AppConsole.GUILable($"Elapse Time : {GetElapseTime()}");
-			AppConsole.GUILable($"Time Scale : {Time.timeScale}");
+			ConsoleSystem.GUILable($"Battery Level : {SystemInfo.batteryLevel}");
+			ConsoleSystem.GUILable($"Battery Status : {SystemInfo.batteryStatus}");
+			ConsoleSystem.GUILable($"Network Status : {GetNetworkState()}");
+			ConsoleSystem.GUILable($"Elapse Time : {GetElapseTime()}");
+			ConsoleSystem.GUILable($"Time Scale : {Time.timeScale}");
 
-			AppConsole.GUIEndScrollView();
+			ConsoleSystem.GUIEndScrollView();
 		}
 
 		private string GetNetworkState()

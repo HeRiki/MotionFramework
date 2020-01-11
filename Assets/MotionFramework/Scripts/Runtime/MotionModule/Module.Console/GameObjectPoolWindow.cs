@@ -23,18 +23,18 @@ namespace MotionFramework.Console
 		public void OnGUI()
 		{
 			var pools = PoolManager.Instance.GetAllPools;
-			AppConsole.GUILable($"池总数：{pools.Count}");
+			ConsoleSystem.GUILable($"池总数：{pools.Count}");
 
-			_scrollPos = AppConsole.GUIBeginScrollView(_scrollPos, 30);
+			_scrollPos = ConsoleSystem.GUIBeginScrollView(_scrollPos, 30);
 			foreach (var pair in pools)
 			{
 				string content = $"[{pair.Value.Location}] CacheCount = {pair.Value.Count} SpwanCount = {pair.Value.SpawnCount}";
 				if (pair.Value.States == EAssetProviderStates.Fail)
-					AppConsole.GUIRedLable(content);
+					ConsoleSystem.GUIRedLable(content);
 				else
-					AppConsole.GUILable(content);
+					ConsoleSystem.GUILable(content);
 			}
-			AppConsole.GUIEndScrollView();
+			ConsoleSystem.GUIEndScrollView();
 		}
 	}
 }

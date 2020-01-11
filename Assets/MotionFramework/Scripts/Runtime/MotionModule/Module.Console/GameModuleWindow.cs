@@ -20,10 +20,10 @@ namespace MotionFramework.Console
 		}
 		public void OnGUI()
 		{
-			_scrollPos = AppConsole.GUIBeginScrollView(_scrollPos, 0);
+			_scrollPos = ConsoleSystem.GUIBeginScrollView(_scrollPos, 0);
 			IMotionEngine motionEngine = AppEngine.Instance;
 			motionEngine.OnGUI();
-			AppConsole.GUIEndScrollView();
+			ConsoleSystem.GUIEndScrollView();
 		}
 	}
 }
