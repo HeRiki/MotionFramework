@@ -5,52 +5,52 @@
 //--------------------------------------------------
 using System.Collections;
 using System.Collections.Generic;
-using MotionFramework.AI;
+using MotionFramework.FSM;
 using MotionFramework.Resource;
 using MotionFramework.Utility;
 
 namespace MotionFramework.Patch
 {
-	internal class FsmGetDonwloadList : IFsmNode
+	internal class FsmGetDonwloadList : IFiniteStateNode
 	{
-		private ProcedureSystem _system;
+		private PatchCenter _center;
 		public string Name { private set; get; }
 
-		public FsmGetDonwloadList(ProcedureSystem system)
+		public FsmGetDonwloadList(PatchCenter center)
 		{
-			_system = system;
+			_center = center;
 			Name = EPatchStates.GetDonwloadList.ToString();
 		}
-		void IFsmNode.OnEnter()
+		void IFiniteStateNode.OnEnter()
 		{
 			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.GetDonwloadList);
 			GetDownloadList();
 		}
-		void IFsmNode.OnUpdate()
+		void IFiniteStateNode.OnUpdate()
 		{
 		}
-		void IFsmNode.OnExit()
+		void IFiniteStateNode.OnExit()
 		{
 		}
-		void IFsmNode.OnHandleMessage(object msg)
+		void IFiniteStateNode.OnHandleMessage(object msg)
 		{
 		}
 
 		private void GetDownloadList()
 		{
-			PatchSystem.Instance.DownloadList.Clear();
+			_center.DownloadList.Clear();
 
 			// 临时下载列表
 			List<PatchElement> downloadList = new List<PatchElement>(1000);
 
 			// 准备下载列表
-			foreach (var pair in PatchSystem.Instance.WebPatchManifest.Elements)
+			foreach (var pair in _center.WebPatchManifest.Elements)
 			{
 				PatchElement element = pair.Value;
 
 				// 先检测APP里的清单
 				PatchElement appElement;
-				if (PatchSystem.Instance.AppPatchManifest.Elements.TryGetValue(element.Name, out appElement))
+				if (_center.AppPatchManifest.Elements.TryGetValue(element.Name, out appElement))
 				{
 					if (appElement.MD5 == element.MD5)
 						continue;
@@ -58,7 +58,7 @@ namespace MotionFramework.Patch
 
 				// 再检测沙盒里的清单
 				PatchElement sandboxElement;
-				if (PatchSystem.Instance.SandboxPatchManifest.Elements.TryGetValue(element.Name, out sandboxElement))
+				if (_center.SandboxPatchManifest.Elements.TryGetValue(element.Name, out sandboxElement))
 				{
 					if (sandboxElement.MD5 != element.MD5)
 						downloadList.Add(element);
@@ -97,18 +97,18 @@ namespace MotionFramework.Patch
 			// 如果下载列表为空
 			if(downloadList.Count == 0)
 			{
-				_system.SwitchNext();
+				_center.SwitchNext();
 			}
 			else
 			{
 				// 最后添加到正式下载列表里
-				PatchSystem.Instance.DownloadList.AddRange(downloadList);
+				_center.DownloadList.AddRange(downloadList);
 				downloadList.Clear();
 
 				// 发现新更新文件后，挂起流程系统
-				int totalDownloadCount = PatchSystem.Instance.DownloadList.Count;
+				int totalDownloadCount = _center.DownloadList.Count;
 				long totalDownloadSizeKB = 0;
-				foreach (var element in PatchSystem.Instance.DownloadList)
+				foreach (var element in _center.DownloadList)
 				{
 					totalDownloadSizeKB += element.SizeKB;
 				}

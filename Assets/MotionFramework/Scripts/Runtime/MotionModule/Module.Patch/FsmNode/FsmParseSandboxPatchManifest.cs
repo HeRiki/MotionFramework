@@ -5,22 +5,22 @@
 //--------------------------------------------------
 using System.Collections;
 using System.Collections.Generic;
-using MotionFramework.AI;
+using MotionFramework.FSM;
 using MotionFramework.Resource;
 
 namespace MotionFramework.Patch
 {
-	internal class FsmParseSandboxPatchManifest : IFsmNode
+	internal class FsmParseSandboxPatchManifest : IFiniteStateNode
 	{
-		private ProcedureSystem _system;
+		private PatchCenter _center;
 		public string Name { private set; get; }
 
-		public FsmParseSandboxPatchManifest(ProcedureSystem system)
+		public FsmParseSandboxPatchManifest(PatchCenter center)
 		{
-			_system = system;
+			_center = center;
 			Name = EPatchStates.ParseSandboxPatchManifest.ToString();
 		}
-		void IFsmNode.OnEnter()
+		void IFiniteStateNode.OnEnter()
 		{
 			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.ParseSandboxPatchManifest);
 
@@ -31,22 +31,22 @@ namespace MotionFramework.Patch
 				string fileContent = PatchHelper.ReadFile(filePath);
 
 				PatchHelper.Log(ELogType.Log, $"Parse sandbox patch file.");
-				PatchSystem.Instance.ParseSandboxPatchManifest(fileContent);
+				_center.ParseSandboxPatchManifest(fileContent);
 			}
 			else
 			{
-				PatchSystem.Instance.ParseSandboxPatchManifest(PatchSystem.Instance.AppPatchManifest);
+				_center.ParseSandboxPatchManifest(_center.AppPatchManifest);
 			}
 
-			_system.SwitchNext();
+			_center.SwitchNext();
 		}
-		void IFsmNode.OnUpdate()
+		void IFiniteStateNode.OnUpdate()
 		{
 		}
-		void IFsmNode.OnExit()
+		void IFiniteStateNode.OnExit()
 		{
 		}
-		void IFsmNode.OnHandleMessage(object msg)
+		void IFiniteStateNode.OnHandleMessage(object msg)
 		{
 		}
 	}

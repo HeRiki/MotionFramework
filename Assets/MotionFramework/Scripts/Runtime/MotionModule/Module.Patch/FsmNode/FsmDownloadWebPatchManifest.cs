@@ -5,42 +5,42 @@
 //--------------------------------------------------
 using System.Collections;
 using System.Collections.Generic;
-using MotionFramework.AI;
+using MotionFramework.FSM;
 using MotionFramework.Resource;
 using MotionFramework.Network;
 
 namespace MotionFramework.Patch
 {
-	internal class FsmDownloadWebPatchManifest : IFsmNode
+	internal class FsmDownloadWebPatchManifest : IFiniteStateNode
 	{
-		private ProcedureSystem _system;
+		private PatchCenter _center;
 		public string Name { private set; get; }
 
-		public FsmDownloadWebPatchManifest(ProcedureSystem system)
+		public FsmDownloadWebPatchManifest(PatchCenter center)
 		{
-			_system = system;
+			_center = center;
 			Name = EPatchStates.DownloadWebPatchManifest.ToString();
 		}
-		void IFsmNode.OnEnter()
+		void IFiniteStateNode.OnEnter()
 		{
 			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.DownloadWebPatchManifest);
 			AppEngine.Instance.StartCoroutine(Download());
 		}
-		void IFsmNode.OnUpdate()
+		void IFiniteStateNode.OnUpdate()
 		{
 		}
-		void IFsmNode.OnExit()
+		void IFiniteStateNode.OnExit()
 		{
 		}
-		void IFsmNode.OnHandleMessage(object msg)
+		void IFiniteStateNode.OnHandleMessage(object msg)
 		{
 		}
 
 		private IEnumerator Download()
 		{
 			// 注意：等所有文件下载完毕后，下载并替换补丁清单
-			int newResourceVersion = PatchSystem.Instance.RequestedResourceVersion;
-			string url = PatchSystem.Instance.GetWebDownloadURL(newResourceVersion.ToString(), PatchDefine.PatchManifestFileName);
+			int newResourceVersion = _center.RequestedResourceVersion;
+			string url = _center.GetWebDownloadURL(newResourceVersion.ToString(), PatchDefine.PatchManifestFileName);
 			string savePath = AssetPathHelper.MakePersistentLoadPath(PatchDefine.PatchManifestFileName);
 			WebFileRequest download = new WebFileRequest(url, savePath);
 			yield return download.DownLoad();
@@ -55,7 +55,7 @@ namespace MotionFramework.Patch
 			{
 				PatchHelper.Log(ELogType.Log, "Web patch manifest is download.");
 				download.Dispose();
-				_system.SwitchNext();
+				_center.SwitchNext();
 			}
 		}
 	}

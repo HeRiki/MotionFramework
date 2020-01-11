@@ -5,31 +5,31 @@
 //--------------------------------------------------
 using System.Collections;
 using System.Collections.Generic;
-using MotionFramework.AI;
+using MotionFramework.FSM;
 
 namespace MotionFramework.Patch
 {
-	internal class FsmDownloadOver : IFsmNode
+	internal class FsmDownloadOver : IFiniteStateNode
 	{
-		private ProcedureSystem _system;
+		private PatchCenter _center;
 		public string Name { private set; get; }
 
-		public FsmDownloadOver(ProcedureSystem system)
+		public FsmDownloadOver(PatchCenter center)
 		{
-			_system = system;
+			_center = center;
 			Name = EPatchStates.DownloadOver.ToString();
 		}
-		void IFsmNode.OnEnter()
+		void IFiniteStateNode.OnEnter()
 		{
 			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.DownloadOver);
 		}
-		void IFsmNode.OnUpdate()
+		void IFiniteStateNode.OnUpdate()
 		{
 		}
-		void IFsmNode.OnExit()
+		void IFiniteStateNode.OnExit()
 		{
 		}
-		void IFsmNode.OnHandleMessage(object msg)
+		void IFiniteStateNode.OnHandleMessage(object msg)
 		{
 		}
 	}

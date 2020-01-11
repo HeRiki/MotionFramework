@@ -5,33 +5,33 @@
 //--------------------------------------------------
 using System.Collections;
 using System.Collections.Generic;
-using MotionFramework.AI;
+using MotionFramework.FSM;
 using MotionFramework.Network;
 
 namespace MotionFramework.Patch
 {
-	internal class FsmRequestGameVersion : IFsmNode
+	internal class FsmRequestGameVersion : IFiniteStateNode
 	{
-		private ProcedureSystem _system;
+		private PatchCenter _center;
 		public string Name { private set; get; }
 
-		public FsmRequestGameVersion(ProcedureSystem system)
+		public FsmRequestGameVersion(PatchCenter center)
 		{
-			_system = system;
+			_center = center;
 			Name = EPatchStates.RequestGameVersion.ToString();
 		}
-		void IFsmNode.OnEnter()
+		void IFiniteStateNode.OnEnter()
 		{
 			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.RequestGameVersion);
 			AppEngine.Instance.StartCoroutine(Download());
 		}
-		void IFsmNode.OnUpdate()
+		void IFiniteStateNode.OnUpdate()
 		{
 		}
-		void IFsmNode.OnExit()
+		void IFiniteStateNode.OnExit()
 		{
 		}
-		void IFsmNode.OnHandleMessage(object msg)
+		void IFiniteStateNode.OnHandleMessage(object msg)
 		{
 		}
 
@@ -39,8 +39,8 @@ namespace MotionFramework.Patch
 		{
 			// 获取最新的游戏版本号
 			{
-				string url = PatchSystem.Instance.GetWebServerIP();
-				string post = PatchSystem.Instance.GetWebPostData();
+				string url = _center.GetWebServerIP();
+				string post = _center.GetWebPostData();
 				PatchHelper.Log(ELogType.Log, $"Request game version : {url} : {post}");
 				WebPostRequest download = new WebPostRequest(url, post);
 				yield return download.DownLoad();
@@ -54,19 +54,19 @@ namespace MotionFramework.Patch
 				}
 
 				string responseData = download.GetResponse();
-				PatchSystem.Instance.ParseResponseData(responseData);
+				_center.ParseResponseData(responseData);
 				download.Dispose();
 			}
 
-			int newResourceVersion = PatchSystem.Instance.RequestedResourceVersion;
-			int oldResourceVersion = PatchSystem.Instance.SandboxPatchManifest.Version;
+			int newResourceVersion = _center.RequestedResourceVersion;
+			int oldResourceVersion = _center.SandboxPatchManifest.Version;
 
 			// 检测强更安装包
-			string appInstallURL = PatchSystem.Instance.GetForceInstallAppURL();
+			string appInstallURL = _center.GetForceInstallAppURL();
 			if(string.IsNullOrEmpty(appInstallURL) == false)
 			{
-				PatchHelper.Log(ELogType.Log, $"Found new APP can be install : {PatchSystem.Instance.GameVersion.ToString()}");
-				PatchEventDispatcher.SendFoundForceInstallAPPMsg(PatchSystem.Instance.GameVersion.ToString(), appInstallURL);
+				PatchHelper.Log(ELogType.Log, $"Found new APP can be install : {_center.GameVersion.ToString()}");
+				PatchEventDispatcher.SendFoundForceInstallAPPMsg(_center.GameVersion.ToString(), appInstallURL);
 				yield break;
 			}
 
@@ -74,12 +74,12 @@ namespace MotionFramework.Patch
 			if (newResourceVersion == oldResourceVersion)
 			{
 				PatchHelper.Log(ELogType.Log, $"Resource version is not change.");
-				_system.Switch(EPatchStates.DownloadOver.ToString());
+				_center.Switch(EPatchStates.DownloadOver.ToString());
 			}
 			else
 			{
 				PatchHelper.Log(ELogType.Log, $"Resource version is change : {oldResourceVersion} -> {newResourceVersion}");
-				_system.SwitchNext();
+				_center.SwitchNext();
 			}
 		}
 	}

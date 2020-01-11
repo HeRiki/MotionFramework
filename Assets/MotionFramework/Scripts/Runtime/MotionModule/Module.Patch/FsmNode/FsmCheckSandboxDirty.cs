@@ -6,21 +6,21 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using MotionFramework.AI;
+using MotionFramework.FSM;
 
 namespace MotionFramework.Patch
 {
-	internal class FsmCheckSandboxDirty : IFsmNode
+	internal class FsmCheckSandboxDirty : IFiniteStateNode
 	{
-		private ProcedureSystem _system;
+		private PatchCenter _center;
 		public string Name { private set; get; }
 		
-		public FsmCheckSandboxDirty(ProcedureSystem system)
+		public FsmCheckSandboxDirty(PatchCenter center)
 		{
-			_system = system;
+			_center = center;
 			Name = EPatchStates.CheckSandboxDirty.ToString();
 		}
-		void IFsmNode.OnEnter()
+		void IFiniteStateNode.OnEnter()
 		{
 			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.CheckSandboxDirty);
 
@@ -32,7 +32,7 @@ namespace MotionFramework.Patch
 			{
 				PatchHelper.Log(ELogType.Log, $"Create sandbox static file : {filePath}");
 				PatchHelper.CreateFile(filePath, appVersion);
-				_system.SwitchNext();
+				_center.SwitchNext();
 				return;
 			}
 
@@ -45,20 +45,20 @@ namespace MotionFramework.Patch
 				PatchHelper.Log(ELogType.Warning, $"Sandbox is dirty, Record version is {recordVersion}, APP version is {appVersion}");
 				PatchHelper.Log(ELogType.Warning, "Clear all sandbox files.");
 				PatchHelper.ClearSandbox();
-				_system.SwitchLast();
+				_center.SwitchLast();
 			}
 			else
 			{
-				_system.SwitchNext();
+				_center.SwitchNext();
 			}
 		}
-		void IFsmNode.OnUpdate()
+		void IFiniteStateNode.OnUpdate()
 		{
 		}
-		void IFsmNode.OnExit()
+		void IFiniteStateNode.OnExit()
 		{
 		}
-		void IFsmNode.OnHandleMessage(object msg)
+		void IFiniteStateNode.OnHandleMessage(object msg)
 		{
 		}
 	}

@@ -7,16 +7,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MotionFramework.AI;
+using MotionFramework.FSM;
 using MotionFramework.Event;
 
 namespace MotionFramework.Patch
 {
-	internal class PatchSystem
+	internal class PatchCenter
 	{
-		public readonly static PatchSystem Instance = new PatchSystem();
+		private readonly Procedure _procedure = new Procedure();
 
-		private readonly ProcedureSystem _system = new ProcedureSystem();
+		// 参数相关
 		private Dictionary<RuntimePlatform, string> _webServers;
 		private Dictionary<RuntimePlatform, string> _cdnServers;
 		private string _defaultWebServer;
@@ -25,6 +25,8 @@ namespace MotionFramework.Patch
 		private int _channelID;
 		private long _deviceID;
 		private int _testFlag;
+
+		// 强更地址
 		private string _forceInstallAppURL;
 
 		// 版本号
@@ -48,7 +50,7 @@ namespace MotionFramework.Patch
 		{
 			get
 			{
-				return _system.Current;
+				return _procedure.Current;
 			}
 		}
 
@@ -81,22 +83,22 @@ namespace MotionFramework.Patch
 		public void Run()
 		{
 			// 注意：按照先后顺序添加流程节点
-			_system.AddNode(new FsmInitiationBegin(_system));
-			_system.AddNode(new FsmCheckSandboxDirty(_system));
-			_system.AddNode(new FsmParseAppPatchManifest(_system));
-			_system.AddNode(new FsmParseSandboxPatchManifest(_system));
-			_system.AddNode(new FsmInitiationOver(_system));
-			_system.AddNode(new FsmRequestGameVersion(_system));
-			_system.AddNode(new FsmParseWebPatchManifest(_system));
-			_system.AddNode(new FsmGetDonwloadList(_system));
-			_system.AddNode(new FsmDownloadWebFiles(_system));
-			_system.AddNode(new FsmDownloadWebPatchManifest(_system));
-			_system.AddNode(new FsmDownloadOver(_system));
-			_system.Run();
+			_procedure.AddNode(new FsmInitiationBegin(this));
+			_procedure.AddNode(new FsmCheckSandboxDirty(this));
+			_procedure.AddNode(new FsmParseAppPatchManifest(this));
+			_procedure.AddNode(new FsmParseSandboxPatchManifest(this));
+			_procedure.AddNode(new FsmInitiationOver(this));
+			_procedure.AddNode(new FsmRequestGameVersion(this));
+			_procedure.AddNode(new FsmParseWebPatchManifest(this));
+			_procedure.AddNode(new FsmGetDonwloadList(this));
+			_procedure.AddNode(new FsmDownloadWebFiles(this));
+			_procedure.AddNode(new FsmDownloadWebPatchManifest(this));
+			_procedure.AddNode(new FsmDownloadOver(this));
+			_procedure.Run();
 		}
 		public void Update()
 		{
-			_system.Update();
+			_procedure.Update();
 		}
 
 		/// <summary>
@@ -126,48 +128,62 @@ namespace MotionFramework.Patch
 				if (message.operation == EPatchOperation.BeginingRequestGameVersion)
 				{
 					// 从挂起的地方继续
-					if (_system.Current == EPatchStates.InitiationOver.ToString())
-						_system.SwitchNext();
+					if (_procedure.Current == EPatchStates.InitiationOver.ToString())
+						_procedure.SwitchNext();
 					else
-						AppLog.Log(ELogType.Error, $"Patch system is not prepare : {_system.Current}");
+						AppLog.Log(ELogType.Error, $"Patch system is not prepare : {_procedure.Current}");
 				}
 				else if (message.operation == EPatchOperation.BeginingDownloadWebFiles)
 				{
 					// 从挂起的地方继续
-					if (_system.Current == EPatchStates.GetDonwloadList.ToString())
-						_system.SwitchNext();
+					if (_procedure.Current == EPatchStates.GetDonwloadList.ToString())
+						_procedure.SwitchNext();
 					else
-						AppLog.Log(ELogType.Error, $"Patch states is incorrect : {_system.Current}");
+						AppLog.Log(ELogType.Error, $"Patch states is incorrect : {_procedure.Current}");
 				}
 				else if (message.operation == EPatchOperation.TryRequestGameVersion)
 				{
 					// 修复当前节点错误
-					if (_system.Current == EPatchStates.RequestGameVersion.ToString())
-						_system.Switch(_system.Current);
+					if (_procedure.Current == EPatchStates.RequestGameVersion.ToString())
+						_procedure.Switch(_procedure.Current);
 					else
-						AppLog.Log(ELogType.Error, $"Patch states is incorrect : {_system.Current}");
+						AppLog.Log(ELogType.Error, $"Patch states is incorrect : {_procedure.Current}");
 				}
 				else if (message.operation == EPatchOperation.TryDownloadWebPatchManifest)
 				{
 					// 修复当前节点错误
-					if (_system.Current == EPatchStates.DownloadWebPatchManifest.ToString() || _system.Current == EPatchStates.ParseWebPatchManifest.ToString())
-						_system.Switch(_system.Current);
+					if (_procedure.Current == EPatchStates.DownloadWebPatchManifest.ToString() || _procedure.Current == EPatchStates.ParseWebPatchManifest.ToString())
+						_procedure.Switch(_procedure.Current);
 					else
-						AppLog.Log(ELogType.Error, $"Patch states is incorrect : {_system.Current}");
+						AppLog.Log(ELogType.Error, $"Patch states is incorrect : {_procedure.Current}");
 				}
 				else if (message.operation == EPatchOperation.TryDownloadWebFiles)
 				{
 					// 修复当前节点错误
-					if (_system.Current == EPatchStates.DownloadWebFiles.ToString())
-						_system.Switch(EPatchStates.GetDonwloadList.ToString());
+					if (_procedure.Current == EPatchStates.DownloadWebFiles.ToString())
+						_procedure.Switch(EPatchStates.GetDonwloadList.ToString());
 					else
-						AppLog.Log(ELogType.Error, $"Patch states is incorrect : {_system.Current}");
+						AppLog.Log(ELogType.Error, $"Patch states is incorrect : {_procedure.Current}");
 				}
 				else
 				{
 					throw new NotImplementedException($"{message.operation}");
 				}
 			}
+		}
+
+		// 流程相关
+		public void Switch(string nodeName)
+		{
+			_procedure.Switch(nodeName);
+		}
+		public void SwitchNext()
+		{
+			_procedure.SwitchNext();
+		}
+		public void SwitchLast()
+		{
+			_procedure.SwitchLast();
 		}
 
 		// 解析补丁清单文件相关接口
@@ -232,7 +248,7 @@ namespace MotionFramework.Patch
 				throw new Exception("Web server response data is null or empty.");
 			if (GameVersion != null)
 				throw new Exception("Should never get here.");
-		
+
 			// $"{GameVersion}&{AppInstallURL}"
 			string[] splits = data.Split('&');
 			string gameVersionContent = splits[0];

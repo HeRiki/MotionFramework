@@ -5,36 +5,35 @@
 //--------------------------------------------------
 using System.Collections;
 using System.Collections.Generic;
-using MotionFramework.AI;
+using MotionFramework.FSM;
 using MotionFramework.Resource;
 using MotionFramework.Network;
-using MotionFramework.Event;
 using MotionFramework.Utility;
 
 namespace MotionFramework.Patch
 {
-	internal class FsmDownloadWebFiles : IFsmNode
+	internal class FsmDownloadWebFiles : IFiniteStateNode
 	{
-		private ProcedureSystem _system;
+		private PatchCenter _center;
 		public string Name { private set; get; }
 
-		public FsmDownloadWebFiles(ProcedureSystem system)
+		public FsmDownloadWebFiles(PatchCenter center)
 		{
-			_system = system;
+			_center = center;
 			Name = EPatchStates.DownloadWebFiles.ToString();
 		}
-		void IFsmNode.OnEnter()
+		void IFiniteStateNode.OnEnter()
 		{
 			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.DownloadWebFiles);
 			AppEngine.Instance.StartCoroutine(Download());
 		}
-		void IFsmNode.OnUpdate()
+		void IFiniteStateNode.OnUpdate()
 		{
 		}
-		void IFsmNode.OnExit()
+		void IFiniteStateNode.OnExit()
 		{
 		}
-		void IFsmNode.OnHandleMessage(object msg)
+		void IFiniteStateNode.OnHandleMessage(object msg)
 		{
 		}
 
@@ -44,21 +43,21 @@ namespace MotionFramework.Patch
 			// TODO 检测磁盘空间不足
 
 			// 计算下载文件的总大小
-			int totalDownloadCount = PatchSystem.Instance.DownloadList.Count;
+			int totalDownloadCount = _center.DownloadList.Count;
 			long totalDownloadSizeKB = 0;
-			foreach (var element in PatchSystem.Instance.DownloadList)
+			foreach (var element in _center.DownloadList)
 			{
 				totalDownloadSizeKB += element.SizeKB;
 			}
 
 			// 开始下载列表里的所有资源
-			PatchHelper.Log(ELogType.Log, $"Begine download web files : {PatchSystem.Instance.DownloadList.Count}");
+			PatchHelper.Log(ELogType.Log, $"Begine download web files : {_center.DownloadList.Count}");
 			long currentDownloadSizeKB = 0;
 			int currentDownloadCount = 0;
-			foreach (var element in PatchSystem.Instance.DownloadList)
+			foreach (var element in _center.DownloadList)
 			{
 				// 注意：资源版本号只用于确定下载路径
-				string url = PatchSystem.Instance.GetWebDownloadURL(element.Version.ToString(), element.Name);
+				string url = _center.GetWebDownloadURL(element.Version.ToString(), element.Name);
 				string savePath = AssetPathHelper.MakePersistentLoadPath(element.Name);
 				element.SavePath = savePath;
 				PatchHelper.CreateFileDirectory(savePath);
@@ -83,7 +82,7 @@ namespace MotionFramework.Patch
 			}
 
 			// 验证下载文件的MD5
-			foreach (var element in PatchSystem.Instance.DownloadList)
+			foreach (var element in _center.DownloadList)
 			{
 				string md5 = HashUtility.FileMD5(element.SavePath);
 				if (md5 != element.MD5)
@@ -95,8 +94,8 @@ namespace MotionFramework.Patch
 			}
 
 			// 最后清空下载列表
-			PatchSystem.Instance.DownloadList.Clear();
-			_system.SwitchNext();
+			_center.DownloadList.Clear();
+			_center.SwitchNext();
 		}
 	}
 }

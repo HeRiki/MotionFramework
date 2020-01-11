@@ -73,16 +73,4 @@ namespace MotionFramework.Patch
 		DownloadOver,
 		#endregion
 	}
-
-	/// <summary>
-	/// 操作方式
-	/// </summary>
-	public enum EPatchOperation
-	{
-		BeginingRequestGameVersion,
-		BeginingDownloadWebFiles,
-		TryRequestGameVersion,
-		TryDownloadWebPatchManifest,
-		TryDownloadWebFiles,
-	}
 }

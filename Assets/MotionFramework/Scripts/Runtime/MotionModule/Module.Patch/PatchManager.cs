@@ -61,6 +61,7 @@ namespace MotionFramework.Patch
 			public string DefaultCDNServerIP;
 		}
 
+		private PatchCenter _patchCenter;
 		private bool _isRun = false;
 
 
@@ -70,15 +71,16 @@ namespace MotionFramework.Patch
 			if (createParam == null)
 				throw new Exception($"{nameof(PatchManager)} create param is invalid.");
 
-			PatchSystem.Instance.Initialize(createParam);
+			_patchCenter = new PatchCenter();
+			_patchCenter.Initialize(createParam);
 		}
 		void IMotionModule.OnUpdate()
 		{
-			PatchSystem.Instance.Update();
+			_patchCenter.Update();
 		}
 		void IMotionModule.OnGUI()
 		{
-			AppConsole.GUILable($"[{nameof(PatchManager)}] States : {PatchSystem.Instance.CurrentStates}");
+			ConsoleSystem.GUILable($"[{nameof(PatchManager)}] States : {_patchCenter.CurrentStates}");
 		}
 
 		/// <summary>
@@ -89,7 +91,7 @@ namespace MotionFramework.Patch
 			if(_isRun == false)
 			{
 				_isRun = true;
-				PatchSystem.Instance.Run();
+				_patchCenter.Run();
 			}
 		}
 
@@ -98,7 +100,7 @@ namespace MotionFramework.Patch
 		/// </summary>
 		public void FixClient()
 		{
-			PatchSystem.Instance.FixClient();
+			_patchCenter.FixClient();
 		}
 
 		/// <summary>
@@ -106,9 +108,9 @@ namespace MotionFramework.Patch
 		/// </summary>
 		public string GetAPPVersion()
 		{
-			if (PatchSystem.Instance.AppVersion == null)
+			if (_patchCenter.AppVersion == null)
 				return "0.0.0.0";
-			return PatchSystem.Instance.AppVersion.ToString();
+			return _patchCenter.AppVersion.ToString();
 		}
 
 		/// <summary>
@@ -116,9 +118,9 @@ namespace MotionFramework.Patch
 		/// </summary>
 		public string GetGameVersion()
 		{
-			if (PatchSystem.Instance.GameVersion == null)
+			if (_patchCenter.GameVersion == null)
 				return "0.0.0.0";
-			return PatchSystem.Instance.GameVersion.ToString();
+			return _patchCenter.GameVersion.ToString();
 		}
 
 		/// <summary>
@@ -126,7 +128,7 @@ namespace MotionFramework.Patch
 		/// </summary>
 		public void HandleEventMessage(IEventMessage msg)
 		{
-			PatchSystem.Instance.HandleEventMessage(msg);
+			_patchCenter.HandleEventMessage(msg);
 		}
 
 		/// <summary>
@@ -155,10 +157,10 @@ namespace MotionFramework.Patch
 		string IBundleServices.GetAssetBundleLoadPath(string manifestPath)
 		{
 			PatchManifest patchManifest;
-			if (PatchSystem.Instance.WebPatchManifest != null)
-				patchManifest = PatchSystem.Instance.WebPatchManifest;
+			if (_patchCenter.WebPatchManifest != null)
+				patchManifest = _patchCenter.WebPatchManifest;
 			else
-				patchManifest = PatchSystem.Instance.SandboxPatchManifest;
+				patchManifest = _patchCenter.SandboxPatchManifest;
 
 			// 注意：可能从APP内加载，也可能从沙盒内加载
 			PatchElement element;
@@ -166,7 +168,7 @@ namespace MotionFramework.Patch
 			{
 				// 先查询APP内的资源
 				PatchElement appElement;
-				if (PatchSystem.Instance.AppPatchManifest.Elements.TryGetValue(manifestPath, out appElement))
+				if (_patchCenter.AppPatchManifest.Elements.TryGetValue(manifestPath, out appElement))
 				{
 					if (appElement.MD5 == element.MD5)
 						return AssetPathHelper.MakeStreamingLoadPath(manifestPath);

@@ -5,34 +5,34 @@
 //--------------------------------------------------
 using System.Collections;
 using System.Collections.Generic;
-using MotionFramework.AI;
+using MotionFramework.FSM;
 using MotionFramework.Resource;
 using MotionFramework.Network;
 
 namespace MotionFramework.Patch
 {
-	internal class FsmParseAppPatchManifest : IFsmNode
+	internal class FsmParseAppPatchManifest : IFiniteStateNode
 	{
-		private ProcedureSystem _system;
+		private PatchCenter _center;
 		public string Name { private set; get; }
 
-		public FsmParseAppPatchManifest(ProcedureSystem system)
+		public FsmParseAppPatchManifest(PatchCenter center)
 		{
-			_system = system;
+			_center = center;
 			Name = EPatchStates.ParseAppPatchManifest.ToString();
 		}
-		void IFsmNode.OnEnter()
+		void IFiniteStateNode.OnEnter()
 		{
 			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.ParseAppPatchManifest);
 			AppEngine.Instance.StartCoroutine(DownLoad());
 		}
-		void IFsmNode.OnUpdate()
+		void IFiniteStateNode.OnUpdate()
 		{
 		}
-		void IFsmNode.OnExit()
+		void IFiniteStateNode.OnExit()
 		{
 		}
-		void IFsmNode.OnHandleMessage(object msg)
+		void IFiniteStateNode.OnHandleMessage(object msg)
 		{
 		}
 
@@ -47,9 +47,9 @@ namespace MotionFramework.Patch
 			if (downloader.States == EWebRequestStates.Success)
 			{
 				PatchHelper.Log(ELogType.Log, "Parse app patch manifest.");
-				PatchSystem.Instance.ParseAppPatchManifest(downloader.GetText());
+				_center.ParseAppPatchManifest(downloader.GetText());
 				downloader.Dispose();
-				_system.SwitchNext();
+				_center.SwitchNext();
 			}
 			else
 			{

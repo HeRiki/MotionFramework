@@ -5,32 +5,32 @@
 //--------------------------------------------------
 using System.Collections;
 using System.Collections.Generic;
-using MotionFramework.AI;
+using MotionFramework.FSM;
 
 namespace MotionFramework.Patch
 {
-	internal class FsmInitiationOver : IFsmNode
+	internal class FsmInitiationOver : IFiniteStateNode
 	{
-		private ProcedureSystem _system;
+		private PatchCenter _center;
 		public string Name { private set; get; }
 
-		public FsmInitiationOver(ProcedureSystem system)
+		public FsmInitiationOver(PatchCenter center)
 		{
-			_system = system;
+			_center = center;
 			Name = EPatchStates.InitiationOver.ToString();
 		}
-		void IFsmNode.OnEnter()
+		void IFiniteStateNode.OnEnter()
 		{
 			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.InitiationOver);
 		}
-		void IFsmNode.OnUpdate()
+		void IFiniteStateNode.OnUpdate()
 		{
 			// 初始化阶段结束之后，挂起流程系统
 		}
-		void IFsmNode.OnExit()
+		void IFiniteStateNode.OnExit()
 		{
 		}
-		void IFsmNode.OnHandleMessage(object msg)
+		void IFiniteStateNode.OnHandleMessage(object msg)
 		{
 		}
 	}

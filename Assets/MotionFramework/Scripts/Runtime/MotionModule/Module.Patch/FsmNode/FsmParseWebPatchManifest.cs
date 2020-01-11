@@ -5,41 +5,41 @@
 //--------------------------------------------------
 using System.Collections;
 using System.Collections.Generic;
-using MotionFramework.AI;
+using MotionFramework.FSM;
 using MotionFramework.Network;
 
 namespace MotionFramework.Patch
 {
-	internal class FsmParseWebPatchManifest : IFsmNode
+	internal class FsmParseWebPatchManifest : IFiniteStateNode
 	{
-		private ProcedureSystem _system;
+		private PatchCenter _center;
 		public string Name { private set; get; }
 
-		public FsmParseWebPatchManifest(ProcedureSystem system)
+		public FsmParseWebPatchManifest(PatchCenter center)
 		{
-			_system = system;
+			_center = center;
 			Name = EPatchStates.ParseWebPatchManifest.ToString();
 		}
-		void IFsmNode.OnEnter()
+		void IFiniteStateNode.OnEnter()
 		{
 			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.ParseWebPatchManifest);
 			AppEngine.Instance.StartCoroutine(Download());
 		}
-		void IFsmNode.OnUpdate()
+		void IFiniteStateNode.OnUpdate()
 		{
 		}
-		void IFsmNode.OnExit()
+		void IFiniteStateNode.OnExit()
 		{
 		}
-		void IFsmNode.OnHandleMessage(object msg)
+		void IFiniteStateNode.OnHandleMessage(object msg)
 		{
 		}
 
 		private IEnumerator Download()
 		{
 			// 从网络上解析最新的补丁清单
-			int newResourceVersion = PatchSystem.Instance.RequestedResourceVersion;
-			string url = PatchSystem.Instance.GetWebDownloadURL(newResourceVersion.ToString(), PatchDefine.PatchManifestFileName);
+			int newResourceVersion = _center.RequestedResourceVersion;
+			string url = _center.GetWebDownloadURL(newResourceVersion.ToString(), PatchDefine.PatchManifestFileName);
 			WebDataRequest download = new WebDataRequest(url);
 			yield return download.DownLoad();
 
@@ -52,9 +52,9 @@ namespace MotionFramework.Patch
 			}
 
 			PatchHelper.Log(ELogType.Log, $"Parse web patch manifest.");
-			PatchSystem.Instance.ParseWebPatchManifest(download.GetText());
+			_center.ParseWebPatchManifest(download.GetText());
 			download.Dispose();
-			_system.SwitchNext();
+			_center.SwitchNext();
 		}
 	}
 }

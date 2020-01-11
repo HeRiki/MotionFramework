@@ -5,32 +5,32 @@
 //--------------------------------------------------
 using System.Collections;
 using System.Collections.Generic;
-using MotionFramework.AI;
+using MotionFramework.FSM;
 
 namespace MotionFramework.Patch
 {
-	internal class FsmInitiationBegin : IFsmNode
+	internal class FsmInitiationBegin : IFiniteStateNode
 	{
-		private ProcedureSystem _system;
+		private PatchCenter _center;
 		public string Name { private set; get; }
 
-		public FsmInitiationBegin(ProcedureSystem system)
+		public FsmInitiationBegin(PatchCenter center)
 		{
-			_system = system;
+			_center = center;
 			Name = EPatchStates.InitiationBegin.ToString();
 		}
-		void IFsmNode.OnEnter()
+		void IFiniteStateNode.OnEnter()
 		{
 			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.InitiationBegin);
 		}
-		void IFsmNode.OnUpdate()
+		void IFiniteStateNode.OnUpdate()
 		{
-			_system.SwitchNext();
+			_center.SwitchNext();
 		}
-		void IFsmNode.OnExit()
+		void IFiniteStateNode.OnExit()
 		{
 		}
-		void IFsmNode.OnHandleMessage(object msg)
+		void IFiniteStateNode.OnHandleMessage(object msg)
 		{
 		}
 	}
