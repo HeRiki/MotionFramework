@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using MotionFramework.Console;
 
-namespace MotionFramework.AI
+namespace MotionFramework.FSM
 {
 	/// <summary>
 	/// 状态机管理器
@@ -22,7 +22,7 @@ namespace MotionFramework.AI
 			/// <summary>
 			/// 节点转换关系图，如果为NULL则不检测转换关系
 			/// </summary>
-			public FsmGraph Graph;
+			public FiniteStateGraph Graph;
 
 			/// <summary>
 			/// 入口节点
@@ -32,11 +32,11 @@ namespace MotionFramework.AI
 			/// <summary>
 			/// 节点列表
 			/// </summary>
-			public List<IFsmNode> Nodes;
+			public List<IFiniteStateNode> Nodes;
 		}
 
-		private readonly FsmSystem _system = new FsmSystem();
-		private FsmGraph _graph;
+		private readonly FiniteStateMachine _fsm = new FiniteStateMachine();
+		private FiniteStateGraph _graph;
 		private string _entryNode;
 		private bool _isRun = false;
 
@@ -54,16 +54,16 @@ namespace MotionFramework.AI
 			_entryNode = createParam.EntryNode;
 			for (int i = 0; i < createParam.Nodes.Count; i++)
 			{
-				_system.AddNode(createParam.Nodes[i]);
+				_fsm.AddNode(createParam.Nodes[i]);
 			}
 		}
 		void IMotionModule.OnUpdate()
 		{
-			_system.Update();
+			_fsm.Update();
 		}
 		void IMotionModule.OnGUI()
 		{
-			AppConsole.GUILable($"[{nameof(FsmManager)}] FSM : {_system.CurrentNodeName}");
+			ConsoleSystem.GUILable($"[{nameof(FsmManager)}] FSM : {_fsm.CurrentNodeName}");
 		}
 
 		/// <summary>
@@ -74,7 +74,7 @@ namespace MotionFramework.AI
 			if (_isRun == false)
 			{
 				_isRun = true;
-				_system.Run(_entryNode, _graph);
+				_fsm.Run(_entryNode, _graph);
 			}
 		}
 
@@ -83,7 +83,7 @@ namespace MotionFramework.AI
 		/// </summary>
 		public string CurrentNodeName
 		{
-			get { return _system.CurrentNodeName; }
+			get { return _fsm.CurrentNodeName; }
 		}
 
 		/// <summary>
@@ -91,7 +91,7 @@ namespace MotionFramework.AI
 		/// </summary>
 		public string PreviousNodeName
 		{
-			get { return _system.PreviousNodeName; }
+			get { return _fsm.PreviousNodeName; }
 		}
 
 		/// <summary>
@@ -99,7 +99,7 @@ namespace MotionFramework.AI
 		/// </summary>
 		public void Transition(string nodeName)
 		{
-			_system.Transition(nodeName);
+			_fsm.Transition(nodeName);
 		}
 
 		/// <summary>
@@ -107,7 +107,7 @@ namespace MotionFramework.AI
 		/// </summary>
 		public void HandleMessage(object msg)
 		{
-			_system.HandleMessage(msg);
+			_fsm.HandleMessage(msg);
 		}
 	}
 }
