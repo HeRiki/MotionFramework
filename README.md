@@ -15,7 +15,7 @@ C# && .Net4.x
 
 2. [日志](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/AppLog.md) **(AppLog)** - 框架内部统一的日志系统，外部业务逻辑通过监听可以接收日志信息。
 
-3. [控制台](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/AppConsole.md) **(AppConsole)** - 在游戏发布到手机等设备进行游戏的时候，通过内置的控制台可以方便查看调试信息。控制台内置了模块，日志，系统，资源系统，引用系统，游戏对象池等窗口。控制台还提供了开发者自定义窗口的接口。
+3. [控制台](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/AppConsole.md) **(AppConsole)** - 在游戏发布到手机等设备进行游戏的时候，通过内置的控制台可以方便查看调试信息。控制台内置了游戏模块，游戏日志，系统，资源系统，引用系统，游戏对象池等窗口。控制台还提供了开发者自定义窗口的接口。
 
 4. [事件系统](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/EventSystem.md) **(EventSystem)** - 业务逻辑订阅、抛出事件的机制。
 
@@ -27,7 +27,7 @@ C# && .Net4.x
 
 8. [补丁系统](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/PatchSystem.md) **(PatchSystem)** - 通用的补丁系统，可以实现资源热更。支持版本回退，支持区分审核版本，测试版本，线上版本，支持灰度更新。
 
-9. [网络系统](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/Network.md) **(Network)** - 异步IOCP SOCKET长连接方案，支持TCP和UDP协议。还支持同时建立多个通信通道，例如连接逻辑服务器的同时还可以连接聊天服务器。不同的通信频道支持使用不同的网络包解析器。我们可以定义支持ProtoBuf的网络包解析器，当然也可以使用自己的序列化和反序列化方案。
+9. [网络系统](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/Network.md) **(Network)** - 异步IOCP SOCKET长连接方案，支持TCP和UDP协议。还支持同时建立多个通信通道，例如连接逻辑服务器的同时还可以连接聊天服务器。不同的通信频道支持使用不同的网络包编码解码器。我们可以定义支持ProtoBuf的网络包编码解码器，当然也可以使用自己的序列化和反序列化方案。
 
 ## 模块介绍
 游戏开发过程中常用的管理器

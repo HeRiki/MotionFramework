@@ -26,14 +26,14 @@ public class Test
 	{
 		// 获取对象方式1
 		{
-			ReferClass refer = ReferenceSystem.Spawn(typeof(ReferClass)) as ReferClass;
-			ReferenceSystem.Release(refer)
+			ReferClass refer = ReferenceSystem.Instance.Spawn(typeof(ReferClass)) as ReferClass;
+			ReferenceSystem.Instance.Release(refer)
 		}
 
 		// 获取对象方式2
 		{
-			ReferClass refer = ReferenceSystem.Spawn<ReferClass>();
-			ReferenceSystem.Release(refer)
+			ReferClass refer = ReferenceSystem.Instance.Spawn<ReferClass>();
+			ReferenceSystem.Instance.Release(refer)
 		}
 	}
 }
@@ -52,10 +52,10 @@ public class Test
 	public void Start()
 	{
 		// 回收列表对象集合
-		ReferenceSystem.Release<ReferClass>(_referList)
+		ReferenceSystem.Instance.Release<ReferClass>(_referList)
 
 		// 回收数组对象集合
-		ReferenceSystem.Release<ReferClass>(_referArray)
+		ReferenceSystem.Instance.Release<ReferClass>(_referArray)
 	}
 }
 ```
