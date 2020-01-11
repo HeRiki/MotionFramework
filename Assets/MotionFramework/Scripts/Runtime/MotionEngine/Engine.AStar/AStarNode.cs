@@ -4,7 +4,7 @@
 // Licensed under the MIT license
 //--------------------------------------------------
 
-namespace MotionFramework.AI
+namespace MotionFramework.AStar
 {
 	public abstract class AStarNode
 	{

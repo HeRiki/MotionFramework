@@ -7,7 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace MotionFramework.AI
+namespace MotionFramework.AStar
 {
 	public interface IAStarGraph
 	{

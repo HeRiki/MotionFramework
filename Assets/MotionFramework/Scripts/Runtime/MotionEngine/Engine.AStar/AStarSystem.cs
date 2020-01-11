@@ -7,21 +7,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace MotionFramework.AI
+namespace MotionFramework.AStar
 {
-	public class AStarSystem
+	public static class AStarSystem
 	{
-		public readonly static AStarSystem Instance = new AStarSystem();
-
-		private readonly List<AStarNode> _openList = new List<AStarNode>(1000);
-		private readonly HashSet<AStarNode> _closedList = new HashSet<AStarNode>();
-
-		/// <summary>
-		/// 私有构造函数
-		/// </summary>
-		private AStarSystem()
-		{
-		}
+		private static readonly List<AStarNode> _openList = new List<AStarNode>(1000);
+		private static readonly HashSet<AStarNode> _closedList = new HashSet<AStarNode>();
 
 		/// <summary>
 		/// 获取一条路径
@@ -30,7 +21,7 @@ namespace MotionFramework.AI
 		/// <param name="from">起点</param>
 		/// <param name="to">终点</param>
 		/// <returns>如果没有找到路径返回NULL</returns>
-		public List<AStarNode> FindPath(IAStarGraph graph, AStarNode from, AStarNode to)
+		public static List<AStarNode> FindPath(IAStarGraph graph, AStarNode from, AStarNode to)
 		{
 			// 清空上次寻路数据
 			graph.ClearTemp();
@@ -81,7 +72,10 @@ namespace MotionFramework.AI
 			return null;
 		}
 
-		private List<AStarNode> RetracePath(AStarNode from, AStarNode to)
+		/// <summary>
+		/// 回溯路径
+		/// </summary>
+		private static List<AStarNode> RetracePath(AStarNode from, AStarNode to)
 		{
 			List<AStarNode> path = new List<AStarNode>();
 			AStarNode current = to;

@@ -5,7 +5,7 @@
 //--------------------------------------------------
 using UnityEngine;
 
-namespace MotionFramework.AI
+namespace MotionFramework.AStar
 {
 	/// <summary>
 	/// 启发式方法
