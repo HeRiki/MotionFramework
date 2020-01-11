@@ -13,16 +13,6 @@ using MotionFramework.Console;
 namespace MotionFramework.Network
 {
 	/// <summary>
-	/// 网络状态
-	/// </summary>
-	public enum ENetworkStates
-	{
-		Disconnect,
-		Connecting,
-		Connected,
-	}
-
-	/// <summary>
 	/// 网络管理器
 	/// </summary>
 	public sealed class NetworkManager : ModuleSingleton<NetworkManager>, IMotionModule
@@ -39,8 +29,8 @@ namespace MotionFramework.Network
 		}
 
 
-		private TServer _server;
-		private TChannel _channel;
+		private TcpServer _server;
+		private TcpChannel _channel;
 		private System.Type _packageCoderType;
 
 		// GUI显示数据
@@ -71,7 +61,7 @@ namespace MotionFramework.Network
 				throw new Exception($"{nameof(NetworkManager)} create param is invalid.");
 
 			_packageCoderType = createParam.PackageCoderType;
-			_server = new TServer();
+			_server = new TcpServer();
 			_server.Start(false, null);
 		}
 		void IMotionModule.OnUpdate()
@@ -106,10 +96,10 @@ namespace MotionFramework.Network
 		}
 		void IMotionModule.OnGUI()
 		{
-			AppConsole.GUILable($"[{nameof(NetworkManager)}] State : {State}");
-			AppConsole.GUILable($"[{nameof(NetworkManager)}] IP Host : {_host}");
-			AppConsole.GUILable($"[{nameof(NetworkManager)}] IP Port : {_port}");
-			AppConsole.GUILable($"[{nameof(NetworkManager)}] IP Type : {_family}");
+			ConsoleSystem.GUILable($"[{nameof(NetworkManager)}] State : {State}");
+			ConsoleSystem.GUILable($"[{nameof(NetworkManager)}] IP Host : {_host}");
+			ConsoleSystem.GUILable($"[{nameof(NetworkManager)}] IP Port : {_port}");
+			ConsoleSystem.GUILable($"[{nameof(NetworkManager)}] IP Type : {_family}");
 		}
 
 		/// <summary>
@@ -132,7 +122,7 @@ namespace MotionFramework.Network
 				_family = remote.AddressFamily;
 			}
 		}
-		private void OnConnectServer(TChannel channel, SocketError error)
+		private void OnConnectServer(TcpChannel channel, SocketError error)
 		{
 			AppLog.Log(ELogType.Log, $"Server connect result : {error}");
 			if (error == SocketError.Success)
