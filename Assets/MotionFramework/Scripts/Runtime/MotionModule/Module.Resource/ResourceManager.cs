@@ -42,19 +42,19 @@ namespace MotionFramework.Resource
 			if (createParam == null)
 				throw new Exception($"{nameof(ResourceManager)} create param is invalid.");
 
-			AssetSystem.Instance.Initialize(createParam.AssetRootPath, createParam.AssetSystemMode, createParam.BundleServices);
+			AssetSystem.Initialize(createParam.AssetRootPath, createParam.AssetSystemMode, createParam.BundleServices);
 		}
 		void IMotionModule.OnUpdate()
 		{
-			AssetSystem.Instance.UpdatePoll();
+			AssetSystem.UpdatePoll();
 		}
 		void IMotionModule.OnGUI()
 		{
-			int totalCount = AssetSystem.Instance.GetFileLoaderCount();
-			int failedCount = AssetSystem.Instance.GetFileLoaderFailedCount();
-			AppConsole.GUILable($"[{nameof(ResourceManager)}] AssetSystemMode : {AssetSystem.Instance.AssetSystemMode}");
-			AppConsole.GUILable($"[{nameof(ResourceManager)}] Loader total count : {totalCount}");
-			AppConsole.GUILable($"[{nameof(ResourceManager)}] Loader failed count : {failedCount}");
+			int totalCount = AssetSystem.GetFileLoaderCount();
+			int failedCount = AssetSystem.GetFileLoaderFailedCount();
+			ConsoleSystem.GUILable($"[{nameof(ResourceManager)}] AssetSystemMode : {AssetSystem.AssetSystemMode}");
+			ConsoleSystem.GUILable($"[{nameof(ResourceManager)}] Loader total count : {totalCount}");
+			ConsoleSystem.GUILable($"[{nameof(ResourceManager)}] Loader failed count : {failedCount}");
 		}
 
 		/// <summary>
@@ -62,7 +62,7 @@ namespace MotionFramework.Resource
 		/// </summary>
 		public void ForceReleaseAll()
 		{
-			AssetSystem.Instance.ForceReleaseAll();
+			AssetSystem.ForceReleaseAll();
 		}
 
 		/// <summary>
@@ -73,7 +73,7 @@ namespace MotionFramework.Resource
 		{
 			UnityEngine.Object result = null;
 
-			if (AssetSystem.Instance.AssetSystemMode == EAssetSystemMode.EditorMode)
+			if (AssetSystem.AssetSystemMode == EAssetSystemMode.EditorMode)
 			{
 #if UNITY_EDITOR
 				string loadPath = AssetPathHelper.FindDatabaseAssetPath(location);
@@ -84,20 +84,20 @@ namespace MotionFramework.Resource
 				throw new Exception("EAssetSystemMode.EditorMode only support unity editor.");
 #endif
 			}
-			else if (AssetSystem.Instance.AssetSystemMode == EAssetSystemMode.ResourcesMode)
+			else if (AssetSystem.AssetSystemMode == EAssetSystemMode.ResourcesMode)
 			{
 				result = Resources.Load<T>(location);
 				if (result == null)
 					AppLog.Log(ELogType.Error, $"Failed to load {location}");
 			}
-			else if (AssetSystem.Instance.AssetSystemMode == EAssetSystemMode.BundleMode)
+			else if (AssetSystem.AssetSystemMode == EAssetSystemMode.BundleMode)
 			{
-				if (AssetSystem.Instance.BundleServices == null)
+				if (AssetSystem.BundleServices == null)
 					throw new Exception($"{nameof(AssetSystem.BundleServices)} is null.");
 
 				string fileName = System.IO.Path.GetFileNameWithoutExtension(location);
 				string manifestPath = AssetPathHelper.ConvertLocationToManifestPath(location);
-				string loadPath = AssetSystem.Instance.BundleServices.GetAssetBundleLoadPath(manifestPath);
+				string loadPath = AssetSystem.BundleServices.GetAssetBundleLoadPath(manifestPath);
 				AssetBundle bundle = AssetBundle.LoadFromFile(loadPath);
 				if(bundle != null)
 					result = bundle.LoadAsset<T>(fileName);
@@ -108,7 +108,7 @@ namespace MotionFramework.Resource
 			}
 			else
 			{
-				throw new NotImplementedException($"{AssetSystem.Instance.AssetSystemMode}");
+				throw new NotImplementedException($"{AssetSystem.AssetSystemMode}");
 			}
 
 			return result as T;
