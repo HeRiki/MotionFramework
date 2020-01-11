@@ -16,13 +16,13 @@ namespace MotionFramework.Network
 	{
 		protected readonly ByteBuffer _sendBuffer = new ByteBuffer(NetworkDefine.ByteBufferSize);
 		protected readonly ByteBuffer _receiveBuffer = new ByteBuffer(NetworkDefine.ByteBufferSize);
-		public TChannel Channel { private set; get; }
+		public TcpChannel Channel { private set; get; }
 
 
 		/// <summary>
 		/// 初始化频道
 		/// </summary>
-		public void InitChannel(TChannel channel)
+		public void InitChannel(TcpChannel channel)
 		{
 			Channel = channel;
 		}

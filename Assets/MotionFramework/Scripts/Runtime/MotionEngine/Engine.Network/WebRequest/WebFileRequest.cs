@@ -10,7 +10,7 @@ using UnityEngine.Networking;
 
 namespace MotionFramework.Network
 {
-	public class WebFileRequest : WebRequest
+	public class WebFileRequest : WebRequestBase
 	{
 		/// <summary>
 		/// 文件存储路径

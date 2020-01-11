@@ -11,7 +11,7 @@ using System.Net.Sockets;
 
 namespace MotionFramework.Network
 {
-	public class TChannel : IDisposable
+	public class TcpChannel : IDisposable
 	{
 		#region Fields
 		private readonly SocketAsyncEventArgs _receiveArgs = new SocketAsyncEventArgs();
@@ -39,10 +39,6 @@ namespace MotionFramework.Network
 		public bool IsValid { get { return IOSocket != null; } }
 		#endregion
 
-
-		public TChannel()
-		{
-		}
 
 		/// <summary>
 		/// 初始化频道

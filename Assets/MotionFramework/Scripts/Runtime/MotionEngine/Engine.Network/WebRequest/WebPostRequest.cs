@@ -4,14 +4,13 @@
 // Licensed under the MIT license
 //--------------------------------------------------
 using System;
-using System.Text;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine.Networking;
 
 namespace MotionFramework.Network
 {
-	public class WebPostRequest : WebRequest
+	public class WebPostRequest : WebRequestBase
 	{
 		public string PostData { private set; get; }
 

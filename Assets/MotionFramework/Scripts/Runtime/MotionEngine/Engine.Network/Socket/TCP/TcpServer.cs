@@ -15,7 +15,7 @@ namespace MotionFramework.Network
 	/// <summary>
 	/// 异步IOCP SOCKET服务器
 	/// </summary>
-	public class TServer : IDisposable
+	public class TcpServer : IDisposable
 	{
 		#region Fields
 		/// <summary>
@@ -37,7 +37,7 @@ namespace MotionFramework.Network
 		/// <summary>
 		/// 通信频道列表
 		/// </summary>
-		private readonly List<TChannel> _allChannels = new List<TChannel>(9999);
+		private readonly List<TcpChannel> _allChannels = new List<TcpChannel>(9999);
 		#endregion
 
 		#region Properties
@@ -68,7 +68,7 @@ namespace MotionFramework.Network
 		/// </summary>
 		/// <param name="listenPort">监听的端口</param>
 		/// <param name="maxClient">最大的客户端数量</param>
-		public TServer(int listenPort, int maxClient)
+		public TcpServer(int listenPort, int maxClient)
 				: this(IPAddress.Any, listenPort, maxClient)
 		{
 		}
@@ -78,7 +78,7 @@ namespace MotionFramework.Network
 		/// </summary>
 		/// <param name="localEP">监听的终结点</param>
 		/// <param name="maxClient">最大客户端数量</param>
-		public TServer(IPEndPoint localEP, int maxClient)
+		public TcpServer(IPEndPoint localEP, int maxClient)
 			: this(localEP.Address, localEP.Port, maxClient)
 		{
 		}
@@ -86,12 +86,12 @@ namespace MotionFramework.Network
 		/// <summary>
 		/// 客户端 TCP服务器
 		/// </summary>
-		public TServer()
+		public TcpServer()
 				: this(IPAddress.Any, 0, 0)
 		{
 		}
 
-		private TServer(IPAddress address, int port, int maxClient)
+		private TcpServer(IPAddress address, int port, int maxClient)
 		{
 			Address = address;
 			Port = port;
@@ -161,7 +161,7 @@ namespace MotionFramework.Network
 		/// <summary>
 		/// 关闭频道并从列表里移除
 		/// </summary>
-		public void CloseChannel(TChannel channel)
+		public void CloseChannel(TcpChannel channel)
 		{
 			if (channel == null)
 				return;
@@ -243,7 +243,7 @@ namespace MotionFramework.Network
 			if (e.SocketError == SocketError.Success)
 			{
 				// 创建频道
-				TChannel channel = new TChannel();
+				TcpChannel channel = new TcpChannel();
 				channel.InitChannel(e.AcceptSocket, _listenerPackageCoderType);
 
 				// 加入到频道列表
@@ -265,7 +265,7 @@ namespace MotionFramework.Network
 		#region 主动连接
 		private class UserToken
 		{
-			public System.Action<TChannel, SocketError> Callback;
+			public System.Action<TcpChannel, SocketError> Callback;
 			public System.Type PackageCoderType;
 		}
 
@@ -275,7 +275,7 @@ namespace MotionFramework.Network
 		/// <param name="remote">IP终端</param>
 		/// <param name="callback">连接回调</param>
 		/// <param name="packageCoderType">网络包编码解码器类型</param>
-		public void ConnectAsync(IPEndPoint remote, System.Action<TChannel, SocketError> callback, System.Type packageCoderType)
+		public void ConnectAsync(IPEndPoint remote, System.Action<TcpChannel, SocketError> callback, System.Type packageCoderType)
 		{
 			if(IsRunning == false)
 			{
@@ -307,13 +307,13 @@ namespace MotionFramework.Network
 		/// </summary>
 		private void ProcessConnected(object obj)
 		{
-			TChannel channel = null;
+			TcpChannel channel = null;
 			SocketAsyncEventArgs e = obj as SocketAsyncEventArgs;
 			UserToken token = (UserToken)e.UserToken;
 			if (e.SocketError == SocketError.Success)
 			{
 				// 创建频道
-				channel = new TChannel();
+				channel = new TcpChannel();
 				channel.InitChannel(e.ConnectSocket, token.PackageCoderType);
 
 				// 加入到频道列表

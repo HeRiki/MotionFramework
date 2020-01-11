@@ -13,7 +13,7 @@ namespace MotionFramework.Network
 	/// 下载器基类
 	/// 说明：UnityWebRequest(UWR) supports reading streaming assets since 2017.1
 	/// </summary>
-	public abstract class WebRequest
+	public abstract class WebRequestBase
 	{
 		/// <summary>
 		/// 下载路径
@@ -57,7 +57,7 @@ namespace MotionFramework.Network
 		protected UnityWebRequest CacheRequest;
 
 
-		public WebRequest(string url)
+		public WebRequestBase(string url)
 		{
 			URL = url;
 			States = EWebRequestStates.None;

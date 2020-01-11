@@ -6,7 +6,7 @@
 
 namespace MotionFramework.Network
 {
-	public class NetworkDefine
+	internal class NetworkDefine
 	{
 		/// <summary>
 		/// 网络包体的最大长度
@@ -22,16 +22,5 @@ namespace MotionFramework.Network
 		/// 网络请求的超时时间（单位：秒）
 		/// </summary>
 		public const int WebRequestTimeout = 30;
-	}
-
-	/// <summary>
-	/// 网络请求状态
-	/// </summary>
-	public enum EWebRequestStates
-	{
-		None = 0,
-		Loading,
-		Success,
-		Fail,
 	}
 }
