@@ -29,7 +29,7 @@ namespace MotionFramework.Console
 			foreach (var pair in pools)
 			{
 				string content = $"[{pair.Value.Location}] CacheCount = {pair.Value.Count} SpwanCount = {pair.Value.SpawnCount}";
-				if (pair.Value.States == EAssetProviderStates.Failed)
+				if (pair.Value.States == EAssetProviderStates.Fail)
 					AppConsole.GUIRedLable(content);
 				else
 					AppConsole.GUILable(content);
