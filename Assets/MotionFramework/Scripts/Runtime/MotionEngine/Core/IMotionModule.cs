@@ -19,7 +19,7 @@ namespace MotionFramework
 		void OnUpdate();
 
 		/// <summary>
-		/// GUI绘制（可以显示模块的一些关键信息）
+		/// GUI绘制
 		/// </summary>
 		void OnGUI();
 	}

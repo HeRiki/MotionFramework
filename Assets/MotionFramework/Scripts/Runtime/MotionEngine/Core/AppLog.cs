@@ -6,17 +6,6 @@
 
 namespace MotionFramework
 {
-	/// <summary>
-	/// 日志类型
-	/// </summary>
-	public enum ELogType
-	{
-		Log,
-		Error,
-		Warning,
-		Exception,
-	}
-
 	public static class AppLog
 	{
 		private static System.Action<ELogType, string> _callback;

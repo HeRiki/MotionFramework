@@ -12,11 +12,6 @@ namespace MotionFramework
 {
 	public class AppEngine : IMotionEngine
 	{
-		public static readonly AppEngine Instance = new AppEngine();
-
-		/// <summary>
-		/// 模块封装类
-		/// </summary>
 		private class ModuleWrapper
 		{
 			public int Priority { private set; get; }
@@ -29,16 +24,53 @@ namespace MotionFramework
 			}
 		}
 
+		public static readonly AppEngine Instance = new AppEngine();
+
 		private readonly List<ModuleWrapper> _coms = new List<ModuleWrapper>(100);
 		private MonoBehaviour _behaviour;
 		private bool _isDirty = false;
 
 
-		/// <summary>
-		/// 私有构造函数
-		/// </summary>
 		private AppEngine()
 		{
+		}
+
+		void IMotionEngine.Initialize(MonoBehaviour behaviour)
+		{
+			if (_behaviour != null)
+				throw new Exception($"{nameof(AppEngine)} is already initialized.");
+
+			_behaviour = behaviour;
+		}
+		void IMotionEngine.OnUpdate()
+		{
+			// 如果有新模块需要重新排序
+			if (_isDirty)
+			{
+				_isDirty = false;
+				_coms.Sort((left, right) =>
+				{
+					if (left.Priority > right.Priority)
+						return -1;
+					else if (left.Priority == right.Priority)
+						return 0;
+					else
+						return 1;
+				});
+			}
+
+			// 轮询所有模块
+			for (int i = 0; i < _coms.Count; i++)
+			{
+				_coms[i].Module.OnUpdate();
+			}
+		}
+		void IMotionEngine.OnGUI()
+		{
+			for (int i = 0; i < _coms.Count; i++)
+			{
+				_coms[i].Module.OnGUI();
+			}
 		}
 
 		/// <summary>
@@ -123,44 +155,6 @@ namespace MotionFramework
 					minPriority = _coms[i].Priority;
 			}
 			return minPriority; //小于等于零
-		}
-
-		void IMotionEngine.Initialize(MonoBehaviour behaviour)
-		{
-			if (_behaviour != null)
-				throw new Exception($"{nameof(AppEngine)} is already initialized.");
-
-			_behaviour = behaviour;
-		}
-		void IMotionEngine.OnUpdate()
-		{
-			// 如果有新模块需要重新排序
-			if (_isDirty)
-			{
-				_isDirty = false;
-				_coms.Sort((left, right) =>
-				{
-					if (left.Priority > right.Priority)
-						return -1;
-					else if (left.Priority == right.Priority)
-						return 0;
-					else
-						return 1;
-				});
-			}
-
-			// 轮询所有模块
-			for (int i = 0; i < _coms.Count; i++)
-			{
-				_coms[i].Module.OnUpdate();
-			}
-		}
-		void IMotionEngine.OnGUI()
-		{
-			for (int i = 0; i < _coms.Count; i++)
-			{
-				_coms[i].Module.OnGUI();
-			}
 		}
 
 		#region 协程相关
