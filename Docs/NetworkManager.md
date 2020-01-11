@@ -5,7 +5,10 @@
 public void Start()
 {
 	// 创建模块
-	AppEngine.Instance.CreateModule<NetworkManager>();
+	// 注意：ProtoPackageCoder是自定义的网络包编码解码器
+	var createParam = new NetworkManager.CreateParameters();
+	createParam.PackageCoderType = typeof(ProtoPackageCoder);
+	AppEngine.Instance.CreateModule<NetworkManager>(createParam);
 }
 ```
 
@@ -17,15 +20,19 @@ public class Test
 {
 	public void Start()
 	{
-		// 注意：ProtoMessagePacker是我们自定义的网络包编码解码器
-		NetworkManager.Instance.ConnectServer("127.0.0.1", 10002, typeof(ProtoPackageCoder));
+		EventManager.Instance.AddListener<NetworkEventMessageDefine.BeginConnect>(OnHandleEventMessage);
+		EventManager.Instance.AddListener<NetworkEventMessageDefine.ConnectSuccess>(OnHandleEventMessage);
+		EventManager.Instance.AddListener<NetworkEventMessageDefine.ConnectFail>(OnHandleEventMessage);
+		EventManager.Instance.AddListener<NetworkEventMessageDefine.Disconnect>(OnHandleEventMessage);
+
+		NetworkManager.Instance.ConnectServer("127.0.0.1", 10002);
 		NetworkManager.Instance.MonoPackageCallback += OnHandleMonoPackage;
 	}
 
-	public void Send()
+	private void OnHandleEventMessage(IEventMessage msg)
 	{
-		// 在网络连接成功之后可以发送消息
-		if(NetworkManager.Instance.State == ENetworkStates.Connected)
+		// 当服务器连接成功
+		if(msg is NetworkEventMessageDefine.ConnectSuccess)
 		{
 			C2R_Login msg = new C2R_Login();
 			msg.Account = "test";
