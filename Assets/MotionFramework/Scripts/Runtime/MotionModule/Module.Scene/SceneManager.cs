@@ -28,8 +28,8 @@ namespace MotionFramework.Scene
 		void IMotionModule.OnGUI()
 		{
 			string mainSceneName = _mainScene == null ? string.Empty : _mainScene.Location;
-			AppConsole.GUILable($"[{nameof(SceneManager)}] Main scene : {mainSceneName}");
-			AppConsole.GUILable($"[{nameof(SceneManager)}] Addition scene count : {_additionScenes.Count}");
+			ConsoleSystem.GUILable($"[{nameof(SceneManager)}] Main scene : {mainSceneName}");
+			ConsoleSystem.GUILable($"[{nameof(SceneManager)}] Addition scene count : {_additionScenes.Count}");
 		}
 
 		/// <summary>
