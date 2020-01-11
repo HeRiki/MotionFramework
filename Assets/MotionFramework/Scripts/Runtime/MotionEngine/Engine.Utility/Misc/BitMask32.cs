@@ -5,7 +5,7 @@
 //--------------------------------------------------
 using System;
 
-namespace MotionFramework
+namespace MotionFramework.Utility
 {
     public struct BitMask32
     {

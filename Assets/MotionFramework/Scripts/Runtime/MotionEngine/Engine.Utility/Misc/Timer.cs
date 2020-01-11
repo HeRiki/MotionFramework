@@ -4,7 +4,7 @@
 // Licensed under the MIT license
 //--------------------------------------------------
 
-namespace MotionFramework
+namespace MotionFramework.Utility
 {
 	/// <summary>
 	/// 计时器基类
