@@ -19,7 +19,6 @@ namespace MotionFramework
 		/// </summary>
 		private class ModuleWrapper
 		{
-			public bool IsStart = false;
 			public int Priority { private set; get; }
 			public IMotionModule Module { private set; get; }
 
@@ -36,7 +35,7 @@ namespace MotionFramework
 
 
 		/// <summary>
-		/// 构造函数
+		/// 私有构造函数
 		/// </summary>
 		private AppEngine()
 		{
@@ -47,7 +46,7 @@ namespace MotionFramework
 		/// </summary>
 		public bool Contains(System.Type moduleType)
 		{
-			for(int i=0; i< _coms.Count; i++)
+			for (int i = 0; i < _coms.Count; i++)
 			{
 				if (_coms[i].Module.GetType() == moduleType)
 					return true;
@@ -89,7 +88,7 @@ namespace MotionFramework
 			AppLog.Log(ELogType.Log, $"Create game module : {typeof(T)}");
 			T module = Activator.CreateInstance<T>();
 			ModuleWrapper wrapper = new ModuleWrapper(module, priority);
-			wrapper.Module.OnCreate(createParam);			
+			wrapper.Module.OnCreate(createParam);
 			_coms.Add(wrapper);
 			_isDirty = true;
 			return module;
@@ -153,14 +152,7 @@ namespace MotionFramework
 			// 轮询所有模块
 			for (int i = 0; i < _coms.Count; i++)
 			{
-				ModuleWrapper wrapper = _coms[i];
-				if (wrapper.IsStart == false)
-				{
-					AppLog.Log(ELogType.Log, $"{wrapper.Module.GetType()} is start.");
-					wrapper.IsStart = true;
-					wrapper.Module.OnStart();
-				}
-				wrapper.Module.OnUpdate();
+				_coms[i].Module.OnUpdate();
 			}
 		}
 		void IMotionEngine.OnGUI()

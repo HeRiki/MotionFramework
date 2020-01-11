@@ -11,6 +11,6 @@ namespace MotionFramework
 	{
 		void Initialize(MonoBehaviour behaviour);
 		void OnUpdate();
-		void OnGUI();
+		void OnGUI();	
 	}
 }
