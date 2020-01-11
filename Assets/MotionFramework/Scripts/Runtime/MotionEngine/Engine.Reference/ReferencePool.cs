@@ -18,6 +18,19 @@ namespace MotionFramework.Reference
 		/// </summary>
 		public Type ClassType { private set; get; }
 
+		/// <summary>
+		/// 内部缓存总数
+		/// </summary>
+		public int Count
+		{
+			get { return _pool.Count; }
+		}
+
+		/// <summary>
+		/// 外部使用总数
+		/// </summary>
+		public int SpawnCount { private set; get; }
+
 
 		public ReferencePool(Type type, int capacity)
 		{
@@ -31,19 +44,6 @@ namespace MotionFramework.Reference
 			if (temp == null)
 				throw new Exception($"{type.Name} need to inherit form IReference");
 		}
-
-		/// <summary>
-		/// 内部缓存总数
-		/// </summary>
-		public int Count
-		{
-			get { return _pool.Count; }
-		}
-
-		/// <summary>
-		/// 外部使用总数
-		/// </summary>
-		public int SpawnCount { private set; get; }
 
 		/// <summary>
 		/// 申请引用对象

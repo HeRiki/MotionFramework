@@ -10,23 +10,21 @@ using System.Collections.Generic;
 namespace MotionFramework.Reference
 {
 	/// <summary>
-	/// 引用系统
+	/// 引用池
 	/// </summary>
-	public class ReferenceSystem
+	public static class ReferenceSystem
 	{
-		public readonly static ReferenceSystem Instance = new ReferenceSystem();
-
-		private readonly Dictionary<Type, ReferencePool> _pools = new Dictionary<Type, ReferencePool>();
+		private static readonly Dictionary<Type, ReferencePool> _pools = new Dictionary<Type, ReferencePool>();
 
 		/// <summary>
 		/// 对象池初始容量
 		/// </summary>
-		public int InitCapacity { get; set; } = 100;
+		public static int InitCapacity { get; set; } = 100;
 
 		/// <summary>
 		/// 对象池的数量
 		/// </summary>
-		public int Count
+		public static int Count
 		{
 			get
 			{
@@ -36,16 +34,9 @@ namespace MotionFramework.Reference
 
 
 		/// <summary>
-		/// 私有构造函数
-		/// </summary>
-		private ReferenceSystem()
-		{
-		}
-
-		/// <summary>
 		/// 清除所有对象池
 		/// </summary>
-		public void ClearAll()
+		public static void ClearAll()
 		{
 			foreach (KeyValuePair<Type, ReferencePool> pair in _pools)
 			{
@@ -57,7 +48,7 @@ namespace MotionFramework.Reference
 		/// <summary>
 		/// 申请引用对象
 		/// </summary>
-		public IReference Spawn(Type type)
+		public static IReference Spawn(Type type)
 		{
 			if (_pools.ContainsKey(type) == false)
 			{
@@ -69,7 +60,7 @@ namespace MotionFramework.Reference
 		/// <summary>
 		/// 申请引用对象
 		/// </summary>
-		public T Spawn<T>() where T : class, IReference, new()
+		public static T Spawn<T>() where T : class, IReference, new()
 		{
 			Type type = typeof(T);
 			return Spawn(type) as T;
@@ -78,7 +69,7 @@ namespace MotionFramework.Reference
 		/// <summary>
 		/// 回收引用对象
 		/// </summary>
-		public void Release(IReference item)
+		public static void Release(IReference item)
 		{
 			Type type = item.GetType();
 			if (_pools.ContainsKey(type) == false)
@@ -91,7 +82,7 @@ namespace MotionFramework.Reference
 		/// <summary>
 		/// 批量回收列表集合
 		/// </summary>
-		public void Release<T>(List<T> items) where T : class, IReference, new()
+		public static void Release<T>(List<T> items) where T : class, IReference, new()
 		{
 			Type type = typeof(T);
 			if (_pools.ContainsKey(type) == false)
@@ -108,7 +99,7 @@ namespace MotionFramework.Reference
 		/// <summary>
 		/// 批量回收数组集合
 		/// </summary>
-		public void Release<T>(T[] items) where T : class, IReference, new()
+		public static void Release<T>(T[] items) where T : class, IReference, new()
 		{
 			Type type = typeof(T);
 			if (_pools.ContainsKey(type) == false)
@@ -123,7 +114,7 @@ namespace MotionFramework.Reference
 		}
 
 		#region 调试专属方法
-		internal Dictionary<Type, ReferencePool> GetAllPools
+		internal static Dictionary<Type, ReferencePool> GetAllPools
 		{
 			get { return _pools; }
 		}
