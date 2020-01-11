@@ -52,7 +52,7 @@ namespace MotionFramework.Network
 			IOSocket = socket;
 			IOSocket.NoDelay = true;
 
-			// 创建解析器
+			// 创建编码解码器
 			_packageCoder = (NetPackageCoder)Activator.CreateInstance(packageCoderType);
 			_packageCoder.InitChannel(this);
 

@@ -9,6 +9,9 @@ using System.Collections.Generic;
 
 namespace MotionFramework.Network
 {
+	/// <summary>
+	/// 默认的网络包编码解码器
+	/// </summary>
 	public abstract class DefaultPackageCoder : NetPackageCoder
 	{
 		/// <summary>

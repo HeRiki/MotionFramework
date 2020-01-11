@@ -19,9 +19,9 @@ namespace MotionFramework.Network
 	{
 		#region Fields
 		/// <summary>
-		/// 监听频道使用的网络包解析器类型
+		/// 监听频道使用的网络包编码解码器类型
 		/// </summary>
-		private Type _listenerPackageParseType;
+		private Type _listenerPackageCoderType;
 
 		/// <summary>
 		/// 监听Socket，用于接受客户端的连接请求
@@ -103,8 +103,8 @@ namespace MotionFramework.Network
 		/// 开始网络服务
 		/// </summary>
 		/// <param name="openListen">是否开启监听</param>
-		/// <param name="listenerPackageParseType">监听频道使用的网络包解析器类型</param>
-		public void Start(bool openListen, Type listenerPackageParseType)
+		/// <param name="listenerPackageCoderType">监听频道使用的网络包编码解码器类型</param>
+		public void Start(bool openListen, Type listenerPackageCoderType)
 		{
 			if (IsRunning)
 				return;
@@ -112,7 +112,7 @@ namespace MotionFramework.Network
 			IsRunning = true;
 
 			// 解析器类型
-			_listenerPackageParseType = listenerPackageParseType;
+			_listenerPackageCoderType = listenerPackageCoderType;
 
 			// 如果需要开启监听
 			if(openListen)
@@ -244,7 +244,7 @@ namespace MotionFramework.Network
 			{
 				// 创建频道
 				TChannel channel = new TChannel();
-				channel.InitChannel(e.AcceptSocket, _listenerPackageParseType);
+				channel.InitChannel(e.AcceptSocket, _listenerPackageCoderType);
 
 				// 加入到频道列表
 				lock (_allChannels)
@@ -266,7 +266,7 @@ namespace MotionFramework.Network
 		private class UserToken
 		{
 			public System.Action<TChannel, SocketError> Callback;
-			public System.Type PackageParseType;
+			public System.Type PackageCoderType;
 		}
 
 		/// <summary>
@@ -274,8 +274,8 @@ namespace MotionFramework.Network
 		/// </summary>
 		/// <param name="remote">IP终端</param>
 		/// <param name="callback">连接回调</param>
-		/// <param name="packageParseType">网络包解析器</param>
-		public void ConnectAsync(IPEndPoint remote, System.Action<TChannel, SocketError> callback, System.Type packageParseType)
+		/// <param name="packageCoderType">网络包编码解码器类型</param>
+		public void ConnectAsync(IPEndPoint remote, System.Action<TChannel, SocketError> callback, System.Type packageCoderType)
 		{
 			if(IsRunning == false)
 			{
@@ -286,7 +286,7 @@ namespace MotionFramework.Network
 			UserToken token = new UserToken()
 			{
 				Callback = callback,
-				PackageParseType = packageParseType,
+				PackageCoderType = packageCoderType,
 			};
 
 			SocketAsyncEventArgs args = new SocketAsyncEventArgs();
@@ -314,7 +314,7 @@ namespace MotionFramework.Network
 			{
 				// 创建频道
 				channel = new TChannel();
-				channel.InitChannel(e.ConnectSocket, token.PackageParseType);
+				channel.InitChannel(e.ConnectSocket, token.PackageCoderType);
 
 				// 加入到频道列表
 				lock (_allChannels)
