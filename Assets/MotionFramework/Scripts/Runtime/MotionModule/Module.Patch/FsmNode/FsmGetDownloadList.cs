@@ -112,7 +112,7 @@ namespace MotionFramework.Patch
 				{
 					totalDownloadSizeKB += element.SizeKB;
 				}
-				PatchEventDispatcher.SendFoundUpdateFiles(totalDownloadCount, totalDownloadSizeKB);
+				PatchEventDispatcher.SendFoundUpdateFilesMsg(totalDownloadCount, totalDownloadSizeKB);
 			}
 		}
 	}

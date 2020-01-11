@@ -45,7 +45,7 @@ namespace MotionFramework.Patch
 			WebFileRequest download = new WebFileRequest(url, savePath);
 			yield return download.DownLoad();
 
-			if (download.States != EWebRequestStates.Succeed)
+			if (download.States != EWebRequestStates.Success)
 			{
 				download.Dispose();
 				PatchEventDispatcher.SendWebPatchManifestDownloadFailedMsg();

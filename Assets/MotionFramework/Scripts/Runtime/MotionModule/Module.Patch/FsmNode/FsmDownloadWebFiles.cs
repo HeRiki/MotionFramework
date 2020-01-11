@@ -69,7 +69,7 @@ namespace MotionFramework.Patch
 				PatchHelper.Log(ELogType.Log, $"Web file is download : {savePath}");
 
 				// 检测是否下载失败
-				if (download.States != EWebRequestStates.Succeed)
+				if (download.States != EWebRequestStates.Success)
 				{
 					PatchEventDispatcher.SendWebFileDownloadFailedMsg(url, element.Name);
 					yield break;

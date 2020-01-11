@@ -22,7 +22,7 @@ namespace MotionFramework.Patch
 			msg.InstallURL = installURL;
 			EventManager.Instance.SendMessage(msg);
 		}
-		public static void SendFoundUpdateFiles(int totalCount, long totalSizeKB)
+		public static void SendFoundUpdateFilesMsg(int totalCount, long totalSizeKB)
 		{
 			PatchEventMessageDefine.FoundUpdateFiles msg = new PatchEventMessageDefine.FoundUpdateFiles();
 			msg.TotalCount = totalCount;

@@ -46,7 +46,7 @@ namespace MotionFramework.Patch
 				yield return download.DownLoad();
 
 				//Check fatal
-				if (download.States != EWebRequestStates.Succeed)
+				if (download.States != EWebRequestStates.Success)
 				{
 					download.Dispose();
 					PatchEventDispatcher.SendGameVersionRequestFailedMsg();

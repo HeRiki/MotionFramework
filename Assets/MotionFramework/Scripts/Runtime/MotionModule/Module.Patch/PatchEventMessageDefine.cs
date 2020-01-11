@@ -9,17 +9,17 @@ namespace MotionFramework.Patch
 {
 	public class PatchEventMessageDefine
 	{
-		#region PatchWindowDispatchEvent
 		/// <summary>
-		/// 开始请求游戏版本号
+		/// 操作事件
 		/// </summary>
 		public class OperationEvent : IEventMessage
 		{
+			/// <summary>
+			/// 操作方式
+			/// </summary>
 			public EPatchOperation operation;
 		}
-		#endregion
 
-		#region PatchSystemDispatchEvent
 		/// <summary>
 		/// 补丁流程状态改变
 		/// </summary>
@@ -87,6 +87,5 @@ namespace MotionFramework.Patch
 		{
 			public string Name;
 		}
-		#endregion
 	}
 }

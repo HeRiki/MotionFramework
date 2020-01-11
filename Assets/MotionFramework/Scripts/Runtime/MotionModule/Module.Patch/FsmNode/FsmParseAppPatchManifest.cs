@@ -44,7 +44,7 @@ namespace MotionFramework.Patch
 			WebDataRequest downloader = new WebDataRequest(url);
 			yield return downloader.DownLoad();
 
-			if (downloader.States == EWebRequestStates.Succeed)
+			if (downloader.States == EWebRequestStates.Success)
 			{
 				PatchHelper.Log(ELogType.Log, "Parse app patch manifest.");
 				PatchSystem.Instance.ParseAppPatchManifest(downloader.GetText());
