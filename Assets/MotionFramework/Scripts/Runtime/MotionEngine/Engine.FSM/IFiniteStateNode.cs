@@ -4,9 +4,9 @@
 // Licensed under the MIT license
 //--------------------------------------------------
 
-namespace MotionFramework.AI
+namespace MotionFramework.FSM
 {
-	public interface IFsmNode
+	public interface IFiniteStateNode
 	{
 		/// <summary>
 		/// 节点名称

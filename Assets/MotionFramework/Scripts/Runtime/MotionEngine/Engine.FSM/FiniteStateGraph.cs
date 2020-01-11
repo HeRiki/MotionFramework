@@ -7,12 +7,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace MotionFramework.AI
+namespace MotionFramework.FSM
 {
 	/// <summary>
 	/// 转换关系图
 	/// </summary>
-	public class FsmGraph
+	public class FiniteStateGraph
 	{
 		private readonly Dictionary<string, List<string>> _graph = new Dictionary<string, List<string>>();
 		private readonly string _globalNode;
@@ -21,7 +21,7 @@ namespace MotionFramework.AI
 		/// 构造函数
 		/// </summary>
 		/// <param name="globalNode">全局节点不受转换关系的限制</param>
-		public FsmGraph(string globalNode)
+		public FiniteStateGraph(string globalNode)
 		{
 			_globalNode = globalNode;
 		}

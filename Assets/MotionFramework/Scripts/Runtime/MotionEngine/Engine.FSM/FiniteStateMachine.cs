@@ -7,17 +7,17 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 
-namespace MotionFramework.AI
+namespace MotionFramework.FSM
 {
 	/// <summary>
 	/// 有限状态机
 	/// </summary>
-	public class FsmSystem
+	public class FiniteStateMachine
 	{
-		private readonly List<IFsmNode> _nodes = new List<IFsmNode>();
-		private IFsmNode _curNode;
-		private IFsmNode _preNode;
-		private FsmGraph _graph;
+		private readonly List<IFiniteStateNode> _nodes = new List<IFiniteStateNode>();
+		private IFiniteStateNode _curNode;
+		private IFiniteStateNode _preNode;
+		private FiniteStateGraph _graph;
 
 		/// <summary>
 		/// 当前运行的节点名称
@@ -38,7 +38,7 @@ namespace MotionFramework.AI
 		/// <summary>
 		/// 加入一个节点
 		/// </summary>
-		public void AddNode(IFsmNode node)
+		public void AddNode(IFiniteStateNode node)
 		{
 			if (node == null)
 				throw new ArgumentNullException();
@@ -58,7 +58,7 @@ namespace MotionFramework.AI
 		/// </summary>
 		/// <param name="entryNode">入口节点</param>
 		/// <param name="graph">节点转换关系图，如果为NULL则不检测转换关系</param>
-		public void Run(string entryNode, FsmGraph graph)
+		public void Run(string entryNode, FiniteStateGraph graph)
 		{
 			_graph = graph;
 			_curNode = GetNode(entryNode);
@@ -87,7 +87,7 @@ namespace MotionFramework.AI
 			if (string.IsNullOrEmpty(nodeName))
 				throw new ArgumentNullException();
 
-			IFsmNode node = GetNode(nodeName);
+			IFiniteStateNode node = GetNode(nodeName);
 			if (node == null)
 			{
 				AppLog.Log(ELogType.Error, $"Can not found node {nodeName}");
@@ -137,7 +137,7 @@ namespace MotionFramework.AI
 			}
 			return false;
 		}
-		private IFsmNode GetNode(string nodeName)
+		private IFiniteStateNode GetNode(string nodeName)
 		{
 			for (int i = 0; i < _nodes.Count; i++)
 			{

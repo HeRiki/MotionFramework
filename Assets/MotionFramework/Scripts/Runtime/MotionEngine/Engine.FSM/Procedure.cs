@@ -5,15 +5,15 @@
 //--------------------------------------------------
 using System.Collections.Generic;
 
-namespace MotionFramework.AI
+namespace MotionFramework.FSM
 {
 	/// <summary>
-	/// 流程系统
+	/// 流程
 	/// </summary>
-	public class ProcedureSystem
+	public class Procedure
 	{
 		private readonly List<string> _nodeNames = new List<string>();
-		private readonly FsmSystem _system = new FsmSystem();
+		private readonly FiniteStateMachine _fsm = new FiniteStateMachine();
 
 		/// <summary>
 		/// 当前运行的节点名称
@@ -22,7 +22,7 @@ namespace MotionFramework.AI
 		{
 			get
 			{
-				return _system.CurrentNodeName;
+				return _fsm.CurrentNodeName;
 			}
 		}
 
@@ -33,7 +33,7 @@ namespace MotionFramework.AI
 		{
 			get
 			{
-				return _system.PreviousNodeName;
+				return _fsm.PreviousNodeName;
 			}
 		}
 
@@ -41,9 +41,9 @@ namespace MotionFramework.AI
 		/// 添加一个流程节点
 		/// 注意：流程节点会按照添加的先后顺序执行
 		/// </summary>
-		public void AddNode(IFsmNode node)
+		public void AddNode(IFiniteStateNode node)
 		{
-			_system.AddNode(node);
+			_fsm.AddNode(node);
 			if (_nodeNames.Contains(node.Name) == false)
 				_nodeNames.Add(node.Name);
 		}
@@ -54,7 +54,7 @@ namespace MotionFramework.AI
 		public void Run()
 		{
 			if (_nodeNames.Count > 0)
-				_system.Run(_nodeNames[0], null);
+				_fsm.Run(_nodeNames[0], null);
 			else
 				AppLog.Log(ELogType.Warning, "Procedure system dont has any node.");
 		}
@@ -64,7 +64,7 @@ namespace MotionFramework.AI
 		/// </summary>
 		public void Update()
 		{
-			_system.Update();
+			_fsm.Update();
 		}
 
 		/// <summary>
@@ -72,7 +72,7 @@ namespace MotionFramework.AI
 		/// </summary>
 		public void Switch(string nodeName)
 		{
-			_system.Transition(nodeName);
+			_fsm.Transition(nodeName);
 		}
 
 		/// <summary>
@@ -80,10 +80,10 @@ namespace MotionFramework.AI
 		/// </summary>
 		public void SwitchNext()
 		{
-			int index = _nodeNames.IndexOf(_system.CurrentNodeName);
+			int index = _nodeNames.IndexOf(_fsm.CurrentNodeName);
 			if (index >= _nodeNames.Count - 1)
 			{
-				AppLog.Log(ELogType.Warning, $"Current node {_system.CurrentNodeName} is end node.");
+				AppLog.Log(ELogType.Warning, $"Current node {_fsm.CurrentNodeName} is end node.");
 			}
 			else
 			{
@@ -96,10 +96,10 @@ namespace MotionFramework.AI
 		/// </summary>
 		public void SwitchLast()
 		{
-			int index = _nodeNames.IndexOf(_system.CurrentNodeName);
+			int index = _nodeNames.IndexOf(_fsm.CurrentNodeName);
 			if (index <= 0)
 			{
-				AppLog.Log(ELogType.Warning, $"Current node {_system.CurrentNodeName} is begin node.");
+				AppLog.Log(ELogType.Warning, $"Current node {_fsm.CurrentNodeName} is begin node.");
 			}
 			else
 			{
