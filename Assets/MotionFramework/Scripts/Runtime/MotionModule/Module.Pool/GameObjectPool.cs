@@ -53,7 +53,7 @@ namespace MotionFramework.Pool
 		/// <summary>
 		/// 当前的加载状态
 		/// </summary>
-		public EAssetProviderStates States
+		public EAssetStates States
 		{
 			get
 			{

@@ -40,7 +40,7 @@ namespace MotionFramework.Pool
 		{
 			if (_pools.ContainsKey(location))
 			{
-				AppLog.Log(ELogType.Warning, $"Asset is already existed : {location}");
+				MotionLog.Log(ELogType.Warning, $"Asset is already existed : {location}");
 				return;
 			}
 			CreatePoolInternal(location, capacity);
@@ -125,7 +125,7 @@ namespace MotionFramework.Pool
 			}
 			else
 			{
-				AppLog.Log(ELogType.Error, $"GameObjectPool does not exist : {location}");
+				MotionLog.Log(ELogType.Error, $"GameObjectPool does not exist : {location}");
 			}
 		}
 
