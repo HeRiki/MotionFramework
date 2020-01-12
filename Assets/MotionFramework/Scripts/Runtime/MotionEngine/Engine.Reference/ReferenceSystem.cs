@@ -10,7 +10,7 @@ using System.Collections.Generic;
 namespace MotionFramework.Reference
 {
 	/// <summary>
-	/// 引用池
+	/// 引用系统
 	/// </summary>
 	public static class ReferenceSystem
 	{
