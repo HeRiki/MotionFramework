@@ -79,7 +79,7 @@ namespace MotionFramework.Resource
 				string loadPath = AssetPathHelper.FindDatabaseAssetPath(location);
 				result = UnityEditor.AssetDatabase.LoadAssetAtPath<T>(loadPath);
 				if (result == null)
-					AppLog.Log(ELogType.Error, $"Failed to load {loadPath}");
+					MotionLog.Log(ELogType.Error, $"Failed to load {loadPath}");
 #else
 				throw new Exception("EAssetSystemMode.EditorMode only support unity editor.");
 #endif
@@ -88,7 +88,7 @@ namespace MotionFramework.Resource
 			{
 				result = Resources.Load<T>(location);
 				if (result == null)
-					AppLog.Log(ELogType.Error, $"Failed to load {location}");
+					MotionLog.Log(ELogType.Error, $"Failed to load {location}");
 			}
 			else if (AssetSystem.AssetSystemMode == EAssetSystemMode.BundleMode)
 			{
@@ -102,7 +102,7 @@ namespace MotionFramework.Resource
 				if(bundle != null)
 					result = bundle.LoadAsset<T>(fileName);
 				if (result == null)
-					AppLog.Log(ELogType.Error, $"Failed to load {loadPath}");
+					MotionLog.Log(ELogType.Error, $"Failed to load {loadPath}");
 				if(bundle != null)
 					bundle.Unload(false);
 			}
