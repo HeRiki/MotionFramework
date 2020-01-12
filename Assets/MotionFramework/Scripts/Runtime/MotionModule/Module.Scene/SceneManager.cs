@@ -62,7 +62,7 @@ namespace MotionFramework.Scene
 			AssetScene scene = TryGetAdditionScene(location);
 			if (scene != null)
 			{
-				AppLog.Log(ELogType.Warning, $"The addition scene {location} is already load.");
+				MotionLog.Log(ELogType.Warning, $"The addition scene {location} is already load.");
 				return;
 			}
 
@@ -86,7 +86,7 @@ namespace MotionFramework.Scene
 			if (scene != null)
 				return scene.Progress;
 
-			AppLog.Log(ELogType.Warning, $"Not found scene {location}");
+			MotionLog.Log(ELogType.Warning, $"Not found scene {location}");
 			return 0;
 		}
 
@@ -105,7 +105,7 @@ namespace MotionFramework.Scene
 			if (scene != null)
 				return scene.IsDone;
 
-			AppLog.Log(ELogType.Warning, $"Not found scene {location}");
+			MotionLog.Log(ELogType.Warning, $"Not found scene {location}");
 			return false;
 		}
 
