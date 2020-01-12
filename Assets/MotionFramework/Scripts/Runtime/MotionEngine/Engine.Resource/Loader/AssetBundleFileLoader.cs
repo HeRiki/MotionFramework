@@ -25,19 +25,19 @@ namespace MotionFramework.Resource
 		public override void Update()
 		{
 			// 如果资源文件加载完毕
-			if (States == EAssetFileLoaderStates.LoadAssetFileSuccess || States == EAssetFileLoaderStates.LoadAssetFileFail)
+			if (States == EFileStates.Success || States == EFileStates.Fail)
 			{
 				UpdateAllProvider();
 				return;
 			}
 
-			if (States == EAssetFileLoaderStates.None)
+			if (States == EFileStates.None)
 			{
-				States = EAssetFileLoaderStates.LoadDepends;
+				States = EFileStates.LoadDepends;
 			}
 
 			// 1. 加载所有依赖项
-			if (States == EAssetFileLoaderStates.LoadDepends)
+			if (States == EFileStates.LoadDepends)
 			{
 				string[] dependencies = AssetSystem.BundleServices.GetDirectDependencies(_manifestPath);
 				if (dependencies.Length > 0)
@@ -49,40 +49,40 @@ namespace MotionFramework.Resource
 						_depends.Add(dpLoader);
 					}
 				}
-				States = EAssetFileLoaderStates.CheckDepends;
+				States = EFileStates.CheckDepends;
 			}
 
 			// 2. 检测所有依赖完成状态
-			if (States == EAssetFileLoaderStates.CheckDepends)
+			if (States == EFileStates.CheckDepends)
 			{
 				foreach (var dpLoader in _depends)
 				{
 					if (dpLoader.IsDone() == false)
 						return;
 				}
-				States = EAssetFileLoaderStates.LoadAssetFile;
+				States = EFileStates.LoadFile;
 			}
 
 			// 3. 加载AssetBundle
-			if (States == EAssetFileLoaderStates.LoadAssetFile)
+			if (States == EFileStates.LoadFile)
 			{
 #if UNITY_EDITOR
 				// 注意：Unity2017.4编辑器模式下，如果AssetBundle文件不存在会导致编辑器崩溃，这里做了预判。
 				if (System.IO.File.Exists(LoadPath) == false)
 				{
-					AppLog.Log(ELogType.Warning, $"Not found assetBundle file : {LoadPath}");
-					States = EAssetFileLoaderStates.LoadAssetFileFail;
+					MotionLog.Log(ELogType.Warning, $"Not found assetBundle file : {LoadPath}");
+					States = EFileStates.Fail;
 					return;
 				}
 #endif
 
 				// Load assetBundle file
 				_cacheRequest = AssetBundle.LoadFromFileAsync(LoadPath);
-				States = EAssetFileLoaderStates.CheckAssetFile;
+				States = EFileStates.CheckFile;
 			}
 
 			// 4. 检测AssetBundle加载结果
-			if (States == EAssetFileLoaderStates.CheckAssetFile)
+			if (States == EFileStates.CheckFile)
 			{
 				if (_cacheRequest.isDone == false)
 					return;
@@ -91,12 +91,12 @@ namespace MotionFramework.Resource
 				// Check error
 				if (CacheBundle == null)
 				{
-					AppLog.Log(ELogType.Warning, $"Failed to load assetBundle file : {LoadPath}");
-					States = EAssetFileLoaderStates.LoadAssetFileFail;
+					MotionLog.Log(ELogType.Warning, $"Failed to load assetBundle file : {LoadPath}");
+					States = EFileStates.Fail;
 				}
 				else
 				{
-					States = EAssetFileLoaderStates.LoadAssetFileSuccess;
+					States = EFileStates.Success;
 				}
 			}
 		}

@@ -31,12 +31,12 @@ namespace MotionFramework.Resource
 		/// <summary>
 		/// 当前的加载状态
 		/// </summary>
-		public EAssetProviderStates States
+		public EAssetStates States
 		{
 			get
 			{
 				if (IsValid == false)
-					return EAssetProviderStates.None;
+					return EAssetStates.None;
 				return _provider.States;
 			}
 		}

@@ -199,7 +199,7 @@ namespace MotionFramework.Resource
 			for (int i = 0; i < _fileLoaders.Count; i++)
 			{
 				AssetFileLoader temp = _fileLoaders[i];
-				if (temp.States == EAssetFileLoaderStates.LoadAssetFileFail || temp.GetFailedProviderCount() > 0)
+				if (temp.States == EFileStates.Fail || temp.GetFailedProviderCount() > 0)
 					count++;
 			}
 			return count;

@@ -13,14 +13,14 @@ namespace MotionFramework.Resource
 		public string AssetName { private set; get; }
 		public System.Type AssetType { private set; get; }
 		public System.Object AssetObject { protected set; get; }
-		public EAssetProviderStates States { protected set; get; }
+		public EAssetStates States { protected set; get; }
 		public AssetOperationHandle Handle { private set; get; }
 		public System.Action<AssetOperationHandle> Callback { set; get; }
 		public bool IsDone
 		{
 			get
 			{
-				return States == EAssetProviderStates.Success || States == EAssetProviderStates.Fail;
+				return States == EAssetStates.Success || States == EAssetStates.Fail;
 			}
 		}
 		public bool IsValid
@@ -44,7 +44,7 @@ namespace MotionFramework.Resource
 			_owner = owner;
 			AssetName = assetName;
 			AssetType = assetType;
-			States = EAssetProviderStates.None;
+			States = EAssetStates.None;
 			Handle = new AssetOperationHandle(this);
 		}
 

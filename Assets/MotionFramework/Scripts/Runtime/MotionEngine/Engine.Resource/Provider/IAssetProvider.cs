@@ -29,7 +29,7 @@ namespace MotionFramework.Resource
 		/// <summary>
 		/// 当前的加载状态
 		/// </summary>
-		EAssetProviderStates States { get; }
+		EAssetStates States { get; }
 
 		/// <summary>
 		/// 资源操作句柄

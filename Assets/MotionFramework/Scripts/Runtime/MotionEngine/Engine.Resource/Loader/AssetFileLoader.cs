@@ -8,9 +8,6 @@ using System;
 
 namespace MotionFramework.Resource
 {
-	/// <summary>
-	/// 资源文件加载器
-	/// </summary>
 	internal abstract class AssetFileLoader
 	{
 		/// <summary>
@@ -26,14 +23,14 @@ namespace MotionFramework.Resource
 		/// <summary>
 		/// 加载状态
 		/// </summary>
-		public EAssetFileLoaderStates States { get; protected set; }
+		public EFileStates States { get; protected set; }
 
 
 		public AssetFileLoader(string loadPath)
 		{
 			LoadPath = loadPath;
 			RefCount = 0;
-			States = EAssetFileLoaderStates.None;
+			States = EFileStates.None;
 		}
 
 		/// <summary>
@@ -70,7 +67,7 @@ namespace MotionFramework.Resource
 		/// </summary>
 		public virtual bool IsDone()
 		{
-			return States == EAssetFileLoaderStates.LoadAssetFileSuccess || States == EAssetFileLoaderStates.LoadAssetFileFail;
+			return States == EFileStates.Success || States == EFileStates.Fail;
 		}
 
 		/// <summary>
@@ -127,7 +124,7 @@ namespace MotionFramework.Resource
 			for (int i = 0; i < _providers.Count; i++)
 			{
 				var provider = _providers[i];
-				if (provider.States == EAssetProviderStates.Fail)
+				if (provider.States == EAssetStates.Fail)
 					failedCount++;
 			}
 			return failedCount;

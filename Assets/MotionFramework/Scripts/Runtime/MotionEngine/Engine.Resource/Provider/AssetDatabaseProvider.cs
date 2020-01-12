@@ -32,13 +32,13 @@ namespace MotionFramework.Resource
 			if (IsDone)
 				return;
 
-			if (States == EAssetProviderStates.None)
+			if (States == EAssetStates.None)
 			{
-				States = EAssetProviderStates.Loading;
+				States = EAssetStates.Loading;
 			}
 
 			// 1. 加载资源对象
-			if (States == EAssetProviderStates.Loading)
+			if (States == EAssetStates.Loading)
 			{
 				string loadPath = _owner.LoadPath;
 
@@ -51,15 +51,15 @@ namespace MotionFramework.Resource
 				}
 
 				AssetObject = UnityEditor.AssetDatabase.LoadAssetAtPath(loadPath, AssetType);
-				States = EAssetProviderStates.Checking;
+				States = EAssetStates.Checking;
 			}
 
 			// 2. 检测加载结果
-			if (States == EAssetProviderStates.Checking)
+			if (States == EAssetStates.Checking)
 			{
-				States = AssetObject == null ? EAssetProviderStates.Fail : EAssetProviderStates.Success;
-				if (States == EAssetProviderStates.Fail)
-					AppLog.Log(ELogType.Warning, $"Failed to load asset object : {_owner.LoadPath} : {AssetName}");
+				States = AssetObject == null ? EAssetStates.Fail : EAssetStates.Success;
+				if (States == EAssetStates.Fail)
+					MotionLog.Log(ELogType.Warning, $"Failed to load asset object : {_owner.LoadPath} : {AssetName}");
 				InvokeCompletion();
 			}
 #endif

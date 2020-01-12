@@ -7,13 +7,15 @@
 namespace MotionFramework.Resource
 {
 	/// <summary>
-	/// 资源提供者的状态
+	/// 文件加载状态
 	/// </summary>
-	public enum EAssetProviderStates
+	internal enum EFileStates
 	{
 		None = 0,
-		Loading,
-		Checking,
+		LoadDepends,
+		CheckDepends,
+		LoadFile,
+		CheckFile,
 		Success,
 		Fail,
 	}

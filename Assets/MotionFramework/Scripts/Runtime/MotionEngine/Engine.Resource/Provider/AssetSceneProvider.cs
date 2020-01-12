@@ -34,38 +34,38 @@ namespace MotionFramework.Resource
 			if (IsDone)
 				return;
 
-			if (States == EAssetProviderStates.None)
+			if (States == EAssetStates.None)
 			{
-				States = EAssetProviderStates.Loading;
+				States = EAssetStates.Loading;
 			}
 
 			// 1. 加载资源对象
-			if (States == EAssetProviderStates.Loading)
+			if (States == EAssetStates.Loading)
 			{
 				var mode = _param.IsAdditive ? LoadSceneMode.Additive : LoadSceneMode.Single;
 				_asyncOp = SceneManager.LoadSceneAsync(AssetName, mode);
 				if (_asyncOp != null)
 				{
 					_asyncOp.allowSceneActivation = _param.ActivateOnLoad;
-					States = EAssetProviderStates.Checking;
+					States = EAssetStates.Checking;
 				}
 				else
 				{
-					AppLog.Log(ELogType.Warning, $"Failed to load scene : {AssetName}");
-					States = EAssetProviderStates.Fail;
+					MotionLog.Log(ELogType.Warning, $"Failed to load scene : {AssetName}");
+					States = EAssetStates.Fail;
 					InvokeCompletion();
 				}
 			}
 
 			// 2. 检测加载结果
-			if (States == EAssetProviderStates.Checking)
+			if (States == EAssetStates.Checking)
 			{
 				if (_asyncOp.isDone || (_param.ActivateOnLoad == false && _asyncOp.progress == 0.9f))
 				{
 					SceneInstance instance = new SceneInstance(_asyncOp);
 					instance.Scene = SceneManager.GetSceneByName(AssetName);
 					AssetObject = instance;
-					States = EAssetProviderStates.Success;
+					States = EAssetStates.Success;
 					InvokeCompletion();
 				}
 			}
