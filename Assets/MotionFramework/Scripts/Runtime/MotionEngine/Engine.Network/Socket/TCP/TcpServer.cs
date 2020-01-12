@@ -254,7 +254,7 @@ namespace MotionFramework.Network
 			}
 			else
 			{
-				AppLog.Log(ELogType.Error, $"ProcessAccept error : {e.SocketError}");
+				MotionLog.Log(ELogType.Error, $"ProcessAccept error : {e.SocketError}");
 			}
 
 			// 投递下一个接收请求
@@ -279,7 +279,7 @@ namespace MotionFramework.Network
 		{
 			if(IsRunning == false)
 			{
-				AppLog.Log(ELogType.Warning, "Server is not start.");
+				MotionLog.Log(ELogType.Warning, "Server is not start.");
 				return;
 			}
 
@@ -324,7 +324,7 @@ namespace MotionFramework.Network
 			}
 			else
 			{
-				AppLog.Log(ELogType.Error, $"ProcessConnected error : {e.SocketError}");
+				MotionLog.Log(ELogType.Error, $"ProcessConnected error : {e.SocketError}");
 			}
 
 			// 回调函数		

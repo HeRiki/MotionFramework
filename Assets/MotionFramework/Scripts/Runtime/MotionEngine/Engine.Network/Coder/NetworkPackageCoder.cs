@@ -12,7 +12,7 @@ namespace MotionFramework.Network
 	/// <summary>
 	/// 网络包编码解码器
 	/// </summary>
-	public abstract class NetPackageCoder
+	public abstract class NetworkPackageCoder
 	{
 		protected readonly ByteBuffer _sendBuffer = new ByteBuffer(NetworkDefine.ByteBufferSize);
 		protected readonly ByteBuffer _receiveBuffer = new ByteBuffer(NetworkDefine.ByteBufferSize);

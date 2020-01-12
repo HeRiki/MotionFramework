@@ -21,7 +21,7 @@ namespace MotionFramework.Network
 		private readonly Queue<System.Object> _receiveQueue = new Queue<System.Object>(10000);
 		private readonly List<System.Object> _decodeTempList = new List<object>(100);
 
-		private NetPackageCoder _packageCoder = null;
+		private NetworkPackageCoder _packageCoder = null;
 
 		private bool _isSending = false;
 		private bool _isReceiving = false;
@@ -49,7 +49,7 @@ namespace MotionFramework.Network
 			IOSocket.NoDelay = true;
 
 			// 创建编码解码器
-			_packageCoder = (NetPackageCoder)Activator.CreateInstance(packageCoderType);
+			_packageCoder = (NetworkPackageCoder)Activator.CreateInstance(packageCoderType);
 			_packageCoder.InitChannel(this);
 
 			_receiveArgs.Completed += new EventHandler<SocketAsyncEventArgs>(IO_Completed);
@@ -164,17 +164,17 @@ namespace MotionFramework.Network
 
 
 		/// <summary>
-		/// 发送消息
+		/// 发送网络包
 		/// </summary>
-		public void SendMsg(System.Object packet)
+		public void SendPackage(System.Object packet)
 		{
 			_sendQueue.Enqueue(packet);
 		}
 
 		/// <summary>
-		/// 获取消息
+		/// 获取网络包
 		/// </summary>
-		public System.Object PickMsg()
+		public System.Object PickPackage()
 		{
 			System.Object package = null;
 			lock (_receiveQueue)
@@ -270,7 +270,7 @@ namespace MotionFramework.Network
 		/// </summary>
 		public void HandleError(bool isDispose, string error)
 		{
-			AppLog.Log(ELogType.Error, error);
+			MotionLog.Log(ELogType.Error, error);
 			if (isDispose) Dispose();
 		}
 	}
