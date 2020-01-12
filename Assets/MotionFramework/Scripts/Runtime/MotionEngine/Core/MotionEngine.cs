@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace MotionFramework
 {
-	public class AppEngine : IMotionEngine
+	public static class MotionEngine
 	{
 		private class ModuleWrapper
 		{
@@ -24,25 +24,26 @@ namespace MotionFramework
 			}
 		}
 
-		public static readonly AppEngine Instance = new AppEngine();
-
-		private readonly List<ModuleWrapper> _coms = new List<ModuleWrapper>(100);
-		private MonoBehaviour _behaviour;
-		private bool _isDirty = false;
+		private static readonly List<ModuleWrapper> _coms = new List<ModuleWrapper>(100);
+		private static MonoBehaviour _behaviour;
+		private static bool _isDirty = false;
 
 
-		private AppEngine()
-		{
-		}
-
-		void IMotionEngine.Initialize(MonoBehaviour behaviour)
+		/// <summary>
+		/// 初始化框架
+		/// </summary>
+		public static void Initialize(MonoBehaviour behaviour)
 		{
 			if (_behaviour != null)
-				throw new Exception($"{nameof(AppEngine)} is already initialized.");
+				throw new Exception($"{nameof(MotionEngine)} is already initialized.");
 
 			_behaviour = behaviour;
 		}
-		void IMotionEngine.OnUpdate()
+
+		/// <summary>
+		/// 更新框架
+		/// </summary>
+		public static void Update()
 		{
 			// 如果有新模块需要重新排序
 			if (_isDirty)
@@ -65,18 +66,22 @@ namespace MotionFramework
 				_coms[i].Module.OnUpdate();
 			}
 		}
-		void IMotionEngine.OnGUI()
+
+		/// <summary>
+		/// GUI绘制
+		/// </summary>
+		public static void OnGUI()
 		{
 			for (int i = 0; i < _coms.Count; i++)
 			{
 				_coms[i].Module.OnGUI();
 			}
 		}
-
+		
 		/// <summary>
 		/// 查询游戏模块是否存在
 		/// </summary>
-		public bool Contains(System.Type moduleType)
+		public static bool Contains(System.Type moduleType)
 		{
 			for (int i = 0; i < _coms.Count; i++)
 			{
@@ -91,7 +96,7 @@ namespace MotionFramework
 		/// </summary>
 		/// <typeparam name="T">模块类</typeparam>
 		/// <param name="priority">运行时的优先级，优先级越大越早执行。如果没有设置优先级，那么会按照添加顺序执行</param>
-		public T CreateModule<T>(int priority = 0) where T : class, IMotionModule
+		public static T CreateModule<T>(int priority = 0) where T : class, IMotionModule
 		{
 			return CreateModule<T>(null, priority);
 		}
@@ -102,7 +107,7 @@ namespace MotionFramework
 		/// <typeparam name="T">模块类</typeparam>
 		/// <param name="createParam">创建参数</param>
 		/// <param name="priority">运行时的优先级，优先级越大越早执行。如果没有设置优先级，那么会按照添加顺序执行</param>
-		public T CreateModule<T>(System.Object createParam, int priority = 0) where T : class, IMotionModule
+		public static T CreateModule<T>(System.Object createParam, int priority = 0) where T : class, IMotionModule
 		{
 			if (priority < 0)
 				throw new Exception("The priority can not be negative");
@@ -117,7 +122,7 @@ namespace MotionFramework
 				priority = --minPriority;
 			}
 
-			AppLog.Log(ELogType.Log, $"Create game module : {typeof(T)}");
+			MotionLog.Log(ELogType.Log, $"Create game module : {typeof(T)}");
 			T module = Activator.CreateInstance<T>();
 			ModuleWrapper wrapper = new ModuleWrapper(module, priority);
 			wrapper.Module.OnCreate(createParam);
@@ -130,7 +135,7 @@ namespace MotionFramework
 		/// 获取游戏模块
 		/// </summary>
 		/// <typeparam name="T">模块类</typeparam>
-		public T GetModule<T>() where T : class, IMotionModule
+		public static T GetModule<T>() where T : class, IMotionModule
 		{
 			System.Type type = typeof(T);
 			for (int i = 0; i < _coms.Count; i++)
@@ -139,14 +144,14 @@ namespace MotionFramework
 					return _coms[i].Module as T;
 			}
 
-			AppLog.Log(ELogType.Warning, $"Not found game module {type}");
+			MotionLog.Log(ELogType.Warning, $"Not found game module {type}");
 			return null;
 		}
 
 		/// <summary>
 		/// 获取当前模块里最小的优先级
 		/// </summary>
-		private int GetMinPriority()
+		private static int GetMinPriority()
 		{
 			int minPriority = 0;
 			for (int i = 0; i < _coms.Count; i++)
@@ -161,10 +166,10 @@ namespace MotionFramework
 		/// <summary>
 		/// 开启一个协程
 		/// </summary>
-		public Coroutine StartCoroutine(IEnumerator coroutine)
+		public static Coroutine StartCoroutine(IEnumerator coroutine)
 		{
 			if (_behaviour == null)
-				throw new Exception($"{nameof(AppEngine)} is not initialize. Use AppEngine.Initialize");
+				throw new Exception($"{nameof(MotionEngine)} is not initialize. Use MotionEngine.Initialize");
 			return _behaviour.StartCoroutine(coroutine);
 		}
 
@@ -172,20 +177,20 @@ namespace MotionFramework
 		/// 停止一个协程
 		/// </summary>
 		/// <param name="coroutine"></param>
-		public void StopCoroutine(Coroutine coroutine)
+		public static void StopCoroutine(Coroutine coroutine)
 		{
 			if (_behaviour == null)
-				throw new Exception($"{nameof(AppEngine)} is not initialize. Use AppEngine.Initialize");
+				throw new Exception($"{nameof(MotionEngine)} is not initialize. Use MotionEngine.Initialize");
 			_behaviour.StopCoroutine(coroutine);
 		}
 
 		/// <summary>
 		/// 停止所有协程
 		/// </summary>
-		public void StopAllCoroutines()
+		public static void StopAllCoroutines()
 		{
 			if (_behaviour == null)
-				throw new Exception($"{nameof(AppEngine)} is not initialize. Use AppEngine.Initialize");
+				throw new Exception($"{nameof(MotionEngine)} is not initialize. Use MotionEngine.Initialize");
 			_behaviour.StopAllCoroutines();
 		}
 		#endregion

@@ -14,7 +14,7 @@ namespace MotionFramework
 			get
 			{
 				if (_instance == null)
-					AppLog.Log(ELogType.Error, $"{typeof(T)} is not create. Use {nameof(AppEngine.CreateModule)} create.");
+					MotionLog.Log(ELogType.Error, $"{typeof(T)} is not create. Use {nameof(MotionEngine.CreateModule)} create.");
 				return _instance;
 			}
 		}
