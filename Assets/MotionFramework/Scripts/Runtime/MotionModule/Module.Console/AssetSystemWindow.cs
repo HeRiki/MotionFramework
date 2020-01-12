@@ -18,13 +18,13 @@ namespace MotionFramework.Console
 		private class InfoWrapper : IReference, IComparer<InfoWrapper>, IComparable<InfoWrapper>
 		{
 			public string Info;
-			public EAssetFileLoaderStates LoadState;
+			public EFileStates LoadState;
 			public int ProviderFailedCount;
 
 			public void OnRelease()
 			{
 				Info = string.Empty;
-				LoadState = EAssetFileLoaderStates.None;
+				LoadState = EFileStates.None;
 				ProviderFailedCount = 0;
 			}
 			public int CompareTo(InfoWrapper other)
@@ -77,7 +77,7 @@ namespace MotionFramework.Console
 			for (int i = 0; i < _cacheInfos.Count; i++)
 			{
 				var element = _cacheInfos[i];
-				if (element.LoadState == EAssetFileLoaderStates.LoadAssetFileFail || element.ProviderFailedCount > 0)
+				if (element.LoadState == EFileStates.Fail || element.ProviderFailedCount > 0)
 					ConsoleSystem.GUIRedLable(element.Info);
 				else
 					ConsoleSystem.GUILable(element.Info);
