@@ -82,7 +82,7 @@ namespace MotionFramework.Config
 			}
 			catch (Exception ex)
 			{
-				AppLog.Log(ELogType.Error, $"Failed to parse config {Location}. Error : {ex.ToString()}");
+				MotionLog.Log(ELogType.Error, $"Failed to parse config {Location}. Error : {ex.ToString()}");
 			}
 
 			// 注意：为了节省内存这里立即释放了资源
@@ -171,7 +171,7 @@ namespace MotionFramework.Config
 			}
 			else
 			{
-				AppLog.Log(ELogType.Warning, $"Faild to get tab. File is {Location}, key is {key}");
+				MotionLog.Log(ELogType.Warning, $"Faild to get tab. File is {Location}, key is {key}");
 				return null;
 			}
 		}
