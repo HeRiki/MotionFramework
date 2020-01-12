@@ -9,7 +9,7 @@ using System.Collections.Generic;
 
 namespace MotionFramework.Network
 {
-	public class NetMessageHandler
+	public class NetworkMessageHandler
 	{
 		private static Dictionary<int, Type> _types = new Dictionary<int, Type>();
 		

@@ -6,7 +6,7 @@
 
 namespace MotionFramework.Network
 {
-	public class NetPackage : INetPackage
+	public class NetworkPackage : INetworkPackage
 	{
 		public bool IsHotfixPackage { set; get; }
 

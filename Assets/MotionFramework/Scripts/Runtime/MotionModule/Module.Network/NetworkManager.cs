@@ -41,17 +41,17 @@ namespace MotionFramework.Network
 		/// <summary>
 		/// 当前的网络状态
 		/// </summary>
-		public ENetworkStates State { private set; get; } = ENetworkStates.Disconnect;
+		public ENetworkStates States { private set; get; } = ENetworkStates.Disconnect;
 
 		/// <summary>
 		/// Mono层网络消息接收回调
 		/// </summary>
-		public Action<INetPackage> MonoPackageCallback;
+		public Action<INetworkPackage> MonoPackageCallback;
 
 		/// <summary>
 		/// 热更层网络消息接收回调
 		/// </summary>
-		public Action<INetPackage> HotfixPackageCallback;
+		public Action<INetworkPackage> HotfixPackageCallback;
 
 
 		void IMotionModule.OnCreate(System.Object param)
@@ -70,9 +70,9 @@ namespace MotionFramework.Network
 
 			if (_channel != null)
 			{
-				// 拉取网络消息
-				// 注意：如果服务器意外断开，未拉取的消息将不会处理
-				INetPackage package = (INetPackage)_channel.PickMsg();
+				// 拉取网络包
+				// 注意：如果服务器意外断开，未拉取的网络包将会丢失
+				INetworkPackage package = (INetworkPackage)_channel.PickPackage();
 				if (package != null)
 				{
 					if (package.IsHotfixPackage)
@@ -81,22 +81,22 @@ namespace MotionFramework.Network
 						MonoPackageCallback.Invoke(package);
 				}
 
-				// 侦测服务器主动断开的连接
-				if (State == ENetworkStates.Connected)
+				// 侦测服务器主动断开连接
+				if (States == ENetworkStates.Connected)
 				{
 					if (_channel.IsConnected() == false)
 					{
-						State = ENetworkStates.Disconnect;
+						States = ENetworkStates.Disconnect;
 						NetworkEventDispatcher.SendDisconnectMsg();
 						CloseChannel();
-						AppLog.Log(ELogType.Warning, "Server disconnect.");
+						MotionLog.Log(ELogType.Warning, "Server disconnect.");
 					}
 				}
 			}
 		}
 		void IMotionModule.OnGUI()
 		{
-			ConsoleSystem.GUILable($"[{nameof(NetworkManager)}] State : {State}");
+			ConsoleSystem.GUILable($"[{nameof(NetworkManager)}] State : {States}");
 			ConsoleSystem.GUILable($"[{nameof(NetworkManager)}] IP Host : {_host}");
 			ConsoleSystem.GUILable($"[{nameof(NetworkManager)}] IP Port : {_port}");
 			ConsoleSystem.GUILable($"[{nameof(NetworkManager)}] IP Type : {_family}");
@@ -109,9 +109,9 @@ namespace MotionFramework.Network
 		/// <param name="port">端口</param>
 		public void ConnectServer(string host, int port)
 		{
-			if (State == ENetworkStates.Disconnect)
+			if (States == ENetworkStates.Disconnect)
 			{
-				State = ENetworkStates.Connecting;
+				States = ENetworkStates.Connecting;
 				NetworkEventDispatcher.SendBeginConnectMsg();
 				IPEndPoint remote = new IPEndPoint(IPAddress.Parse(host), port);
 				_server.ConnectAsync(remote, OnConnectServer, _packageCoderType);
@@ -124,16 +124,16 @@ namespace MotionFramework.Network
 		}
 		private void OnConnectServer(TcpChannel channel, SocketError error)
 		{
-			AppLog.Log(ELogType.Log, $"Server connect result : {error}");
+			MotionLog.Log(ELogType.Log, $"Server connect result : {error}");
 			if (error == SocketError.Success)
 			{
 				_channel = channel;
-				State = ENetworkStates.Connected;
+				States = ENetworkStates.Connected;
 				NetworkEventDispatcher.SendConnectSuccessMsg();
 			}
 			else
 			{
-				State = ENetworkStates.Disconnect;
+				States = ENetworkStates.Disconnect;
 				NetworkEventDispatcher.SendConnectFailMsg(error.ToString());
 			}
 		}
@@ -143,9 +143,9 @@ namespace MotionFramework.Network
 		/// </summary>
 		public void DisconnectServer()
 		{
-			if (State == ENetworkStates.Connected)
+			if (States == ENetworkStates.Connected)
 			{
-				State = ENetworkStates.Disconnect;
+				States = ENetworkStates.Disconnect;
 				NetworkEventDispatcher.SendDisconnectMsg();
 				CloseChannel();
 			}
@@ -154,16 +154,16 @@ namespace MotionFramework.Network
 		/// <summary>
 		/// 发送网络消息
 		/// </summary>
-		public void SendMessage(INetPackage package)
+		public void SendMessage(INetworkPackage package)
 		{
-			if (State != ENetworkStates.Connected)
+			if (States != ENetworkStates.Connected)
 			{
-				AppLog.Log(ELogType.Warning, "Network is not connected.");
+				MotionLog.Log(ELogType.Warning, "Network is not connected.");
 				return;
 			}
 
 			if (_channel != null)
-				_channel.SendMsg(package);
+				_channel.SendPackage(package);
 		}
 
 		private void CloseChannel()

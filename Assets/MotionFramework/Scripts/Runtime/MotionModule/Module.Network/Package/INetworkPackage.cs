@@ -6,7 +6,7 @@
 
 namespace MotionFramework.Network
 {
-	public interface INetPackage
+	public interface INetworkPackage
 	{
 		/// <summary>
 		/// 是否为热更消息

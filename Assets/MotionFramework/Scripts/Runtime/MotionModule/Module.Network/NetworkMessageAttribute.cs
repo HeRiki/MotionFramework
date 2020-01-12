@@ -8,11 +8,11 @@ using System;
 namespace MotionFramework.Network
 {
 	[AttributeUsage(AttributeTargets.Class)]
-	public class NetMessageAttribute : Attribute
+	public class NetworkMessageAttribute : Attribute
 	{
 		public int MsgID;
 
-		public NetMessageAttribute(int msgID)
+		public NetworkMessageAttribute(int msgID)
 		{
 			MsgID = msgID;
 		}
