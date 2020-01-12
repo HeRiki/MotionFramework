@@ -49,7 +49,7 @@ namespace MotionFramework.FSM
 			}
 			else
 			{
-				AppLog.Log(ELogType.Warning, $"Node {node.Name} already existed");
+				MotionLog.Log(ELogType.Warning, $"Node {node.Name} already existed");
 			}
 		}
 
@@ -67,7 +67,7 @@ namespace MotionFramework.FSM
 			if (_curNode != null)
 				_curNode.OnEnter();
 			else
-				AppLog.Log(ELogType.Error, $"Not found entry node : {entryNode}");
+				MotionLog.Log(ELogType.Error, $"Not found entry node : {entryNode}");
 		}
 
 		/// <summary>
@@ -90,7 +90,7 @@ namespace MotionFramework.FSM
 			IFiniteStateNode node = GetNode(nodeName);
 			if (node == null)
 			{
-				AppLog.Log(ELogType.Error, $"Can not found node {nodeName}");
+				MotionLog.Log(ELogType.Error, $"Can not found node {nodeName}");
 				return;
 			}
 
@@ -99,12 +99,12 @@ namespace MotionFramework.FSM
 			{
 				if (_graph.CanTransition(_curNode.Name, node.Name) == false)
 				{
-					AppLog.Log(ELogType.Error, $"Can not transition {_curNode} to {node}");
+					MotionLog.Log(ELogType.Error, $"Can not transition {_curNode} to {node}");
 					return;
 				}
 			}
 
-			AppLog.Log(ELogType.Log, $"Transition {_curNode} to {node}");
+			MotionLog.Log(ELogType.Log, $"Transition {_curNode} to {node}");
 			_preNode = _curNode;
 			_curNode.OnExit();
 			_curNode = node;

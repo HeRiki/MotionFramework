@@ -38,7 +38,7 @@ namespace MotionFramework.FSM
 
 			if (_graph.ContainsKey(nodeName))
 			{
-				AppLog.Log(ELogType.Warning, $"Graph node {nodeName} already existed.");
+				MotionLog.Log(ELogType.Warning, $"Graph node {nodeName} already existed.");
 				return;
 			}
 
@@ -52,7 +52,7 @@ namespace MotionFramework.FSM
 		{
 			if (_graph.ContainsKey(from) == false)
 			{
-				AppLog.Log(ELogType.Warning, $"Not found graph node {from}");
+				MotionLog.Log(ELogType.Warning, $"Not found graph node {from}");
 				return false;
 			}
 
