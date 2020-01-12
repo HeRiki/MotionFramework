@@ -48,7 +48,7 @@ namespace MotionFramework.FSM
 				throw new Exception($"{nameof(FsmManager)} create param is invalid.");
 
 			if (createParam.Nodes == null || createParam.Nodes.Count == 0)
-				AppLog.Log(ELogType.Error, "Fsm nodes is null or empty");
+				MotionLog.Log(ELogType.Error, "Fsm nodes is null or empty");
 
 			_graph = createParam.Graph;
 			_entryNode = createParam.EntryNode;
