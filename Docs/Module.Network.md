@@ -8,7 +8,7 @@ public void Start()
 	// 注意：ProtoPackageCoder是自定义的网络包编码解码器
 	var createParam = new NetworkManager.CreateParameters();
 	createParam.PackageCoderType = typeof(ProtoPackageCoder);
-	AppEngine.Instance.CreateModule<NetworkManager>(createParam);
+	MotionEngine.CreateModule<NetworkManager>(createParam);
 }
 ```
 
@@ -41,7 +41,7 @@ public class Test
 		}
 	}
 
-	private void OnHandleMonoPackage(INetPackage package)
+	private void OnHandleMonoPackage(INetworkPackage package)
 	{
 		Debug.Log($"Handle net message : {package.MsgID}");
 		R2C_Login msg = package.MsgObj as R2C_Login;
@@ -55,4 +55,4 @@ public class Test
 ```
 
 更详细的教程请参考示例代码
-1. [MotionModule/Module.Network/NetworkManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/Scripts/Runtime/MotionModule/Module.Network/NetworkManager.cs)
+1. [Module.Network/NetworkManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/Scripts/Runtime/Module/Module.Network/NetworkManager.cs)

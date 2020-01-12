@@ -5,7 +5,7 @@
 public void Start()
 {
   // 创建模块
-  AppEngine.Instance.CreateModule<EventManager>();
+  MotionEngine.CreateModule<EventManager>();
 }
 ```
 
@@ -65,4 +65,4 @@ public class Test
 }
 ```
 
-1. [MotionModule/Module.Event/EventManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/Scripts/Runtime/MotionModule/Module.Event/EventManager.cs)
+1. [Module.Event/EventManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/Scripts/Runtime/Module/Module.Event/EventManager.cs)

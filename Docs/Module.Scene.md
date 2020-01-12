@@ -5,7 +5,7 @@
 public void Start()
 {
 	// 创建模块
-	AppEngine.Instance.CreateModule<SceneManager>();
+	MotionEngine.CreateModule<SceneManager>();
 }
 ```
 
@@ -36,4 +36,4 @@ public class Test
 ```
 
 更详细的教程请参考示例代码
-1. [MotionModule/Module.Scene/SceneManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/Scripts/Runtime/MotionModule/Module.Scene/SceneManager.cs)
+1. [Module.Scene/SceneManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/Scripts/Runtime/Module/Module.Scene/SceneManager.cs)

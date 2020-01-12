@@ -24,9 +24,9 @@ public void Start()
 	createParam.DefaultCDNServerIP = "127.0.0.1/CDN/PC";
 
 	// 创建模块
-	AppEngine.Instance.CreateModule<PatchManager>(createParam);
+	MotionEngine.CreateModule<PatchManager>(createParam);
 }
 ```
 
 更详细的教程请参考示例代码
-1. [MotionModule/Module.Patch/PatchManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/Scripts/Runtime/MotionModule/Module.Patch/PatchManager.cs)
+1. [Module.Patch/PatchManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/Scripts/Runtime/Module/Module.Patch/PatchManager.cs)

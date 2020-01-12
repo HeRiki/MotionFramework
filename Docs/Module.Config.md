@@ -24,7 +24,7 @@ public void Start()
 	createParam.BaseFolderPath = "Config";
 
 	// 创建模块
-	AppEngine.Instance.CreateModule<ConfigManager>(ceateParam);
+	MotionEngine.CreateModule<ConfigManager>(ceateParam);
 }
 ```
 
@@ -60,4 +60,4 @@ public class Test
 }
 ```
 
-1. [MotionModule/Module.Config/ConfigManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/Scripts/Runtime/MotionModule/Module.Config/ConfigManager.cs)
+1. [Module.Config/ConfigManager.cs](https://github.com/gmhevinci/MotionFramework/blob/master/Assets/MotionFramework/Scripts/Runtime/Module/Module.Config/ConfigManager.cs)
