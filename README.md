@@ -11,9 +11,9 @@ C# && .Net4.x
 
 ## 核心系统
 
-1. [框架引擎](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/MotionEngine.md) **(MotionEngine)** - 游戏框架的核心类，它负责游戏模块的创建和管理。在核心系统的基础上还提供了游戏开发过程中常用的管理器，可以帮助开发者加快游戏开发速度。
+1. [引擎](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/MotionEngine.md) **(MotionEngine)** - 游戏框架的核心类，它负责游戏模块的创建和管理。在核心系统的基础上还提供了游戏开发过程中常用的管理器，可以帮助开发者加快游戏开发速度。
 
-2. [框架日志](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/MotionLog.md) **(MotionLog)** - 游戏框架的日志系统，开发者通过注册可以监听框架日志。
+2. [日志](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/MotionLog.md) **(MotionLog)** - 游戏框架的日志系统，开发者通过注册可以监听框架日志。
 
 3. [控制台](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/Engine.Console.md) **(Engine.Console)** - 在游戏运行的时候，通过内置的控制台可以方便查看调试信息。控制台内置了游戏模块，游戏日志，应用详情，资源系统，引用池，游戏对象池等窗口。开发者可以扩展自定义窗口。
 
@@ -48,7 +48,7 @@ C# && .Net4.x
 
 8. [游戏对象池管理器](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/Module.Pool.md) **(GameObjectPoolManager)**
 
-9. [状态机管理器](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/Module.FSM.md) **(FsmManager)**
+9. [状态机管理器](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/Module.AI.FSM.md) **(FsmManager)**
 
 ## 工具介绍
 内置的相关工具介绍
