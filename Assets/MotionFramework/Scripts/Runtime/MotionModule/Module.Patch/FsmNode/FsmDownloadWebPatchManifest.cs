@@ -24,7 +24,7 @@ namespace MotionFramework.Patch
 		void IFiniteStateNode.OnEnter()
 		{
 			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.DownloadWebPatchManifest);
-			AppEngine.Instance.StartCoroutine(Download());
+			MotionEngine.StartCoroutine(Download());
 		}
 		void IFiniteStateNode.OnUpdate()
 		{

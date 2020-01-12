@@ -23,7 +23,7 @@ namespace MotionFramework.Patch
 		void IFiniteStateNode.OnEnter()
 		{
 			PatchEventDispatcher.SendPatchStatesChangeMsg(EPatchStates.RequestGameVersion);
-			AppEngine.Instance.StartCoroutine(Download());
+			MotionEngine.StartCoroutine(Download());
 		}
 		void IFiniteStateNode.OnUpdate()
 		{

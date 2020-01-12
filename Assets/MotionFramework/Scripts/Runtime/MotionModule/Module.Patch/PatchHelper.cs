@@ -51,7 +51,7 @@ namespace MotionFramework.Patch
 		/// </summary>
 		public static void Log(ELogType logType, string log)
 		{
-			AppLog.Log(logType, log);
+			MotionLog.Log(logType, log);
 		}
 
 		/// <summary>
