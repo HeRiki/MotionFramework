@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using MotionFramework.Console;
+using MotionFramework.Reference;
 
 namespace MotionFramework.Event
 {
@@ -16,7 +17,6 @@ namespace MotionFramework.Event
 	public sealed class EventManager : ModuleSingleton<EventManager>, IModule
 	{
 		private readonly Dictionary<int, List<Action<IEventMessage>>> _listeners = new Dictionary<int, List<Action<IEventMessage>>>();
-
 
 		void IModule.OnCreate(System.Object param)
 		{
@@ -68,6 +68,11 @@ namespace MotionFramework.Event
 			{
 				listeners[i].Invoke(message);
 			}
+
+			// 回收引用对象
+			IReference refClass = message as IReference;
+			if (refClass != null)
+				ReferencePool.Release(refClass);
 		}
 
 		/// <summary>
