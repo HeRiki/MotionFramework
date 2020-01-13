@@ -8,7 +8,7 @@ public class CustomNode : IFsmNode
 
 	public CustomNode()
 	{
-		Name = "CustomNode";
+		Name = "Node";
 	}
 
 	void IFsmNode.OnEnter()
@@ -22,6 +22,46 @@ public class CustomNode : IFsmNode
 	}
 	void IFsmNode.OnHandleMessage(object msg)
 	{
+	}
+}
+```
+
+创建有限状态机
+```C#
+using MotionFramework.AI;
+
+public class Test
+{
+	// 有限状态机
+	private FiniteStateMachine _fsm = new FiniteStateMachine();
+
+	public void Start()
+	{
+		// 节点转换关系图	
+		FsmGraph graph = new FsmGraph("globalNode");
+		graph.AddTransition("Node1", new List<string>() {"Node2"})
+		graph.AddTransition("Node2", new List<string>() {"Node3", "Node4"})
+		graph.AddTransition("Node3", new List<string>() {"Node2"})
+		graph.AddTransition("Node4", new List<string>() {"Node2"})
+
+		// 注意：如果不想限制节点之间的转换规则，可以设为空
+		_fsm.Graph = graph;	
+
+		// 添加节点
+		_fsm.AddNode(new CustomNode1());
+		_fsm.AddNode(new CustomNode2());
+		_fsm.AddNode(new CustomNode3());
+		_fsm.AddNode(new CustomNode4());
+		_fsm.AddNode(new GlobalNode());
+
+		// 运行入口节点
+		_fsm.Run("Node1");
+	}
+
+	public void Update
+	{
+		// 更新
+		_fsm.Update();
 	}
 }
 ```

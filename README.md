@@ -48,8 +48,6 @@ C# && .Net4.x
 
 8. [游戏对象池管理器](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/Module.Pool.md) **(GameObjectPoolManager)**
 
-9. [状态机管理器](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/Module.AI.FSM.md) **(FsmManager)**
-
 ## 工具介绍
 内置的相关工具介绍
 
