@@ -22,7 +22,7 @@ namespace MotionFramework.Console
 		}
 		void IConsoleWindow.OnGUI()
 		{
-			var pools = GameObjectPoolManager.Instance.GetAllPools;
+			var pools = GameObjectPoolManager.Instance.GetAllCollectors;
 			ConsoleGUI.Lable($"池总数：{pools.Count}");
 
 			_scrollPos = ConsoleGUI.BeginScrollView(_scrollPos, 30);

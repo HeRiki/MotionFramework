@@ -58,6 +58,15 @@ namespace MotionFramework.Resource
 		}
 
 		/// <summary>
+		/// 资源回收
+		/// 卸载引用计数为零的资源
+		/// </summary>
+		public static void Release()
+		{
+			AssetSystem.Release();
+		}
+
+		/// <summary>
 		/// 强制回收所有资源
 		/// </summary>
 		public void ForceReleaseAll()

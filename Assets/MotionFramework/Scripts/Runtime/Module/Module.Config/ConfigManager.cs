@@ -34,7 +34,7 @@ namespace MotionFramework.Config
 		{
 			CreateParameters createParam = param as CreateParameters;
 			if (createParam == null)
-				throw new Exception($"{nameof(ConfigManager)} create param is invalid.");
+				throw new ArgumentNullException($"{nameof(ConfigManager)} create param is invalid.");
 
 			_baseFolderPath = createParam.BaseFolderPath;
 		}

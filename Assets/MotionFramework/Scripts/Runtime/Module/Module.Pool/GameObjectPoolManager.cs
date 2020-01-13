@@ -15,7 +15,7 @@ namespace MotionFramework.Pool
 	/// </summary>
 	public sealed class GameObjectPoolManager : ModuleSingleton<GameObjectPoolManager>, IModule
 	{
-		private readonly Dictionary<string, GameObjectCollector> _pools = new Dictionary<string, GameObjectCollector>();
+		private readonly Dictionary<string, GameObjectCollector> _collectors = new Dictionary<string, GameObjectCollector>();
 		private GameObject _root;
 
 
@@ -38,7 +38,7 @@ namespace MotionFramework.Pool
 		/// </summary>
 		public void CreatePool(string location, int capacity)
 		{
-			if (_pools.ContainsKey(location))
+			if (_collectors.ContainsKey(location))
 			{
 				MotionLog.Log(ELogLevel.Warning, $"Asset is already existed : {location}");
 				return;
@@ -48,7 +48,7 @@ namespace MotionFramework.Pool
 		private GameObjectCollector CreatePoolInternal(string location, int capacity)
 		{
 			GameObjectCollector pool = new GameObjectCollector(_root.transform, location, capacity);
-			_pools.Add(location, pool);
+			_collectors.Add(location, pool);
 			return pool;
 		}
 
@@ -57,7 +57,7 @@ namespace MotionFramework.Pool
 		/// </summary>
 		public bool IsAllDone()
 		{
-			foreach (var pair in _pools)
+			foreach (var pair in _collectors)
 			{
 				if (pair.Value.IsDone == false)
 					return false;
@@ -70,11 +70,11 @@ namespace MotionFramework.Pool
 		/// </summary>
 		public void DestroyAll()
 		{
-			foreach (var pair in _pools)
+			foreach (var pair in _collectors)
 			{
 				pair.Value.Destroy();
 			}
-			_pools.Clear();
+			_collectors.Clear();
 		}
 
 		/// <summary>
@@ -82,9 +82,9 @@ namespace MotionFramework.Pool
 		/// </summary>
 		public void Spawn(string location, Action<GameObject> callbcak)
 		{
-			if (_pools.ContainsKey(location))
+			if (_collectors.ContainsKey(location))
 			{
-				_pools[location].Spawn(callbcak);
+				_collectors[location].Spawn(callbcak);
 			}
 			else
 			{
@@ -99,9 +99,9 @@ namespace MotionFramework.Pool
 		/// </summary>
 		public GameObject Spawn(string location)
 		{
-			if (_pools.ContainsKey(location))
+			if (_collectors.ContainsKey(location))
 			{
-				return _pools[location].Spawn();
+				return _collectors[location].Spawn();
 			}
 			else
 			{
@@ -119,9 +119,9 @@ namespace MotionFramework.Pool
 			if (obj == null)
 				return;
 
-			if (_pools.ContainsKey(location))
+			if (_collectors.ContainsKey(location))
 			{
-				_pools[location].Restore(obj);
+				_collectors[location].Restore(obj);
 			}
 			else
 			{
@@ -130,9 +130,9 @@ namespace MotionFramework.Pool
 		}
 
 		#region 调试专属方法
-		internal Dictionary<string, GameObjectCollector> GetAllPools
+		internal Dictionary<string, GameObjectCollector> GetAllCollectors
 		{
-			get { return _pools; }
+			get { return _collectors; }
 		}
 		#endregion
 	}
