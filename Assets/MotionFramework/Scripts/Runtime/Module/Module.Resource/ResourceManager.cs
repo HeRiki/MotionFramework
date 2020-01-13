@@ -6,6 +6,7 @@
 using System;
 using UnityEngine;
 using MotionFramework.Console;
+using MotionFramework.Utility;
 
 namespace MotionFramework.Resource
 {
@@ -33,7 +34,15 @@ namespace MotionFramework.Resource
 			/// AssetBundle服务接口
 			/// </summary>
 			public IBundleServices BundleServices;
+
+			/// <summary>
+			/// 资源系统自动释放零引用资源的间隔秒数
+			/// 注意：如果小于等于零代表不自动释放，可以使用ResourceManager.Release接口主动释放
+			/// </summary>
+			public float AutoReleaseInterval;
 		}
+
+		private RepeatTimer _releaseTimer;
 
 
 		void IModule.OnCreate(System.Object param)
@@ -43,10 +52,21 @@ namespace MotionFramework.Resource
 				throw new Exception($"{nameof(ResourceManager)} create param is invalid.");
 
 			AssetSystem.Initialize(createParam.AssetRootPath, createParam.AssetSystemMode, createParam.BundleServices);
+
+			// 创建间隔计时器
+			if(createParam.AutoReleaseInterval > 0)
+				_releaseTimer = new RepeatTimer(0, createParam.AutoReleaseInterval);
 		}
 		void IModule.OnUpdate()
 		{
+			// 轮询更新资源系统
 			AssetSystem.UpdatePoll();
+
+			// 自动释放零引用资源
+			if(_releaseTimer != null && _releaseTimer.Update(Time.unscaledDeltaTime))
+			{
+				AssetSystem.Release();
+			}			
 		}
 		void IModule.OnGUI()
 		{
