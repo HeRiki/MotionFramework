@@ -12,6 +12,11 @@ public void Start()
     // 创建模块
     MotionEngine.CreateModule<ResourceManager>(createParam);
 }
+public void FixedUpdate()
+{
+	// 卸载引用计数为零的资源
+	ResourceManager.Instance.Release();
+}
 ```
 
 资源的加载教程请参考[资源系统](https://github.com/gmhevinci/MotionFramework/blob/master/Docs/Engine.Resource.md)
