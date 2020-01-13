@@ -4,18 +4,15 @@
 ```C#
 public void Start()
 {
-    // 设置参数
-    var createParam = new ResourceManager.CreateParameters();
-    createParam.AssetRootPath = "Assets/Works/Resource";
-    createParam.AssetSystemMode = EAssetSystemMode.AssetDatabase;
+	// 设置参数
+	var createParam = new ResourceManager.CreateParameters();
+	createParam.AssetRootPath = "Assets/Works/Resource";
+	createParam.AssetSystemMode = EAssetSystemMode.AssetDatabase;
+	createParam.BundleServices = null;
+	createParam.AutoReleaseInterval = 10;
 
-    // 创建模块
-    MotionEngine.CreateModule<ResourceManager>(createParam);
-}
-public void FixedUpdate()
-{
-	// 卸载引用计数为零的资源
-	ResourceManager.Instance.Release();
+	// 创建模块
+	MotionEngine.CreateModule<ResourceManager>(createParam);
 }
 ```
 
