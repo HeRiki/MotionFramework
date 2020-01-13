@@ -17,7 +17,12 @@ namespace MotionFramework.AI
 		private readonly List<IFsmNode> _nodes = new List<IFsmNode>();
 		private IFsmNode _curNode;
 		private IFsmNode _preNode;
-		private FsmGraph _graph;
+
+		/// <summary>
+		/// 节点转换关系图
+		/// 注意：如果为NULL则不检测转换关系
+		/// </summary>
+		public FsmGraph Graph;
 
 		/// <summary>
 		/// 当前运行的节点名称
@@ -33,6 +38,31 @@ namespace MotionFramework.AI
 		public string PreviousNodeName
 		{
 			get { return _preNode != null ? _preNode.Name : string.Empty; }
+		}
+
+
+		/// <summary>
+		/// 启动状态机
+		/// </summary>
+		/// <param name="entryNode">入口节点</param>
+		public void Run(string entryNode)
+		{
+			_curNode = GetNode(entryNode);
+			_preNode = GetNode(entryNode);
+
+			if (_curNode != null)
+				_curNode.OnEnter();
+			else
+				MotionLog.Log(ELogLevel.Error, $"Not found entry node : {entryNode}");
+		}
+
+		/// <summary>
+		/// 更新状态机
+		/// </summary>
+		public void Update()
+		{
+			if (_curNode != null)
+				_curNode.OnUpdate();
 		}
 
 		/// <summary>
@@ -54,32 +84,6 @@ namespace MotionFramework.AI
 		}
 
 		/// <summary>
-		/// 启动状态机
-		/// </summary>
-		/// <param name="entryNode">入口节点</param>
-		/// <param name="graph">节点转换关系图，如果为NULL则不检测转换关系</param>
-		public void Run(string entryNode, FsmGraph graph)
-		{
-			_graph = graph;
-			_curNode = GetNode(entryNode);
-			_preNode = GetNode(entryNode);
-
-			if (_curNode != null)
-				_curNode.OnEnter();
-			else
-				MotionLog.Log(ELogLevel.Error, $"Not found entry node : {entryNode}");
-		}
-
-		/// <summary>
-		/// 更新状态机
-		/// </summary>
-		public void Update()
-		{
-			if (_curNode != null)
-				_curNode.OnUpdate();
-		}
-
-		/// <summary>
 		/// 转换节点
 		/// </summary>
 		public void Transition(string nodeName)
@@ -95,9 +99,9 @@ namespace MotionFramework.AI
 			}
 
 			// 检测转换关系
-			if (_graph != null)
+			if (Graph != null)
 			{
-				if (_graph.CanTransition(_curNode.Name, node.Name) == false)
+				if (Graph.CanTransition(_curNode.Name, node.Name) == false)
 				{
 					MotionLog.Log(ELogLevel.Error, $"Can not transition {_curNode} to {node}");
 					return;

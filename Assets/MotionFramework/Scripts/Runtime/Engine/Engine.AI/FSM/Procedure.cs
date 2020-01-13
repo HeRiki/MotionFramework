@@ -54,7 +54,7 @@ namespace MotionFramework.AI
 		public void Run()
 		{
 			if (_nodeNames.Count > 0)
-				_fsm.Run(_nodeNames[0], null);
+				_fsm.Run(_nodeNames[0]);
 			else
 				MotionLog.Log(ELogLevel.Warning, "Procedure system dont has any node.");
 		}
