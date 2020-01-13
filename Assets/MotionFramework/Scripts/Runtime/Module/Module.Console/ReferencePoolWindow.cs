@@ -16,10 +16,10 @@ namespace MotionFramework.Console
 		// GUI相关
 		private Vector2 _scrollPos = Vector2.zero;
 
-		public void OnCreate()
+		void IConsoleWindow.OnStart()
 		{
 		}
-		public void OnGUI()
+		void IConsoleWindow.OnGUI()
 		{
 			var pools = ReferencePool.GetAllCollectors;
 			ConsoleGUI.Lable($"池总数：{pools.Count}");

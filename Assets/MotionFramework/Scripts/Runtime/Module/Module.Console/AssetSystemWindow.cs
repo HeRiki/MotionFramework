@@ -55,11 +55,10 @@ namespace MotionFramework.Console
 		// GUI相关
 		private Vector2 _scrollPos = Vector2.zero;
 
-
-		public void OnCreate()
+		void IConsoleWindow.OnStart()
 		{
 		}
-		public void OnGUI()
+		void IConsoleWindow.OnGUI()
 		{
 			// 过滤信息
 			FilterInfos();
@@ -84,6 +83,7 @@ namespace MotionFramework.Console
 			}
 			ConsoleGUI.EndScrollView();
 		}
+
 		private void FilterInfos()
 		{
 			// 回收引用

@@ -70,7 +70,7 @@ namespace MotionFramework
 		/// <summary>
 		/// GUI绘制
 		/// </summary>
-		public static void OnGUI()
+		public static void DrawGUI()
 		{
 			for (int i = 0; i < _coms.Count; i++)
 			{

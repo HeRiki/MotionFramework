@@ -39,13 +39,13 @@ namespace MotionFramework.Console
 		private bool _showWarning = true;
 		private bool _showError = true;
 		private Vector2 _scrollPos = Vector2.zero;
-
-		public void OnCreate()
+		
+		void IConsoleWindow.OnStart()
 		{
 			// 注册UnityEngine日志系统
 			Application.logMessageReceived += HandleUnityEngineLog;
 		}
-		public void OnGUI()
+		void IConsoleWindow.OnGUI()
 		{
 			GUILayout.BeginHorizontal();
 			_showLog = ConsoleGUI.Toggle("Log", _showLog);

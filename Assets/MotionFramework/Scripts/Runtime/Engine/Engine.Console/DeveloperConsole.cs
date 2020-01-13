@@ -37,6 +37,7 @@ namespace MotionFramework.Console
 		/// 控制台节点列表
 		/// </summary>
 		private readonly static List<WindowWrapper> _wrappers = new List<WindowWrapper>();
+		private static bool _isStart = false;
 
 		// GUI相关
 		private static bool _visibleToggle = false;
@@ -50,9 +51,10 @@ namespace MotionFramework.Console
 		public static void Initialize()
 		{
 			// 加载背景纹理
-			_bgTexture = Resources.Load<Texture>("builtin_background");
+			string textureName = "console_background";
+			_bgTexture = Resources.Load<Texture>(textureName);
 			if (_bgTexture == null)
-				UnityEngine.Debug.LogWarning("Not found builtin_background texture in Resources folder.");
+				UnityEngine.Debug.LogWarning($"Not found {textureName} texture in Resources folder.");
 
 			// 获取所有调试类
 			List<Type> allTypes = AssemblyUtility.GetAssignableAttributeTypes(typeof(IConsoleWindow), typeof(ConsoleAttribute));
@@ -76,7 +78,6 @@ namespace MotionFramework.Console
 			{
 				WindowWrapper wrapper = _wrappers[i];
 				wrapper.Instance = (IConsoleWindow)Activator.CreateInstance(wrapper.ClassType);
-				wrapper.Instance.OnCreate();
 			}
 
 			// 标题列表
@@ -95,6 +96,16 @@ namespace MotionFramework.Console
 		{
 			// 注意：GUI接口只能在OnGUI内部使用
 			ConsoleGUI.InitGlobalStyle();
+
+			if (_isStart == false)
+			{
+				_isStart = true;
+				for (int i = 0; i < _wrappers.Count; i++)
+				{
+					WindowWrapper wrapper = _wrappers[i];
+					wrapper.Instance.OnStart();
+				}
+			}
 
 			GUILayout.BeginHorizontal();
 			{
