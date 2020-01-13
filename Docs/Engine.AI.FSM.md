@@ -65,3 +65,31 @@ public class Test
 	}
 }
 ```
+
+创建流程
+```C#
+using MotionFramework.AI;
+
+public class Test
+{
+	private Procedure _procedure = new Procedure();
+
+	public void Start()
+	{
+		// 添加节点
+		// 注意：按照先后顺序添加流程节点
+		_procedure.AddNode(new CustomNode1());
+		_procedure.AddNode(new CustomNode2());
+		_procedure.AddNode(new CustomNode3());
+		_procedure.AddNode(new CustomNode4());
+
+		// 运行流程
+		_procedure.Run();
+	}
+	public void Update
+	{
+		// 更新
+		_procedure.Update();
+	}
+}
+```
