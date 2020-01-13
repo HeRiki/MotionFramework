@@ -1,6 +1,6 @@
 ### 引擎 (MotionEngine)  
 
-在开发游戏的过程中，我们常常需要定义自己的游戏模块。  
+在游戏开发过程中，开发者常常需要定义自己的游戏模块。  
 
 自定义游戏模块
 ```C#
@@ -29,7 +29,7 @@ public class BattleManager : ModuleSingleton<BattleManager>, IModule
 }
 ```
 
-创建和使用游戏模块
+创建游戏模块
 ```C#
 public void Start()
 {
@@ -40,8 +40,14 @@ public void Start()
   // 说明：运行时的优先级，优先级越大越早轮询。如果没有设置优先级，那么会按照添加顺序执行
   int priority = 1000;
   MotionEngine.CreateModule<BattleManager>(priority);
+}
+```
 
-  // 通过AppEngine调用模块方法
+使用游戏模块
+```C#
+public void Start()
+{
+  // 通过获取实例调用模块方法
   MotionEngine.GetModule<BattleManager>().Print();
 
   // 通过全局实例调用模块方法

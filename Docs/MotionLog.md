@@ -1,12 +1,11 @@
 ### 日志 (MotionLog)
 
-监听框架日志
+监听框架生成的日志
 ```C#
 using MotionFramework;
 
 public void Start()
 {
-	// 监听框架日志
 	MotionLog.RegisterCallback(LogCallback);
 }
 
